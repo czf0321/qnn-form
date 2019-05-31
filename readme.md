@@ -1,4 +1,4 @@
-<h1><center>qnn-form</center></h1>
+<h1><center>qnn-form（未发布版本）</center></h1>
 
 ##### qnn-form 是一套能够根据配置文件自动生成 pc + mobile 表单的组件，有数据管理列表的话推荐使用<a href="https://github.com/wangzongming/qnn-table">qnn-table</a>组件
 
