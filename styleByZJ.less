@@ -1,0 +1,408 @@
+@default: #333;
+// @disabled: rgb(126, 123, 123);
+@disabled: @default;
+@fs: 15px;
+@blue: #0099dd;
+@orange: #ff9900;
+@color-lightgray: #efefef;
+/*滚动条样式*/
+.scrollstyle {
+    &::-webkit-scrollbar {
+        /*滚动条整体样式*/
+        width: 3px; /*高宽分别对应横竖滚动条的尺寸*/
+        height: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.2);
+    }
+    &::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        // -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        background: transparent;
+        // background: rgba(0, 0, 0, 0.1);
+    }
+}
+.mobileForm.QnnForm {
+    transform: translate3d(0, 0, 0);
+    box-sizing: border-box;
+    // padding-bottom: 55px;
+    :global {
+        .ant-form {
+            // overflow: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+.QnnForm {
+    transform: translate3d(0, 0, 0);
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    overflow: hidden;
+    box-sizing: border-box;
+    background: white;
+    position: relative;
+    padding-top: 6px;
+    :global {
+        .ant-form {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            .ant-row {
+                margin-left: 0px !important;
+                margin-right: 0px !important;
+                width: 100%;
+                .ant-switch {
+                    width: 50px !important;
+                }
+                .ant-form-item-control {
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    //这块样式直接影响了全局  ---待检查为啥要设置height width和left
+                    .ant-form-item-children button {
+                        // width: 110px;
+                        // margin-left: 30%;
+                        // height: 32px;
+                    }
+                }
+                .ant-slider {
+                    width: 95% !important;
+                }
+            }
+            .ant-upload-text.disabled {
+                color: @disabled;
+            }
+            .ant-upload-text {
+                padding-top: 8px;
+            }
+            .dropbox-images {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+            .ant-upload.ant-upload-select-picture-card {
+                width: 100%;
+                height: 100%;
+                min-height: 140px;
+                max-width: 160px;
+            }
+            .dropbox-images .ant-upload-list-item.ant-upload-list-item-done {
+                width: 100%;
+                height: 100%;
+            }
+            .ant-upload-list.ant-upload-list-picture-card {
+                height: 100%;
+                max-height: 180px;
+            }
+            .ant-upload-list-item {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        //移动版样式
+        .mobileItem.ant-form-item {
+            width: 100%;
+            margin-bottom: 0px;
+        }
+        .ComponentCol {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .mobileItem {
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid fade(@blue, 40);
+            //输入框样式
+            ._input {
+                border: 1px solid @orange;
+                border-radius: 3px;
+                box-sizing: border-box;
+            }
+
+            .ant-upload-disabled {
+                display: none;
+            }
+            .am-list-item {
+                padding: 0;
+                box-sizing: border-box;
+                min-height: auto;
+                overflow: hidden;
+                .am-list-line .am-list-content {
+                    font-size: @fs;
+                }
+                .am-list-extra {
+                    text-align: left;
+                    color: @default;
+                    flex-basis: 100%;
+                    font-size: @fs;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+                .am-list-arrow {
+                    width: 10px;
+                    height: 10px;
+                }
+            }
+            .ant-form-item-required:before {
+                position: absolute;
+                top: 5px;
+                left: -0px;
+            }
+            .ant-form-item-control {
+                ._input;
+                line-height: 26px;
+                margin: 6px 0;
+                padding: 0 6px;
+            }
+            &.haveHisDom .ant-form-item-control {
+                border: none;
+                padding: 0;
+                .textarea-hisDom {
+                    margin-bottom: 6px;
+                    padding-bottom: 6px;
+                    font-size: 14px;
+                    // padding-left: 6px;
+                    box-sizing: border-box;
+                    line-height: 1.2;
+                    border: 1px solid @orange;
+                }
+            }
+            .w-input-container {
+                ._input;
+                padding: 0 6px;
+            }
+
+            .ant-input,
+            .ant-select-selection,
+            .am-list-item,
+            .ant-input-number-input,
+            .ant-input-number {
+                border: none;
+                border-radius: 0px;
+                font-size: @fs;
+                padding: 0;
+                color: @default;
+                font-size: 14px;
+                height: 26px;
+                outline: none;
+            }
+            .textarea.ant-input {
+                margin-top: 3px;
+            }
+            .am-list-item {
+                margin-top: 4px;
+            }
+
+            .ant-input-number {
+                padding: 0; //数字输入框的样式和inpuut重复了 特殊处理
+            }
+
+            .ant-radio-group {
+                text-align: left;
+            }
+            .ant-cascader-picker:focus .ant-cascader-input,
+            .has-error .ant-input-number:focus,
+            .ant-input-number-focused,
+            .ant-select-selection,
+            .ant-input:focus,
+            textarea:focus {
+                box-shadow: none;
+            }
+            .ant-select-selection__rendered {
+                margin: 0;
+            }
+            .ant-form-item-label {
+                padding: 0;
+                padding-top: 7px;
+                position: relative;
+                &::after {
+                    display: inline-block;
+                    content: "：";
+                    position: absolute;
+                    right: 1px;
+                    top: 9px;
+                    right: -3px;
+                    bottom: 0;
+                    margin: auto;
+                }
+                label {
+                    width: 100%;
+                    height: 26px;
+                    line-height: 26px !important;
+                    overflow: hidden;
+                    display: inline-block;
+                    // max-width: 160px;
+                    display: block;
+                    color: @default;
+                    font-size: @fs;
+                    text-align: justify;
+                    text-align: -webkit-justify;
+                    text-align-last: justify;
+                    text-justify: inter-ideograph;
+                    padding-right: 12px; //显示空格
+                    padding-left: 7px; //显示*号用的
+                    &::after {
+                        content: " ";
+                        width: 100%;
+                        height: 0;
+                        display: inline-block;
+                        padding: 0;
+                        margin: 0;
+                        line-height: 0;
+                    }
+                }
+                //一行的就不进行左右文字均匀对齐
+                &.ant-col-xs-24,
+                &.ant-col-xs-23,
+                &.ant-col-xs-22,
+                &.ant-col-xs-21 {
+                    label {
+                        text-align: left;
+                        text-align-last: left;
+                        &::after {
+                            width: auto;
+                            display: inline-block;
+                            content: "：";
+                            // position: absolute;
+                        }
+                        &::before {
+                            content: " ";
+                        }
+                    }
+                    &.ant-form-item-label {
+                        &::after {
+                            content: "";
+                        }
+                    }
+                }
+            }
+            .ant-select-disabled .ant-select-selection,
+            .ant-input-disabled,
+            .ant-input-number-disabled {
+                color: @disabled;
+                background: white;
+            } //附件组件
+            .ant-input-prefix {
+                left: -20px;
+            }
+            .ant-input-group-addon {
+                border: 0;
+                background: transparent;
+                position: absolute;
+                right: 15px;
+                top: 3px;
+                margin: auto;
+                display: inline-block;
+                z-index: 2;
+            }
+        }
+
+        //可语音输入的
+        .mobileItem.voiceItem {
+            input.ant-input,
+            input.ant-select-selection,
+            input.am-list-item,
+            input.ant-input-number-input,
+            input.ant-input-number,
+            textarea.ant-input,
+            .ant-select,
+            .am-list-item {
+                padding-right: 28px;
+                box-sizing: border-box;
+            }
+        }
+        .mobileItem.placeholder {
+            .am-list-extra {
+                // color: #c8c8c8;
+                padding-left: 0;
+            }
+        }
+        .mobileItem.disabled {
+            .am-list-arrow {
+                display: none;
+            }
+            .ant-form-item-control,
+            .w-input-container {
+                color: @default;
+                border: none;
+                .am-list-extra,
+                .am-list-item,
+                textarea,
+                input {
+                    color: @default;
+                }
+            }
+        }
+        .mobileItem.Component {
+            padding: 0px;
+        }
+        .mobileItem2 {
+            width: 100%;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 0px 8px 8px 0px;
+            .ant-form-item-control {
+                padding: 6px 6px;
+            }
+        }
+    }
+    .btnCon { 
+        background: #fff;
+        box-shadow: 0 0 4px 4px fade(#efefef, 20);
+        z-index: 9999;
+        border-top: 1px solid #efefef;
+        display: flex;
+        display: -webkit-flex;
+        justify-content: space-around;
+        // border: 1px solid red;
+        :global(.ant-btn) {
+            margin: 6px 6px;
+            height: 39px;
+            flex: 1;
+            line-height: 39px;
+        }
+    }
+
+    .qnnFormContent {
+        flex: 1; 
+        overflow-y: scroll;
+        .scrollstyle; 
+    }
+
+    .qnnFormBtnsContent {
+        flex-basis: 40px;  
+        :global {
+            .ant-form-item {
+                padding-bottom: 0px;
+                margin-bottom: 0px;
+            }
+        }
+    }
+
+    //qnn-form块的配置
+    .QnnFormBlockLabel {
+        color: #777;
+        font-size: 14px;
+        padding: 12px 12px;
+        background: @color-lightgray;
+    }
+}
+
+// @keyframes itemAni {
+//     0% {
+//         opacity: 0;
+//     }
+//     100% {
+//         height: auto;
+//         opacity: 1;
+//     }
+// }
