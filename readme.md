@@ -1,27 +1,6 @@
-<h1><center>qnn-form（未发布版本）</center></h1>
+### qnn-form V1.0
 
-##### qnn-form 是一套能够根据配置文件自动生成 pc + mobile 表单的组件，有数据管理列表的话推荐使用<a href="https://github.com/wangzongming/qnn-table">qnn-table</a>组件
-
-##### 主要依赖 react、antd、antd-mobile、rc-form。
-
-##### 30+输入组件可满足各种复杂业务需求
-
-##### 此组件也将不断升级维护。（喜欢的话点个 star 啦~~~）
-
-![Markdown](http://i2.bvimg.com/688778/d6a949571dcb9a11.png)
-
-![Markdown](http://i2.bvimg.com/688778/b32e8fbb92dc88d5.png)
-
-![Markdown](http://i2.bvimg.com/688778/ed7ea33e4ca70426.png)
-
-![Markdown](http://i2.bvimg.com/688778/b52dbc57c33df5eb.png)
-
-![Markdown](http://i2.bvimg.com/688778/d66d014ddd55cdd8.png)
-
-#### 使用前必看
-
-<a href="https://ant.design/components/grid-cn/">antd 栅格系统</a>
-<br />
+#### 使用前必看【<a href="https://ant.design/components/grid-cn/">antd 栅格系统</a>】
 
 ####文档导航
 
@@ -40,8 +19,10 @@
     <li><b><a href="#btnsCondition">按钮条件显隐配置</a></li> 
     <li><b><a href="#condition">配置字段条件显隐</a></li>
     <li><b><a href="#formatter">格式化显示</a></li>
+    <li><b><a href="#func">一些方法调用</a></li>
+    <li><b><a href="#bind">绑定内置方法</a></li>
+ 
 </ul>
-
 
 ###### <a id="use">下载&引用</a>
 
@@ -96,14 +77,36 @@
         <td><a href="#component">自定义组件 component</td>
         <td><a href="#qnnTable">qnnTable组件 qnnTable</td> 
         <td><a href="#qnnForm">qnnForm（表单块，相当于内部还有表单） </td> 
+    </tr>   
+    <tr>  
+        <td><a href="#treeSelect">军官证或士兵证 officers</td> 
+        <td><a href="#qnnForm">出生证 birthCertificate</td> 
+        <td><a href="#itemitem">护照 passport</td> 
+        <td><a href="#component">香港永久性居民身份证 hongKongPerpetualIdentity</td>
+        <td><a href="#component">台湾居民身份证 taiWanIdentity</td> 
+        <td><a href="#qnnTable">户口本 householdRegister</td> 
     </tr>    
     <tr>  
         <td><a href="#richtext">富文本 richtext</a></td>
         <td><a href="#specialPlane">座机号码 specialPlane</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td><a href="#specialPlane">邮政编码 postalCode</td> 
+        <td><a href="#selectByPaging">下拉选择 selectByPaging</td>
+        <td><a href="#filesDragger">文件拖动上传 filesDragger</td> 
+        <td><a href="#money">金额字段 money</td> 
+    </tr>   
+    <tr>  
+        <td><a href="#locInfo">详细地址 locInfo</a></td>
+        <td><a href="#locInfo">省 specialPlane</td>
+        <td><a href="#locInfo">城市 postalCode</td> 
+        <td><a href="#locInfo">区域 selectByPaging</td>
+        <td><a href="#locInfo">街道 filesDragger</td> 
+        <td><a href="#locInfo">经度/纬度</td> 
+    </tr>   
+    <tr>  
+        <td><a href="#cangyongv" style="color:red">21种常用验证</td> 
+        <td><a href="#year">年份选择 year</a></td> 
+        <td><a href="#week">周选择 week</a></td>  
+        <td colspan="3"><a href="#rangeDate">时间/日期区域选择 rangeDate（周、月、年、小时、日期）</a></td>  
     </tr>   
 </table>
 
@@ -111,38 +114,30 @@
 
     不建议将不用的数据全部传入props中
     特别是在自定义组件中使用QnnTable组件把整个props在传入到QnnTable会出些奇怪的问题
-    props中必须包含react-router的信息{ match, history }
-    和 fetch（返回一个pormise）方法
 
     import React,{ Component } from "react";
     import QnnForm from "../modules/qnn-table/qnn-form";
-    import { Form } from 'antd';
 
     class index extends Component {
         render() {
             return (
                 <QnnForm
-                    //Form.create的
-                    form={this.props.form}
 
-                    //路由信息
-                    history={this.props.history}
-                    match={this.props.match}
+                    //比传的的唯一标识
+                    field="myQnnForm"
 
-                    //ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
+                    ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
                     fetch={this.props.myFetch}
 
-                    //上传时给后台的头信息
-                    headers={{
-                        token: this.props.loginAndLogoutInfo.loginInfo.token
-                    }}
+                    上传文件使用的 (apiName)=>(e)=>Promise(({success, data, message})=>{/**code...**/})
+                    upload={this.props.myUpload}
 
-                    //获取qnn-form实例
+                    获取qnn-form实例
                     wrappedComponentRef={(me) => {
                         this.form = me;
                     }}
 
-                    //具体字段配置
+                    具体字段配置
                     formConfig:[
                         {
                             type: 'string',
@@ -153,12 +148,24 @@
                         },
                         {
                             type: 'number',
-                            label: 'age',
-                            field: 'name',
+                            label: '年纪',
+                            field: 'age',
                             placeholder: '请输入',
                             max:99,
+
                         }
                     ]
+
+                    method={{
+                        labelClcikFn: (obj) => {
+                            console.log("labelClcikFn：",obj)
+                        },
+                        ...
+                    }}
+
+                    componentsKey={{
+                        diyCom:<div>这是个自定义组件</div>
+                    }}
 
                     {...其他需要用到的数据可传入 在自定义组件中或者回调方法中能获取到}
                 />
@@ -166,22 +173,17 @@
         }
     }
 
-    export default Form.create()(idnex);
-
-
-
-
-
- 
+    export default idnex;
 
 ####<a id="fieldConfigDetail">字段详细配置</a>
 
 <ul>
      <li><b><a href="#use">type 类型（必需配置）</a></li> 
      <li><b><a href="#field">field 字段名（必须配置）</a></li> 
+     <li><b><a href="#dependencies">dependencies</a></li> 
      <li><b><a href="#label">label</a></li>   
      <li><b><a href="#labelStyle">labelStyle label自定义样式</a></li>   
-     <li><b><a href="#labelClcik">labelClcik label点击后的回调</a></li>   
+     <li><b><a href="#labelClick">labelClick label点击后的回调</a></li>   
      <li><b><a href="#required">required 是否必填</a></li> 
      <li><b><a href="#placeholder">placeholder</a></li> 
      <li><b><a href="#initialValue">initialValue 初始值</a></li> 
@@ -209,33 +211,37 @@
 </ul>
 <br />
 
-###### <a id="commonByQnnForm">qnn-form 配置</a>
+###### <a id="commonByQnnForm">qnn-form 根配置</a>
 
         {
-             //Form.create的
+            Form.create的
             form={this.props.form}
 
-            //路由信息
+            路由信息
             history={this.props.history}
             match={this.props.match}
 
-            //ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
+            ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
             fetch={this.props.myFetch}
 
-            //上传时给后台的头信息
+            上传时给后台的头信息
             headers={{
                 token: this.props.loginAndLogoutInfo.loginInfo.token
             }}
 
-            //获取qnn-form实例
+            获取qnn-form实例
             wrappedComponentRef={(me) => {
                 this.form = me;
             }}
 
-            //假数据
+            【不推荐】假数据
+            这个需要注意在pc端时候如果页面是tab表单的话不能设置这个data属性 否则将会报错 （解决办法使用form的方法来设置值）
             data={}
 
-            //输入框和label布局
+            【推荐】表单初始值 object {name:"张三", age:32}
+            initialValues={}
+
+            输入框和label布局
             formItemLayout={
                 labelCol: {
                     xs: { span: 24 },
@@ -250,13 +256,13 @@
             按钮配置
             tailFormItemLayout = {
                 wrapperCol: {
-                xs: {
-                        span: 24,
-                        offset: 0
-                },
-                sm: {
-                        span: 24,
-                        offset: 3
+                    xs: {
+                            span: 24,
+                            offset: 0
+                    },
+                    sm: {
+                            span: 24,
+                            offset: 3
                     }
                 }
             };
@@ -342,7 +348,17 @@
                 myDiyComponent: (props)=><div></div> | reactDom
             }}
 
+            移动端时 tab页面表单页面高度 （一般为：window.innerHeight - 45（tab容器高）, 如果上面顶部还加有导航条等需要继续减去导航条的高度）
+            [number]
+            qnnFormContextHeight
+
 ###### <a id="common">通用属性说明</a>
+
+    ps:
+        所有function可用bind绑定函数名
+
+        eg:
+            onClick:"bind:labelClcikFn"
 
     {
         唯一的字段名 [string]  ***必传
@@ -355,7 +371,11 @@
         label: '姓名',
 
         label点击回调
-        labelClcik:(obj)=>void,
+        labelClick:(obj)=>void,
+
+        控制label是否可被点击
+        执行后返回false将不可被点击（文字将不是蓝色）  labelCanClick不存在则根据disabled控制可不可点击
+        labelCanClick:(obj)=>boolean
 
         label自定义样式
         labelStyle:{},
@@ -406,19 +426,33 @@
             }
         },
 
+        //按钮布局
+        tailFormItemLayout: {
+                wrapperCol: {
+                    xs: {
+                        span: 24,
+                        offset: 0
+                    },
+                    sm: {
+                        span: 24,
+                        offset: 4
+                    }
+                }
+            }
+
         自定义input样式
         style:{
             color:'red'
         },
 
         最外层col容器的样式(可以简单解决 一行多列导致第一列跟其他行不对齐问题)   [object] 默认null
-        colWrapperStyle:{paddingRight:0}
+        formItemWrapperStyle:{paddingRight:0}
 
         最外层col容器的class名称   [string]  默认null
         colWrapperClassName:""
 
         输入框最外层样式
-        colStyle:{
+        formItemStyle:{
             margin:'100px'
         },
 
@@ -497,11 +531,211 @@
             name:"name"
         },
 
-        //数字类型字段特有
-        // 加数  该配置不可填写表单块中的字段
-        //设置后再add1或者add2字段值发生变化后 会自动获取这两字段值相加并且赋值给配置字段
+        数字类型字段特有
+        加数  该配置不可填写表单块中的字段
+        设置后再add1或者add2字段值发生变化后 会自动获取这两字段值相加并且赋值给配置字段
         addends: ["add1","add2"],
+
+        可设置字段无样式
+        noStyle:false,
+
+        label样式
+        labelStyle:{color:'red'},
+
+        自定义效验规则
+        diyRules: function (obj) {
+            // console.log(obj)
+            var required = obj.required;
+            var message = obj.message;
+            // 可直接写正则
+            // 百度坐标拾取规则验证  （ 116.430715,39.881501）
+            return [
+                //必填验证
+                {
+                    required: required,
+                    message:message
+                },
+                //输入规则验证
+                {
+                    pattern: new RegExp(/^(-)?(\d{1,}\.\d{1,})(,)(-)?(\d{1,}(\.)\d{1,})$/),
+                    message: "请输入正确的格式，如：116.430715,39.881501"
+                }
+            ];
+
+            //也可写为回调
+            //座机和普通电话号码验证案例  （18216811014 ||  028-80801015）
+            // return [
+            //     {
+            //         required: required,
+            //         message
+            //     },
+            //     {
+            //         validator: (rule,value,callback) => {
+            //             if (value) {
+            //                 let reg1 = new RegExp(/^[a-zA-Z0-9]{7,21}$/);
+            //                 let reg2 = new RegExp(/^(P\d{7})|(G\d{8})$/);
+            //                 if (!reg1.test(value) && !reg2.test(value)) {
+            //                     callback('证件号码格式错误')
+            //                 }
+            //             }
+            //             // // Note: 必须总是返回一个 callback，否则 validateFieldsAndScroll 无法响应
+            //             callback()
+            //         }
+            //     }
+            // ];
+        }
     },
+
+###### <a id="cangyongv">21 中常用验证</a>
+
+    {
+        type: "email",
+        field: "email",
+        label: "邮箱",
+        help: "eg：3306625609@qq.com"
+    },
+    {
+        type: "phone",
+        field: "phone",
+        label: "手机号码和座机号码",
+        help: "eg：0341-86091234、18216811014"
+    },
+    {
+        type: "phoneOnly",
+        field: "phoneOnly",
+        label: "手机号码",
+        help: "eg：18216811014"
+    },
+    {
+        type: "specialPlane",
+        field: "specialPlane",
+        label: "座机号码",
+        help: "eg：0341-86091234"
+    },
+    {
+        type: "url",
+        field: "url",
+        label: "网址",
+        help: "eg：http://baidu.com"
+    },
+    {
+        type: "postalCode",
+        field: "postalCode",
+        label: "邮政编码",
+        help: "eg：556884"
+    },
+    {
+        type: "birthCertificate",
+        field: "birthCertificate",
+        label: "出生证",
+        help: "eg：0000019"
+    },
+    {
+        type: "identity",
+        field: "identity",
+        label: "身份证",
+        help: "eg：522122199902282412"
+    },
+    {
+        type: "householdRegister",
+        field: "householdRegister",
+        label: "户口本",
+        help: "eg：522122199902282412"
+    },
+    {
+        type: "passport",
+        field: "passport",
+        label: "护照",
+        help: "eg：GUIZhOU"
+    },
+    {
+        type: "hongKongPerpetualIdentity",
+        field: "hongKongPerpetualIdentity",
+        label: "香港永久性居民身份证",
+        help: "eg： AB1234567"
+    },
+    {
+        type: "taiWanIdentity",
+        field: "taiWanIdentity",
+        label: "台湾居民身份证",
+        help: "eg：U193683453"
+    },
+    {
+        type: "trainNumber",
+        field: "trainNumber",
+        label: "火车车次",
+        help: "eg: G1868、D9..."
+    },
+    {
+        type: "phoneBodyCode",
+        field: "phoneBodyCode",
+        label: "手机机身码",
+        help: "123456789012345"
+    },
+    {
+        type: "creditCode",
+        field: "creditCode",
+        label: "统一社会信用代码",
+        help: "eg: 92371000MA3MXH0E3W"
+    },
+
+    {
+        type: "noLetter",
+        field: "noLetter",
+        label: "不能包含字母",
+        help: "eg: 你好！"
+    },
+    {
+        type: "onlyChineseAndNumber",
+        field: "onlyChineseAndNumber",
+        label: "只能包含中文和数字",
+        help: "eg: 你好123456！"
+    },
+    {
+        type: "HexadecimalColor",
+        field: "HexadecimalColor",
+        label: "16进制颜色",
+        help: "eg: #f00, #F90, #000, #fe9de8"
+    },
+    {
+        type: "qq",
+        field: "qq",
+        label: "qq号码",
+        help: "eg: 3306625609"
+    },
+    {
+        type: "weixin",
+        field: "weixin",
+        label: "微信号码",
+        help: "eg: xiaomingdijia"
+    },
+    {
+        type: "licensePlateNumber",
+        field: "licensePlateNumber",
+        label: "车牌号(新能源+非新能源)",
+        help: "eg: 京A00599"
+    },
+
+###### <a id="dependencies">字段依赖项</a>
+
+    {
+        type: "string",
+        field: "disabled1",
+        label: "禁用方法",
+        dependencies: ["name"], //依赖于name字段
+        disabled: "bind:disabledDisabled",
+        help: "[name]等于1禁用",
+    }
+
+###### <a id="locInfo">地址信息：详细地址 address 省 province 城市 city 区域 district 街道</a>
+
+    {
+        type: "string",
+        field: "wxAddress",
+        label: "定位地址",
+        locInfo: "address", // 详细地址address  省province  城市city  区域district  街道
+        help: "string、textarea类型输入可配",
+    }
 
 ###### <a id="string">文本类型</a>
 
@@ -519,7 +753,7 @@
 
 ###### <a id="password">密码</a>
 
-     {
+    {
         type: 'password',
         label: 'password',
         field: 'password', //唯一的字段名 ***必传
@@ -622,6 +856,31 @@
 
     }
 
+###### <a id="year">年选择</a>
+
+    {
+        type: "year",
+        label: "年选择",
+        field: "year", //唯一的字段名 ***必传
+    }
+
+###### <a id="week">周选择</a>
+
+    {
+        type: "week",
+        field: "week",
+        label: "周选择",
+    },
+
+###### <a id="month">年月 YYYY-MM</a>
+
+    {
+        type: "month",
+        label: "年月选择",
+        field: "month", //唯一的字段名 ***必传
+        placeholder: "请选择"
+    }
+
 ###### <a id="date">日期 yyyy-mm-dd</a>
 
     {
@@ -632,17 +891,6 @@
         required: true,
         format:"YYYY-MM-DD",
         showTime:false, //不显示时间
-    }
-
-###### <a id="time">时间 mm:ss</a>
-
-    {
-        type: 'time',
-        label: 'time',
-        field: 'time', //唯一的字段名 ***必传
-        placeholder: '请选择',
-        required: true,
-        is24: true,//是否是24小时制 默认true2
     }
 
 ###### <a id="dateTime">日期时间 YYYY-MM-DD HH:mm:ss</a>
@@ -656,13 +904,15 @@
         is24: true,//是否是24小时制 默认true
     },
 
-###### <a id="month">年月 YYYY-MM</a>
+###### <a id="time">时间 mm:ss</a>
 
     {
-        type: "month",
-        label: "年月选择",
-        field: "month", //唯一的字段名 ***必传
-        placeholder: "请选择"
+        type: 'time',
+        label: 'time',
+        field: 'time', //唯一的字段名 ***必传
+        placeholder: '请选择',
+        required: true,
+        is24: true,//是否是24小时制 默认true2
     }
 
 ###### <a id="component">自定义组件</a>
@@ -701,6 +951,8 @@
         required: true,
         multiple: false, //是否开启多选功能 开启后自动开启搜索功能
         showSearch: false, //是否开启搜索功能 (移动端不建议开启)
+        pullJoin:false, 多选可能会用到  控制是否拆分后台返回的数据 后台返回数组就无需配置或者配置为false 反之为true
+        pushJoin:true, 多选可能会用到  控制是否join给到后台的数据 同pull
         // optionData: [//默认选项数据//可为function (props)=>array
         //     {
         //         name: '01name',
@@ -713,8 +965,8 @@
         //         orgId: '02orgId'
         //     },
         // ],
-        optionConfig: {//下拉选项配置
-            label: 'name', //默认 label
+        optionConfig: {//下拉选项配置 可为func
+            label: 'name', //默认 label  可为字符串模板："{{label}} => {{ext1}}"
             value: ['id', 'orgId'],// [array | string]  最终的值使用逗号连接 默认值使用valueName 默认['value']
             //与其他字段双向绑定配置
             linkageFields:{
@@ -722,10 +974,75 @@
                 linkageTwo:"orgId",
             }
         },
-        fetchConfig: {//配置后将会去请求下拉选项数据
+        fetchConfig: {//配置后将会去请求下拉选项数据  可为func
             apiName: 'getSysDepartmentList',
             otherParams: {},
+        },
+
+        itemData为选中的整条数据 label和其他数据
+        onChange:(value, {itemData, ...other})=>{
+
         }
+    }
+
+###### <a id="selectByPaging">分页下拉</a>
+
+    ps:分页下拉的接口必须要能支持根据下拉选项的值来进行下拉选项的筛选，因为回显时候需要根据值来请求下拉选项进行显示
+
+    {
+        type: "selectByPaging",
+        label: "下拉分页",
+        field: "selectPage", //唯一的字段名 ***必传
+        placeholder: "请选择",
+        multiple: false, //是否开启多选功能 开启后自动开启搜索功能
+        pullJoin:false, 多选可能会用到  控制是否拆分后台返回的数据 后台返回数组就无需配置或者配置为false 反之为true
+        pushJoin:true, 多选可能会用到  控制是否join给到后台的数据 同pull
+        fetchConfig: {
+            apiName: "getBaseCodeList",
+            otherParams: {
+                codePid: "0"
+            },
+            params: {
+                aaa: "bindings"
+            }
+            // searchKey:'itemName'
+        },
+        optionConfig: {
+            //下拉选项配置
+            label: "itemName",
+            value: "itemId",
+             //与其他字段双向绑定配置
+            linkageFields:{
+                linkageOne:"name",
+                linkageTwo:"orgId",
+            }
+        },
+        pageConfig:{
+            //设置每页显示多少条数据
+            limit:20
+        },
+
+        //可以和别的输入框联动起来
+        condition: [
+            {//条件
+                regex: {
+                    bindings: null,
+                },
+                action: 'disabled',
+            },
+            {//条件
+                regex: {
+                    bindings: undefined,
+                },
+                action: 'disabled',
+            },
+            {//条件
+                regex: {
+                    bindings: 'undefined',
+                },
+                action: 'disabled',
+            }
+        ]
     }
 
 ###### <a id="cascader">层叠联动</a>
@@ -765,24 +1082,35 @@
 ###### <a id="treeSelect">树选择 （具体配置查看 pull-person 插件配置）</a>
 
     {
-        isInTable:false,
-        form: {
-            label:'树选择',
-            field:'treeSelect',
-            type: 'treeSelect',
-            initialValue:[],
-            treeSelectOption:{
-                help:true,
-                fetchConfig: {
-                    apiName: 'getSysDepartmentUserAllTree',
-                },
-                search:true,
-                searchPlaceholder:'姓名、账号、电话',
-                // searchApi:'getSysDepartmentUserAllTree',  //搜索时调用的api  [string]
-                searchParamsKey:'search',//搜索文字的K 默认是'searchText'   [string]
-                searchOtherParams:{pageSize:999}//搜索时的其他参数  [object]
-            }
+        label:'树选择',
+        field:'treeSelect',
+        type: 'treeSelect',
+        initialValue:[],
+        treeSelectOption:{
+            help:true,
+            fetchConfig: {
+                apiName: 'getSysDepartmentUserAllTree',
+            },
+            search:true,
+            searchPlaceholder:'姓名、账号、电话',
+            // searchApi:'getSysDepartmentUserAllTree',  //搜索时调用的api  [string]
+            searchParamsKey:'search',//搜索文字的K 默认是'searchText'   [string]
+            searchOtherParams:{pageSize:999}//搜索时的其他参数  [object]
         }
+    }
+
+###### <a id="rangeDate">时间区域选择</a>
+
+    {
+        type: "rangeDate",
+        label: "时间区域",
+        field: "rangeDate",
+        placeholder: "请选择",
+        picker: "week", //week  month  year  time date
+
+        默认值和后台返回的值都必须是数组
+        给后台值也是数组
+        initialValue: [new Date(), new Date()],
     }
 
 ###### <a id="treeNode">树节点 （具体配置查看 tree 插件配置）</a>
@@ -874,12 +1202,28 @@
         rows: 4, //行高 默认4
     }
 
-###### <a id="textarea">files 文件上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
+###### <a id="files">files 文件上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
 
     {
         type: 'files',
         label: 'files',
         field: 'files', //唯一的字段名 ***必传
+        required: true,//是否必填
+        desc: '点击上传', //默认 点击或者拖动上传
+        fetchConfig: {
+            apiName: window.configs.domain + 'upload',
+            // name:'123', //上传文件的name 默认空
+        },
+        accept: 'image/jpeg', //支持上传的类型 默认都支持  格式"image/gif, image/jpeg"
+        max: 2, //最大上传数量
+    }
+
+###### <a id="textarea">files 文件拖动上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
+
+    {
+        type: 'filesDragger',
+        label: 'filesDragger',
+        field: 'filesDragger', //唯一的字段名 ***必传
         required: true,//是否必填
         desc: '点击或者拖动上传', //默认 点击或者拖动上传
         subdesc: '只支持单个上传',//默认空
@@ -891,7 +1235,7 @@
         max: 2, //最大上传数量
     }
 
-###### <a id="images">图片上传</a>
+###### <a id="images">图片上传 （不推荐使用）</a>
 
     {
         type: 'images',
@@ -1015,21 +1359,36 @@
         }
     }
 
+###### <a id="money">money</a>
+
+    {
+        type: "money",
+        label: "money",
+        field: "money",
+    }
+
 ###### <a id="qnnForm">qnnForm 控件（表单块）</a>
 
     {
         type: "qnnForm",
         field: "qnnFormField",
         label: "报销细明",
+        addBtnStyle：{}, //底部按钮样式
         //文字配置 默认数据如下 [object]
         textObj: {
             add: "添加报销细明",
             del: "删除"
         },
-        //是否能新增form表单(true可动态增删) 默认false [bool]
-        //注意：开启后表单项值的类型为array  关闭为object
+        可直接改变表单块标题的背景颜色等
+        titleStyle:{},
+        是否隐藏 类型[ boolen | fun(()=>boolean) | bind:name
+        hide:false,
+        是否能新增form表单(true可动态增删) 默认false [bool]
+        注意：开启后表单项值的类型为array  关闭为object
+            开启后默认值写到具体字段将失效 必须写到首层
         canAddForm: true,
-        //canAddForm===true 的初期値设置格式（提交数据格式&后台返回字段格式 同）
+        配置用于控制新增 表单块按钮布局
+        addBtnFormItemLayout:{}
         initialValue:[
             {
                 typeOfExpense:"01",
@@ -1043,105 +1402,74 @@
             desc: "1113"
         },
         //qnn-form配置
-        qnnFormConfig: {
-            formConfig: [
-                {
-                    type: "select",
-                    label: "费用类型",
-                    field: "typeOfExpense", //唯一的字段名 ***必传
-                    placeholder: "请选择",
-                    required: true,
-                    optionData: [
-                        {
-                            label: "交通",
-                            value: "01"
-                        }
-                    ]
-                },
-                {
-                    type: "textarea",
-                    label: "费用说明",
-                    field: "desc", //唯一的字段名 ***必传
-                    placeholder: "请输入"
-                }
-            ]
-        }
+        formFields: [
+            {
+                type: "select",
+                label: "费用类型",
+                field: "typeOfExpense", //唯一的字段名 ***必传
+                placeholder: "请选择",
+                required: true,
+                optionData: [
+                    {
+                        label: "交通",
+                        value: "01"
+                    }
+                ]
+            },
+            {
+                type: "textarea",
+                label: "费用说明",
+                field: "desc", //唯一的字段名 ***必传
+                placeholder: "请输入"
+            }
+        ]
     },
 
-###### <a id="qnnForm">无限联动</a>
+###### <a id="linkage">无限联动</a>
 
     {
-        isInTable: false,//必须为false  默认false
-        /*
-            无需配置field因为无意义
-            联动表单从第一层children开始 第一层不出现在form中
-            children配置和form里的字段配置一样
-            可联动大部分类型(部分类型暂不支持，例如图片)
+        type: "select",
+        field: "linkageOne",
+        label: "无限联动一级",
+        optionConfig: {
+            label: "label1",
+            value: "value",
+            children: "childrenList"
+        },
+        fetchConfig:{apiName}
+    },
 
-            数据格式（ model:'0'）
-                [
-                    {
-                        apih5FlowId:'0',
-                        apih5FlowName:'名称',
-                        children:[
-                            {
-                                apih5FlowId:'0',
-                                apih5FlowName:'名称',
-                            },
-                            ...
-                        ]
-                    },
-                    ...
-                ]
-        */
-        form: {
-            type: 'linkage',
-            model:'0', // string  默认0  0所有数据都给到前端  1触焦时去请求数据
-            fetchConfig: {//只有模式为0才写到这
-                apiName: 'getFlowNameSelectList',
-            },
-            optionConfig: { // 暂时只有模式为0有意义 所有子集默认optionConfig
-                value: 'apih5FlowId',
-                label: 'apih5FlowName',
-                children:'children'
-            },
-            children: {//所有配置见qnn-form
-                isInTable: false,
-                form: {
-                    editDisabled: true,
-                    label: '一级',
-                    field: 'linkage1',
-                    type: 'select',
-                    placeholder: '请选择',
-                    // fetchConfig: {//model为1时有用
-                    //     apiName: 'getFlowNameSelectList',
-                    //     parentKey:'XXX'
-                    // },
-                },
-                children: {
-                    form: {
-                        label: '二级',
-                        placeholder: '请选择',
-                        field: 'linkage2',
-                        type: 'select',
-                        optionData:[//可为function (props)=>array
-                            {
-                                apih5FlowId:'111',
-                                apih5FlowName:'111'
-                            }
-                        ]
-                    },
-                    children: {
-                        form: {
-                            label: '三级',
-                            placeholder: '请输入',
-                            field: 'linkage3',
-                            type: 'string',
-                        }
-                    }
-                }
-            }
-        }
+    {
+        type: "select",
+        field: "linkageTwo",
+        label: "无限联动二级",
+        showSearch: true,
+        optionConfig: {
+            label: "label1",
+            value: "value",
+            children: "childrenList"
+        },
+        //父级
+        parent: "linkageOne",
+    },
+    {
+        type: "select",
+        field: "linkageThree",
+        label: "无限联动三级",
+        showSearch: true,
+        optionConfig: {
+            label: "label1",
+            value: "value",
+        },
+        //父级
+        parent: "linkageTwo",
+    },
+    {
+        type: "string",
+        field: "linkageFour",
+        label: "无限联动四级",
+        //父级
+        parent: "linkageThree",
     },
 
 ###### <a id="isUrlParams">隐藏字段 并且是 从浏览器网址取的值</a>
@@ -1167,6 +1495,8 @@
             title: "表单",
             //[boolean | ()=>boolean]   默认false
             disabled:true,
+            当前表单出现执行的回调函数 (args)=>{}
+            onShow:()=>{},
             content:{
                 formConfig:[{...}],
                 btns:[{...}]
@@ -1179,6 +1509,8 @@
             title: "表格",
             //[boolean | ()=>boolean]   默认false
             disabled:true,
+            当前表单出现执行的回调函数 (args)=>{}
+            onShow:()=>{},
             content:{
                 formConfig:[{...}],
                 actionBtns:[{...}]
@@ -1189,8 +1521,11 @@
             field: "diy1",
             name: "diy1",
             title: "自定义页面",
+            当前表单出现执行的回调函数 (args)=>{}
+            onShow:()=>{},
             //[boolean | ()=>boolean]   默认false
             disabled:true,
+            支持ReactDom(包括函数组件)、string、compontKey形式
             content: props => {
                 return <div>自定义组件</div>;
             }
@@ -1203,7 +1538,33 @@
         {
             label: '获取值',
             type: 'primary',
-            isValidate: false,//是否验证表单 默认 true
+
+            是否验证表单 默认 true
+            isValidate可配置为字符串curTab选项，用于只获取和只验证该按钮所处的tab页面的表单值（老版本是所有tabs表单都会被验证，而且获取所有tabs中表单的所有字段值）
+            isValidate: false,
+
+            配置可直接设置按钮样式
+            style:{},
+
+            类型[ boolen | fun(()=>boolean) | bind:name ]
+            disabled:false,
+            类型[ boolen | fun(()=>boolean) | bind:name ]
+            hide:false,
+
+            obj{
+                tab表单有效 当前table页表单字段值
+                curTabVals
+
+                所有表单字段值
+                values
+
+                一些回调方法
+                btnfns
+
+                页面props
+                props
+            }
+
             onClick: function (obj) {
                 console.log(obj)
             },
@@ -1269,7 +1630,7 @@
                         name: 'aaa'
                     },
                     action: 'hide', //disabled, show, hide, function(){}
-                }
+                },
             ]
         },
     ]
@@ -1277,11 +1638,36 @@
 ###### <a id="setVals">设置已有的值（非请求方式设置值）</a>
 
     componentDidMount() {
-        let data = {
+
+         let data = {
             name: '测试王',
             date: 1234569877894,
         };
-        //得使用sFormatData静态方法格式化
-        let _d = QnnForm.sFormatData(data, this.state.config.formConfig);
+
+        /* 推荐使用 */
+        this.qnnForm.setValue(data);
+
+        /* 非特殊情况不推荐使用该方式 */
+        let _d = QnnForm.sFormatData(data, this.state.config.formConfig);//使用sFormatData静态方法格式化
         this.props.form.setFieldsValue(_d)
     }
+
+###### <a id="func">方法调用</a>
+
+    获取某个下拉字段的下拉数据key
+    getSelectKey
+
+    @params 是否验证
+    @params 获取后的回调
+    获取表单值 getValues(true, (vals)=>{})
+    getValues
+
+    格式化时间的插件moment
+    moment
+
+    解析方法的bind
+    bind
+
+###### <a id="bind">绑定内置方法</a>
+
+    bind:_blocksAddends::表单块字段名::表单块中的字段名::总数字段名

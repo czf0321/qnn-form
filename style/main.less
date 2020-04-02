@@ -1,0 +1,627 @@
+//移动端和pc端都有的
+.QnnForm,
+.mobileForm {
+    .formItemCol {
+        width: 100%;
+        display: inline-block;
+    }
+    :global {
+        .ant-upload-list-picture-card .ant-upload-list-item-thumbnail,
+        .ant-upload-list-picture-card .ant-upload-list-item-thumbnail img {
+            object-fit: contain;
+        }
+        .ant-tabs-nav-wrap {
+            margin-left: 12px;
+        }
+    }
+
+    //没有label的时候 删除label所占位置
+    :global(.ant-col-xs-0) {
+        display: none;
+        & + div {
+            margin-left: 0px;
+        }
+    }
+
+    //qnnTable类型的tab页面
+    .TabByqnnTable {
+        padding: 12px 24px;
+        box-sizing: border-box;
+    }
+}
+
+//pc端表单样式
+.QnnForm {
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: white;
+    position: relative;
+    padding-bottom: 12px;
+
+    .qnnFormItem {
+        margin: 12px 0px;
+        box-sizing: border-box;
+    }
+    //富文本
+    .qnnFormReactUeditor {
+        :global {
+            //更改富文本默认样式
+            .edui-editor-iframeholder,
+            .edui-editor {
+                width: 100% !important;
+            }
+            .edui-default
+                .edui-toolbar
+                .edui-button
+                .edui-state-checked
+                .edui-button-wrap {
+                border: 0px;
+            }
+        }
+    }
+
+    .QnnFormContent { 
+        //富文本在销毁时候没法销毁留下的textarea输入框,暂时这么解决 ...需要继续研究
+        & > form > textarea {
+            display: none;
+        }
+    }
+
+    //拖动上传组件上传到最大值时候
+    .maxLen {
+        display: none;
+        transition: 0.3s;
+    }
+
+    //底部按钮
+    .btnsContainer {
+        padding: 12px;
+        :global(.ant-btn) {
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+    }
+    :global {
+        //让上传组件的文件删除按钮一直显示
+        .ant-upload-list-item-card-actions {
+            opacity: 0.8;
+        }
+
+        //配置0的字段不会自动隐藏 在这设置下
+        .ant-col-sm-0 {
+            display: inherit;
+            label {
+                height: 0px;
+            }
+
+            //解决必填项时候红色*符号会被独占一行
+            label.ant-form-item-required::before {
+                position: absolute;
+                top: 10px;
+                left: 0px;
+                overflow: inherit;
+            }
+            & + .ant-col-xs-24 {
+                padding-left: 8px;
+            }
+        }
+
+        //强制设置禁用输入框的背景颜色
+        //必填项禁用时候必填验证会把输入框背景变为白色
+        .ant-input[disabled] {
+            background-color: #f5f5f5 !important;
+        }
+    }
+}
+
+//在qnnTale抽屉中的表单样式
+.QnnForm.isInQnnTable {
+    // 输入框两边给出空白
+    .qnnFormItem {
+        margin: 12px 12px;
+        box-sizing: border-box;
+    } 
+}
+
+//移动端表单样式
+.mobileForm {
+    height: 100%;
+    overflow: hidden;
+    background: white;
+    box-sizing: border-box;
+    //具体的表单容器
+    .QnnFormContent {
+        height: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        //富文本在销毁时候没法销毁留下的textarea输入框,暂时这么解决 ...需要继续研究
+        & > form > textarea {
+            display: none;
+        }
+
+        //正常的formItem
+        .mobileItem {
+            box-sizing: border-box;
+            border-bottom: 1px solid fade(@blue, 50);
+            //左边留一点不要底部边框
+            padding: 8px 12px;
+            padding-left: 0px;
+            margin-left: 12px;
+
+            //修改antd默认样式
+            //默认底部间距
+            margin-bottom: 0px;
+            //输入框边框颜色
+            .qnnFormInput {
+                box-sizing: border-box;
+                font-size: 14px;
+                border: 1px solid @orangeYellow;
+                border-radius: 2px;
+                //下拉类型中包含的一层有边框
+                & > :global(.ant-select-selector) {
+                    border: 0px;
+                }
+                &:focus {
+                    box-shadow: 0px 0px 5px fade(@orangeYellow, 60%);
+                }
+            }
+
+            //上传组件
+            .upload {
+                display: block;
+                :global {
+                    //移动端的上传按钮直接铺满全屏即可
+                    .ant-upload,
+                    .ant-upload-text {
+                        width: 100%;
+                    }
+                    .ant-btn {
+                        width: 100%;
+                        border-color: transparent;
+                    }
+                }
+            }
+
+            //上传组件的值列表 这个dom在拖动上传组件时候是和上传按钮同级，所以得写到外面来
+            :global(.ant-upload-list-item) {
+                margin-top: 0px;
+                margin: 4px;
+            }
+            //让上传组件的文件删除按钮一直显示
+            :global {
+                .ant-upload-list-item-card-actions,
+                .ant-upload-list-item-actions {
+                    opacity: 1;
+                }
+            }
+
+            //上传到最大数量时
+            .maxLen {
+                display: none;
+                transition: 0.3s;
+            }
+            .maxLen + :global(.ant-upload-list) {
+                border: 1px solid @orangeYellow;
+            }
+
+            //images组件
+            .qnnFormImages {
+                padding: 0px;
+                :global(.ant-upload.ant-upload-select-picture-card) {
+                    margin-top: 4px;
+                    margin-left: 8px;
+                }
+            }
+
+            //层叠联动
+            .qnnFormCascader {
+                //层级联动等组件在input类名的下一层
+                :global(.ant-input) {
+                    border: none;
+                    &:focus {
+                        box-shadow: 0px 0px 5px fade(@orangeYellow, 60%);
+                    }
+                }
+            }
+
+            //富文本
+            .qnnFormReactUeditor {
+                :global(.edui-editor) {
+                    border: 1px solid @orangeYellow !important;
+                    .edui-default
+                        .edui-toolbar
+                        .edui-button
+                        .edui-state-checked
+                        .edui-button-wrap {
+                        border: 0px;
+                    }
+                }
+            }
+
+            //选项
+            .qnnFormItemCom {
+                box-sizing: border-box;
+                padding: 6px;
+            }
+
+            //多选单选
+            .qnnFormCheckbox {
+                padding: 3px 6px;
+                box-sizing: border-box;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                :global(label) {
+                    flex-basis: 40%;
+                    display: block;
+                    box-sizing: border-box;
+                    margin-bottom: 6px;
+                }
+            }
+
+            //开关 滑块 打分
+            .qnnFormSwitch {
+                width: 80%;
+                margin-bottom: 0px;
+                border-radius: 12px;
+            }
+            .qnnFormRate {
+                padding: 3px 6px;
+            }
+            .qnnFormSlider {
+                width: 92% !important;
+                margin-right: 24px;
+                border: none;
+            }
+
+            //语音输入时候的特殊样式
+            .voice {
+                //隐藏掉antd输入框的边框
+                :global(.ant-input) {
+                    border: 0px;
+                    &:focus {
+                        box-shadow: 0px 0px 5px fade(@orangeYellow, 60%);
+                    }
+                }
+                //隐藏掉语音输入时后缀按钮的边框
+                :global(.ant-input-group-addon) {
+                    border: 0px;
+                    background: transparent;
+                }
+            }
+
+            //label超出隐藏的话 * 会被隐藏
+            :global(.ant-form-item-label) {
+                overflow: inherit;
+            }
+
+            //设置label中的文字均匀分布
+            :global(label) {
+                width: 100%;
+                box-sizing: border-box;
+                color: @blank;
+                font-size: @labelSize;
+                display: inline-block;
+                & > a,
+                & > div {
+                    height: 100%;
+                    width: 100%;
+                    display: inline-block;
+                    flex: 1;
+                    text-align: justify;
+                    text-align: -webkit-justify;
+                    text-align-last: justify;
+                    text-align-last: -webkit-justify;
+                    &:after {
+                        content: "";
+                        width: 100%;
+                        height: 0;
+                        display: inline-block;
+                    }
+                }
+
+                //让必填符号不占据label文字的空间
+                position: relative;
+                &:before {
+                    position: absolute;
+                    left: -9px;
+                    top: 10px;
+                }
+            }
+
+            //label独占一行的不能让文字均匀分布
+            :global {
+                .ant-col-xs-24,
+                .ant-col-xs-23 {
+                    label {
+                        display: inline-block;
+                        width: 100%;
+                        & > a,
+                        & > div {
+                            letter-spacing: 1px;
+                            display: inline-block;
+                            flex: 1;
+                            text-align: left;
+                            text-align-last: left;
+                        }
+                    }
+                }
+            }
+
+            :global {
+                //antd移动端适配导致布局失效
+                //解决移动端label独占一行
+                .ant-form-item-label {
+                    flex: 0 0 90px;
+                    max-width: 100%;
+                    padding: 0 0 0px;
+                    position: relative;
+                    height: 32px;
+                    line-height: 32px;
+                    //解决移动端上没有 冒号
+                    &::after {
+                        content: ":";
+                        position: absolute;
+                        top: 0px;
+                        bottom: 0px;
+                        right: -5px;
+                        margin: auto;
+                        height: 32px;
+                        line-height: 32px;
+                    }
+                }
+                .ant-form-item-control {
+                    flex: 1;
+                    margin-left: 8px;
+                }
+
+                //文字超过6个label独占一行 并且去除：号
+                .ant-col-xs-23 {
+                    flex: 0 0 100%;
+                    max-width: 100%;
+                }
+                .ant-col-xs-23.ant-form-item-label {
+                    &::after {
+                        content: "";
+                    }
+                }
+            }
+        }
+
+        //formItem最后一个不要底部边框颜色
+        .formBlockCol .formItemCol:nth-last-of-type(1) .mobileItem {
+            border-bottom: none;
+        }
+
+        //禁用的输入框不要有边框色
+        //禁用的输入框中的文字颜色为黑色
+        //输入框背景色透明
+        .mobileItem.mobileItemDisabled {
+            .qnnFormInput {
+                border: 0px;
+                color: @fc;
+                background-color: transparent !important;
+            }
+        }
+        .mobileItemDisabled .qnnFormReactUeditor {
+            :global(.edui-editor) {
+                border: 1px solid @gray !important;
+            }
+        }
+
+        //可增减表单块的按钮
+        .addBlockBtnContainer {
+            padding: 0px 8px;
+            .addBlockBtn {
+                margin-top: 18px;
+                height: 35px;
+            }
+        }
+
+        //拉人组件和树节点组件
+        .qnnFormPullPersonMobile,
+        .qnnFormTreeNode {
+            border: 1px solid @orangeYellow;
+            border-radius: 2px;
+        }
+
+        //移动端时间日期组件
+        .mobileDatePickerListItem {
+            box-sizing: border-box;
+            font-size: 14px;
+            border: 1px solid @orangeYellow;
+            border-radius: 2px;
+            height: 32px;
+            min-height: 32px;
+            padding: 4px 11px;
+            text-align: right;
+            //装载时间和右边箭头的容器
+            :global(.am-list-line) {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: space-between;
+                padding-right: 0px;
+            }
+            // 装载时间容器
+            :global(.am-list-extra) {
+                flex-basis: 50%;
+                text-align: left;
+                color: @fc;
+                font-size: @fs;
+            }
+        }
+
+        //禁用的时间组件也需要改变样式
+        .mobileItemDisabled .mobileDatePickerListItem {
+            border: 0px;
+            //隐藏箭头
+            :global(.am-list-arrow) {
+                display: none;
+            }
+        }
+
+        //移动端的区域选择
+        .DateRangeMobile {
+            position: relative;
+            :global(.rdr-Calendar) {
+                width: 100% !important;
+                box-shadow: @box-shadow;
+                position: absolute;
+                left: 0px;
+                right: 0px;
+                z-index: 2;
+                padding: 8px !important;
+                padding-bottom: 42px !important;
+            }
+            :global {
+                .is-inRange,
+                .is-selected {
+                    background: @blue !important;
+                    color: white !important;
+                }
+                .rdr-Day {
+                    margin: 3px 0px;
+                    height: 34px !important;
+                    line-height: 34px !important;
+                }
+                .rdr-MonthAndYear-button {
+                    border-radius: 3px !important;
+                    background: rgba(189, 195, 199, 0.3) !important;
+                }
+            }
+
+            //确定按钮
+            .dateRangeMobileBtn {
+                text-align: right;
+                color: @blue;
+                display: inline-block;
+                background: white;
+                padding: 8px 24px;
+                border-radius: 2px;
+                position: absolute;
+                left: 0px;
+                right: 0px;
+                z-index: 2;
+                bottom: -330px;
+                text-align: center;
+            }
+        }
+
+        // form表单
+        .form {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        //form表单的字段容器
+        //需要有滚动
+        .formContent {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            transform: translate3d(0, 0, 0);
+            flex: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        //底部按钮
+        .btnsContainer {
+            background: #fff;
+            box-shadow: 0 0 10px rgba(153, 153, 153, 0.6);
+            border-top: 1px solid #efefef;
+            box-sizing: border-box;
+            margin-bottom: 0px;
+            :global(.ant-form-item-control) {
+                box-sizing: border-box;
+                display: block;
+            }
+            :global(.ant-form-item-control-input-content) {
+                width: 100%;
+                display: flex;
+                padding-right: 8px;
+                box-sizing: border-box;
+            }
+
+            :global(.ant-btn) {
+                margin-top: 8px;
+                margin-bottom: 8px;
+                margin-left: 8px;
+                height: 39px;
+                box-sizing: border-box;
+                flex: 1;
+            }
+        }
+    }
+
+    //loading容器
+    :global {
+        .ant-spin-nested-loading,
+        .ant-spin-container {
+            height: 100%;
+            width: 100%;
+        }
+    }
+}
+
+// 移动端 tabs页面样式修改
+.mobileForm.tabsForm {
+    height: 100%;
+    //移动端底部按钮的位置
+    padding-bottom: 0px;
+    //tab页面
+    .TabsContainer {
+        height: 100%;
+        overflow: hidden;
+        .Tabs {
+            height: 100%;
+            //更改antd默认样式
+            :global(.ant-tabs-bar) {
+                margin: 0px;
+            }
+            .btnsContainer {
+                bottom: 0px;
+            }
+            //顶部的tab高度需要减去
+            :global(.ant-tabs-content) {
+                box-sizing: border-box;
+                height: calc(100% - 45.5px);
+            }
+            .TabPane {
+                height: 100%;
+                overflow-y: scroll;
+                box-sizing: border-box;
+            }
+        }
+    }
+    .QnnFormContent {
+        padding-bottom: 0px;
+    }
+}
+
+//没有底部按钮的移动表单
+.mobileForm.noBtns {
+    //移动端底部按钮的位置
+    padding-bottom: 0px;
+}
+
+//表单块
+.QnnForm .qnnFormBlock,
+.mobileForm .qnnFormBlock {
+    margin-top: 8px;
+    border-radius: 2px;
+}
+
+// 表单块关闭后给个阴影
+.QnnForm .qnnFormBlockCloseed,
+.mobileForm .qnnFormBlockCloseed {
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    background: rgba(243, 244, 245, 0.15);
+    box-shadow: 0px 3px 3px rgba(101, 102, 102, 0.15);
+}

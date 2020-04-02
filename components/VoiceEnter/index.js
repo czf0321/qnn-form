@@ -1,82 +1,86 @@
-import React, { Component } from "react";
+import React,{ Component } from "react";
 import { Modal } from "antd-mobile";
 import s from "./style.less";
 const voiceImg = require("../../imgs/voice.png");
 const alert = Modal.alert;
 
-class index extends Component { 
-    static getDerivedStateFromProps(props, state) {
+class VoiceEnter extends Component {
+    static getDerivedStateFromProps(props,state) {
         let obj = {
             ...state,
             ...props
         };
         return obj;
     }
-    startVoice() {
-        if(!this.props.myPublic){
-            return;
-        }
-        const { wx } = this.props.myPublic;
-        if(!wx){
-            return
-        }
-        const { setFieldValueByVoice, onCloseVoice } = this.props;
-        this.setState(
-            {
-                s: 60
-            },
-            () => {
-                wx.startRecord();
-                wx.onVoiceRecordEnd({
-                    // 录音时间超过一分钟没有停止的时候会执行 complete 回调
-                    complete: function(res) {
-                        var localId = res.localId; 
-                        onCloseVoice();
-                        window.clearInterval(window.recordTimer);
-                        wx.translateVoice({
-                            localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
-                            isShowProgressTips: 1, // 默认为1，显示进度提示
-                            success: function(res) {
-                                setFieldValueByVoice(res.translateResult); 
-                            }
-                        });
-                    }
-                });
-                window.clearInterval(window.recordTimer);
-                window.recordTimer = window.setInterval(() => {
-                    this.setState({
-                        s: this.state.s - 1
-                    });
-                }, 1000);
-            }
-        );
-    }
     state = {
         s: 60
-    }; 
+    };
+    startVoice() { 
+        const { wx } = window;
+        if (!wx) {
+            return
+        }
+        wx.ready(() => {
+            const { setFieldValueByVoice,onCloseVoice } = this.props;
+            this.setState(
+                {
+                    s: 60
+                },
+                () => {
+                    wx.startRecord();
+                    wx.onVoiceRecordEnd({
+                        // 录音时间超过一分钟没有停止的时候会执行 complete 回调
+                        complete: function (res) {
+                            var localId = res.localId;
+                            onCloseVoice && onCloseVoice();
+                            window.clearInterval(window.recordTimer);
+                            wx.translateVoice({
+                                localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                                isShowProgressTips: 1, // 默认为1，显示进度提示
+                                success: function (res) {
+                                    setFieldValueByVoice && setFieldValueByVoice(res.translateResult);
+                                }
+                            });
+                        }
+                    });
+                    window.clearInterval(window.recordTimer);
+                    window.recordTimer = window.setInterval(() => {
+                        this.setState({
+                            s: this.state.s - 1
+                        });
+                    },1000);
+                }
+            );
+
+        })
+
+    }
     componentWillUnmount() {
         window.clearInterval(window.recordTimer);
     }
-    ok = () => { 
-        const { wx } = this.props.myPublic;
-        const { setFieldValueByVoice } = this.props;  
-        wx.stopRecord({
-            success: function(res) {
-                var localId = res.localId;
-                wx.translateVoice({
-                    localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
-                    isShowProgressTips: 1, // 默认为1，显示进度提示
-                    success: function(res) {
-                        setFieldValueByVoice(res.translateResult);
-                    }
-                });
-            },
-            fail: function(e) {
-                alert("录音失败" + JSON.stringify(e));
-            }
-        });
+    ok = () => {
+        const wx = window.wx;
+        wx.ready(() => {
+            const { setFieldValueByVoice } = this.props;
+            wx.stopRecord({
+                success: function (res) {
+                    var localId = res.localId;
+                    wx.translateVoice({
+                        localId: localId, // 需要识别的音频的本地Id，由录音相关接口获得
+                        isShowProgressTips: 1, // 默认为1，显示进度提示
+                        success: function (res) {
+                            setFieldValueByVoice && setFieldValueByVoice(res.translateResult);
+                        }
+                    });
+                },
+                fail: function (e) {
+                    alert("录音失败" + JSON.stringify(e));
+                }
+            });
+        })
+
     };
-    render() {
+    render() { 
         return (
             <div>
                 {this.props.childred}
@@ -89,16 +93,13 @@ class index extends Component {
                         {
                             text: "取消",
                             onPress: () => {
-                                this.props.onCloseVoice(() => {
-                                    console.log("取消");
-                                });
+                                this.props.onCloseVoice && this.props.onCloseVoice();
                             }
                         },
                         {
                             text: "确定",
                             onPress: () => {
-                                this.props.onCloseVoice(() => {
-                                    // console.log("确定");
+                                this.props.onCloseVoice && this.props.onCloseVoice(() => {
                                     this.ok();
                                 });
                             }
@@ -107,7 +108,7 @@ class index extends Component {
                 >
                     <div
                         className={s.con}
-                        style={{ height: 85, overflow: "hidden" }}
+                        style={{ height: 85,overflow: "hidden" }}
                     >
                         <img alt="immg" className={s.img} src={voiceImg} width="50" />
                         <div className={s.desc}>还可录制{this.state.s}秒</div>
@@ -118,4 +119,4 @@ class index extends Component {
     }
 }
 
-export default index;
+export default VoiceEnter;
