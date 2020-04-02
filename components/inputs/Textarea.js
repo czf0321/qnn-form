@@ -16,7 +16,7 @@ const TestAreaComponent = (props) => {
         },
         startVoice, 
         qnnformData: { style },
-        fns: { isMobile },
+        fns: { isMobile, tool },
         form
     } = props;
     const ovTextKey = oldValueKey.text;

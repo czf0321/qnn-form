@@ -1,8 +1,24 @@
-### qnn-form V1.0
+<h2><center> Qnn Form 【全能 表单组件】</center><h2>
+<h4>
+    <center>
+    基于antd、antd-mobile开发，可将纯配置部分和jsx部分做到完全分离开来。<br/>
+    移动、pc两端皆可用,  无需在对表单中的数据进行手动操作，一切组件都给你做好了<br/>
+    20多种字段验证、字段动态显隐、tab页面、40多种输入控件...<br/>
+    你只需要关注你需要什么输入控件即可！
+    </center>
+<h4><br/><br/>
 
-#### 使用前必看【<a href="https://ant.design/components/grid-cn/">antd 栅格系统</a>】
+#### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
 
-####文档导航
+---
+
+#### <a href="https://marketplace.visualstudio.com/items?itemName=xm.qnn">qnn 【vsCode 扩展】</a>
+
+    可使用 vsCode qnn 扩展进行更加愉快的配置
+
+---
+
+#### 文档导航
 
 <ul> 
     <li><b><a href="#use">下载&引用</a></li> 
@@ -21,21 +37,73 @@
     <li><b><a href="#formatter">格式化显示</a></li>
     <li><b><a href="#func">一些方法调用</a></li>
     <li><b><a href="#bind">绑定内置方法</a></li>
+    <li><b><a href="#JSX">JSX风格调用</a></li>
  
 </ul>
 
-###### <a id="use">下载&引用</a>
+#### <a id="use">下载&引用</a>
 
     ps：暂未打包发布到npm，所以请直接克隆后放置项目合适的位置引用即可
 
     import QnnForm from 'XXX/qnn-form'
 
-###### <a id="start">快速开始</a>
+#### <a id="start">环境配置</a>
 
     需要项目安装并且配置好antd、antd-mobile的按需加载
-    参考配置：暂无
+    参考配置：
 
-###### <a id="types">可用的输入类型</a>
+        webpack.config.js
+
+        {
+            ...
+
+            module:{
+                ...
+                rules:[
+
+                    ...
+
+                    {
+                        oneOf:[
+                            {
+                                ...
+
+                                test: /\.(js|mjs|jsx|ts|tsx)$/,
+                                options:{
+                                    ...
+
+                                    plugins:[
+                                        ...
+                                        [
+                                            "import",
+                                            {
+                                                libraryName: "antd",
+                                                libraryDirectory: "es",
+                                                style: "css"
+                                            },
+                                            "ant"
+                                        ],
+                                        [
+                                            "import",
+                                            {
+                                                libraryName: "antd-mobile",
+                                                libraryDirectory: "es",
+                                                style: "css"
+                                            },
+                                            "antd-mobile"
+                                        ]
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+
+            ...
+        }
+
+#### <a id="types">可用的输入类型</a>
 
 <table> 
     <tr> 
@@ -110,11 +178,7 @@
     </tr>   
 </table>
 
-###### <a id="example">使用实例</a>
-
-    不建议将不用的数据全部传入props中
-    特别是在自定义组件中使用QnnTable组件把整个props在传入到QnnTable会出些奇怪的问题
-
+#### <a id="example">使用实例</a> 
     import React,{ Component } from "react";
     import QnnForm from "../modules/qnn-table/qnn-form";
 
@@ -123,7 +187,7 @@
             return (
                 <QnnForm
 
-                    //比传的的唯一标识
+                    唯一标识
                     field="myQnnForm"
 
                     ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
@@ -133,9 +197,7 @@
                     upload={this.props.myUpload}
 
                     获取qnn-form实例
-                    wrappedComponentRef={(me) => {
-                        this.form = me;
-                    }}
+                    wrappedComponentRef={(me) => this.qnnForm = me}
 
                     具体字段配置
                     formConfig:[
@@ -152,13 +214,13 @@
                             field: 'age',
                             placeholder: '请输入',
                             max:99,
-
-                        }
+                            onChange:"bind:ageChange"
+                        } 
                     ]
 
                     method={{
-                        labelClcikFn: (obj) => {
-                            console.log("labelClcikFn：",obj)
+                        ageChange: (args) => {
+                            console.log("labelClcikFn：",args)
                         },
                         ...
                     }}
@@ -211,28 +273,24 @@
 </ul>
 <br />
 
-###### <a id="commonByQnnForm">qnn-form 根配置</a>
+#### <a id="commonByQnnForm">qnn-form 根配置</a>
 
         {
-            Form.create的
-            form={this.props.form}
-
-            路由信息
-            history={this.props.history}
-            match={this.props.match}
 
             ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
             fetch={this.props.myFetch}
 
-            上传时给后台的头信息
+
+            上传文件使用的 (apiName)=>(e)=>Promise(({success, data, message})=>{/**code...**/})
+            upload={this.props.myUpload}
+
+            上传时给后台的头信息 配置upload此配置可忽略
             headers={{
                 token: this.props.loginAndLogoutInfo.loginInfo.token
             }}
 
             获取qnn-form实例
-            wrappedComponentRef={(me) => {
-                this.form = me;
-            }}
+            wrappedComponentRef={(qnnForm) =>  this.qnnForm = qnnForm}
 
             【不推荐】假数据
             这个需要注意在pc端时候如果页面是tab表单的话不能设置这个data属性 否则将会报错 （解决办法使用form的方法来设置值）
@@ -352,7 +410,7 @@
             [number]
             qnnFormContextHeight
 
-###### <a id="common">通用属性说明</a>
+#### <a id="common">通用属性说明</a>
 
     ps:
         所有function可用bind绑定函数名
@@ -586,7 +644,7 @@
         }
     },
 
-###### <a id="cangyongv">21 中常用验证</a>
+#### <a id="cangyongv">21 中常用验证</a>
 
     {
         type: "email",
@@ -716,7 +774,7 @@
         help: "eg: 京A00599"
     },
 
-###### <a id="dependencies">字段依赖项</a>
+#### <a id="dependencies">字段依赖项</a>
 
     {
         type: "string",
@@ -727,7 +785,7 @@
         help: "[name]等于1禁用",
     }
 
-###### <a id="locInfo">地址信息：详细地址 address 省 province 城市 city 区域 district 街道</a>
+#### <a id="locInfo">地址信息：详细地址 address 省 province 城市 city 区域 district 街道</a>
 
     {
         type: "string",
@@ -737,7 +795,7 @@
         help: "string、textarea类型输入可配",
     }
 
-###### <a id="string">文本类型</a>
+#### <a id="string">文本类型</a>
 
     {
         type: 'string',
@@ -751,7 +809,7 @@
         }
     }
 
-###### <a id="password">密码</a>
+#### <a id="password">密码</a>
 
     {
         type: 'password',
@@ -763,7 +821,7 @@
         prefixStyle: { color: 'rgba(0,0,0,.25)' },//前缀图标样式
     }
 
-###### <a id="identity">身份证</a>
+#### <a id="identity">身份证</a>
 
      {
         type: 'identity',
@@ -773,7 +831,7 @@
         required: true,//是否必填
     }
 
-###### <a id="phone">电话号码</a>
+#### <a id="phone">电话号码</a>
 
      {
         type: 'phone',
@@ -783,7 +841,7 @@
         required: true,//是否必填
     }
 
-###### <a id="specialPlane">座机号码</a>
+#### <a id="specialPlane">座机号码</a>
 
      {
         type: 'specialPlane',
@@ -793,7 +851,7 @@
         required: true,//是否必填
     }
 
-###### <a id="number">数字类型</a>
+#### <a id="number">数字类型</a>
 
     {
         type: 'number',
@@ -807,7 +865,7 @@
         // formatter:function(value){return value + '$'}, //格式化显示
     }
 
-###### <a id="integer">整数</a>
+#### <a id="integer">整数</a>
 
      {
         type: 'integer',
@@ -817,7 +875,7 @@
         required: true,
     }
 
-###### <a id="email">邮箱</a>
+#### <a id="email">邮箱</a>
 
      {
         type: 'email',
@@ -827,7 +885,7 @@
         required: true,
     }
 
-###### <a id="url">网址</a>
+#### <a id="url">网址</a>
 
     {
         type: 'url',
@@ -837,7 +895,7 @@
         required: true,
     }
 
-###### <a id="richtext">富文本</a>
+#### <a id="richtext">富文本</a>
 
     {
         type: "richtext",
@@ -856,7 +914,7 @@
 
     }
 
-###### <a id="year">年选择</a>
+#### <a id="year">年选择</a>
 
     {
         type: "year",
@@ -864,7 +922,7 @@
         field: "year", //唯一的字段名 ***必传
     }
 
-###### <a id="week">周选择</a>
+#### <a id="week">周选择</a>
 
     {
         type: "week",
@@ -872,7 +930,7 @@
         label: "周选择",
     },
 
-###### <a id="month">年月 YYYY-MM</a>
+#### <a id="month">年月 YYYY-MM</a>
 
     {
         type: "month",
@@ -881,7 +939,7 @@
         placeholder: "请选择"
     }
 
-###### <a id="date">日期 yyyy-mm-dd</a>
+#### <a id="date">日期 yyyy-mm-dd</a>
 
     {
         type: 'date',
@@ -893,7 +951,7 @@
         showTime:false, //不显示时间
     }
 
-###### <a id="dateTime">日期时间 YYYY-MM-DD HH:mm:ss</a>
+#### <a id="dateTime">日期时间 YYYY-MM-DD HH:mm:ss</a>
 
     {
         type: 'datetime',
@@ -904,7 +962,7 @@
         is24: true,//是否是24小时制 默认true
     },
 
-###### <a id="time">时间 mm:ss</a>
+#### <a id="time">时间 mm:ss</a>
 
     {
         type: 'time',
@@ -915,7 +973,7 @@
         is24: true,//是否是24小时制 默认true2
     }
 
-###### <a id="component">自定义组件</a>
+#### <a id="component">自定义组件</a>
 
     {
         type: 'component',
@@ -941,7 +999,7 @@
         }
     }
 
-###### <a id="select">普通选择框</a>
+#### <a id="select">普通选择框</a>
 
     {
         type: 'select',
@@ -985,7 +1043,7 @@
         }
     }
 
-###### <a id="selectByPaging">分页下拉</a>
+#### <a id="selectByPaging">分页下拉</a>
 
     ps:分页下拉的接口必须要能支持根据下拉选项的值来进行下拉选项的筛选，因为回显时候需要根据值来请求下拉选项进行显示
 
@@ -1045,7 +1103,7 @@
         ]
     }
 
-###### <a id="cascader">层叠联动</a>
+#### <a id="cascader">层叠联动</a>
 
     {
         type: 'cascader',
@@ -1079,7 +1137,7 @@
         // }
     }
 
-###### <a id="treeSelect">树选择 （具体配置查看 pull-person 插件配置）</a>
+#### <a id="treeSelect">树选择 （具体配置查看 pull-person 插件配置）</a>
 
     {
         label:'树选择',
@@ -1099,7 +1157,7 @@
         }
     }
 
-###### <a id="rangeDate">时间区域选择</a>
+#### <a id="rangeDate">时间区域选择</a>
 
     {
         type: "rangeDate",
@@ -1113,7 +1171,7 @@
         initialValue: [new Date(), new Date()],
     }
 
-###### <a id="treeNode">树节点 （具体配置查看 tree 插件配置）</a>
+#### <a id="treeNode">树节点 （具体配置查看 tree 插件配置）</a>
 
     {
         type: "treeNode",
@@ -1148,7 +1206,7 @@
         }
     }
 
-###### <a id="condition">条件显隐例子</a>
+#### <a id="condition">条件显隐例子</a>
 
     {
         type: 'string',
@@ -1174,7 +1232,7 @@
         ]
     }
 
-###### <a id="formatter">formatter 属性例子，显示格式化</a>
+#### <a id="formatter">formatter 属性例子，显示格式化</a>
 
     {
             type: 'string',
@@ -1191,7 +1249,7 @@
             }
     }
 
-###### <a id="textarea">多行文本</a>
+#### <a id="textarea">多行文本</a>
 
     {
         type: 'textarea',
@@ -1202,7 +1260,7 @@
         rows: 4, //行高 默认4
     }
 
-###### <a id="files">files 文件上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
+#### <a id="files">files 文件上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
 
     {
         type: 'files',
@@ -1218,7 +1276,7 @@
         max: 2, //最大上传数量
     }
 
-###### <a id="textarea">files 文件拖动上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
+#### <a id="textarea">files 文件拖动上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
 
     {
         type: 'filesDragger',
@@ -1235,7 +1293,7 @@
         max: 2, //最大上传数量
     }
 
-###### <a id="images">图片上传 （不推荐使用）</a>
+#### <a id="images">图片上传 （不推荐使用）</a>
 
     {
         type: 'images',
@@ -1253,7 +1311,7 @@
         max: 2, //最大上传数量
     }
 
-###### <a id="camera">移动端文件上传</a>
+#### <a id="camera">移动端文件上传</a>
 
     //会自动根据类型和运行环境自动选择图片文件预览方式（cameraConfig.type===[images|camera]）
     {
@@ -1275,7 +1333,7 @@
         max: 2, //最大上传数量
     }
 
-###### <a id="item">问题答案选项</a>
+#### <a id="item">问题答案选项</a>
 
     item类型   使用场景：上一个字段是问题，然后可用这个类型设置问题答案选项
     {
@@ -1285,7 +1343,7 @@
         required: true
     }
 
-###### <a id="radio">单选</a>
+#### <a id="radio">单选</a>
 
     {
         type: "radio",
@@ -1303,7 +1361,7 @@
         ]
     }
 
-###### <a id="checkbox">多选</a>
+#### <a id="checkbox">多选</a>
 
     {
         type: "checkbox",
@@ -1321,7 +1379,7 @@
         ]
     }
 
-###### <a id="switch">开关</a>
+#### <a id="switch">开关</a>
 
     {
         type: "switch",
@@ -1329,7 +1387,7 @@
         field: "switch",
     }
 
-###### <a id="rate">打分</a>
+#### <a id="rate">打分</a>
 
     {
         type: "rate",
@@ -1337,7 +1395,7 @@
         field: "rate",
     }
 
-###### <a id="slider">滑块</a>
+#### <a id="slider">滑块</a>
 
     {
         type: "slider",
@@ -1348,7 +1406,7 @@
         }
     }
 
-###### <a id="qnnTable">qnnTable</a>
+#### <a id="qnnTable">qnnTable</a>
 
     {
         type: "qnnTable",
@@ -1359,7 +1417,7 @@
         }
     }
 
-###### <a id="money">money</a>
+#### <a id="money">money</a>
 
     {
         type: "money",
@@ -1367,7 +1425,7 @@
         field: "money",
     }
 
-###### <a id="qnnForm">qnnForm 控件（表单块）</a>
+#### <a id="qnnForm">qnnForm 控件（表单块）</a>
 
     {
         type: "qnnForm",
@@ -1425,7 +1483,7 @@
         ]
     },
 
-###### <a id="linkage">无限联动</a>
+#### <a id="linkage">无限联动</a>
 
     {
         type: "select",
@@ -1472,7 +1530,7 @@
         parent: "linkageThree",
     },
 
-###### <a id="isUrlParams">隐藏字段 并且是 从浏览器网址取的值</a>
+#### <a id="isUrlParams">隐藏字段 并且是 从浏览器网址取的值</a>
 
     {
         type: 'string',
@@ -1485,7 +1543,7 @@
         isUrlParams: true,//是否是从地址参数中取值 默认false
     },
 
-###### <a id="tabs">tabs 页面配置</a>
+#### <a id="tabs">tabs 页面配置</a>
 
     ps：内置name有 qnnForm和qnnTable 可以自定义
     [
@@ -1532,7 +1590,7 @@
         }
     ]
 
-###### <a id="btns">按钮配置</a>
+#### <a id="btns">按钮配置</a>
 
     [ ---可为 func
         {
@@ -1614,7 +1672,7 @@
         }
     ]
 
-###### <a id="btnsCondition">按钮条件显隐配置</a>
+#### <a id="btnsCondition">按钮条件显隐配置</a>
 
     [
         {
@@ -1635,7 +1693,7 @@
         },
     ]
 
-###### <a id="setVals">设置已有的值（非请求方式设置值）</a>
+#### <a id="setVals">设置已有的值（非请求方式设置值）</a>
 
     componentDidMount() {
 
@@ -1652,7 +1710,47 @@
         this.props.form.setFieldsValue(_d)
     }
 
-###### <a id="func">方法调用</a>
+#### <a id="JSX">JSX 风格</a>
+
+    import React from "react";
+
+    import QnnForm from "apih5/modules/qnn-form";
+    import { Button } from "antd"
+
+    const index = (props) => {
+    let thisForm;
+    let qnnForm;
+
+    return <div style={{ height: "100%" }}>
+
+            <QnnForm
+                fetch={props.myFetch}
+                wrappedComponentRef={(me) => {
+                    thisForm = me?.form;
+                    qnnForm = me;
+                }}
+            >
+
+                <QnnForm.Field type="string" field="name" label="姓名" initialValue="王麻子" />
+                <QnnForm.Field type="number" field="age" label="年纪" />
+
+                <div>想怎么布局就怎么布局</div>
+
+                <div>
+                    <QnnForm.Field type="string" field="test1" label="test1" placeholder="我可以只要一个输入框" noStyle style={{ width: 200,margin: "10px" }} />
+                </div>
+                <Button style={{ marginLeft: 3 }} onClick={async (e) => {
+                    console.log('使用form获取值:',thisForm.getFieldsValue())
+                    console.log('使用qnnForm获取值:',await qnnForm.getValues())
+                }}>获取值</Button>
+            </QnnForm>
+
+        </div>
+
+    }
+    export default index;
+
+#### <a id="func">方法调用</a>
 
     获取某个下拉字段的下拉数据key
     getSelectKey
@@ -1668,6 +1766,6 @@
     解析方法的bind
     bind
 
-###### <a id="bind">绑定内置方法</a>
+#### <a id="bind">绑定内置方法</a>
 
     bind:_blocksAddends::表单块字段名::表单块中的字段名::总数字段名
