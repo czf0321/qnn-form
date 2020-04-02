@@ -214,25 +214,21 @@
 ###### <a id="commonByQnnForm">qnn-form 根配置</a>
 
         {
-            Form.create的
-            form={this.props.form}
-
-            路由信息
-            history={this.props.history}
-            match={this.props.match}
 
             ajax方法 ()=>Promise(({success, data, message})=>{/**code...**/})
             fetch={this.props.myFetch}
 
-            上传时给后台的头信息
+
+            上传文件使用的 (apiName)=>(e)=>Promise(({success, data, message})=>{/**code...**/})
+            upload={this.props.myUpload}
+
+            上传时给后台的头信息 配置upload此配置可忽略
             headers={{
                 token: this.props.loginAndLogoutInfo.loginInfo.token
             }}
 
             获取qnn-form实例
-            wrappedComponentRef={(me) => {
-                this.form = me;
-            }}
+            wrappedComponentRef={(qnnForm) =>  this.qnnForm = qnnForm}
 
             【不推荐】假数据
             这个需要注意在pc端时候如果页面是tab表单的话不能设置这个data属性 否则将会报错 （解决办法使用form的方法来设置值）
