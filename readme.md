@@ -19,6 +19,12 @@
 
 ---
 
+#### 预览
+ 
+ ![alt 属性文本](./preview/basic.png)
+ 
+ ![alt 属性文本](./preview/tabs.png)
+
 #### 文档导航
 
 <ul> 

@@ -15,8 +15,10 @@ const ItemComponent = React.lazy(() => import("./Item"));
 const FileUploadComponent = React.lazy(() => import("./FileUpload"));
 const TreeSelectComponent = React.lazy(() => import("./TreeSelect"));
 const TreeNodeComponent = React.lazy(() => import("./TreeNode"));
-const QnnTableComponent = React.lazy(() => import("apih5/modules/qnn-table"));
-
+// const QnnTableComponent = React.lazy(() => import("apih5/modules/qnn-table"));
+const QnnTableComponent = ()=>{
+    return <div>qnnTable组件暂未开源 请使用自定义组件代替</div>
+}
 //异步加载的loading配置
 const skeletonProps = {
     loading: true,

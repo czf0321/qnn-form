@@ -1,6 +1,9 @@
 import React,{ Suspense } from 'react';
 import { Skeleton,Tabs } from "antd";
-const QnnTableComponent = React.lazy(() => import("apih5/modules/qnn-table"));
+// const QnnTableComponent = React.lazy(() => import("apih5/modules/qnn-table"));
+const QnnTableComponent = ()=>{
+    return <div>qnnTable组件暂未开源 请使用自定义组件代替</div>
+}
 const { TabPane } = Tabs;
 
 const TabsForm = (props) => {
