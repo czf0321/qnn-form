@@ -1,0 +1,60 @@
+@tableBorderColor: rgb(200, 200, 200);
+.isInQnnTable {
+    .descriptionsFormContainer {
+        box-sizing: border-box;
+        margin: 12px 12px;
+    }
+}
+.descriptionsForm {
+    .descriptionsFormLabelRequ{
+        color: red; 
+        left: -6px; 
+        position: absolute;
+    }
+    :global {
+        .ant-descriptions-item-label,
+        .ant-descriptions-item-content,
+        .ant-descriptions-row,
+        .ant-descriptions-view {
+            border-color: @tableBorderColor !important;
+        }
+        .ant-descriptions-item-label {
+            div {
+                width: 100%;
+                min-width: 60px;
+            }
+        }
+    }
+    .descriptionsFormChild {
+        :global {
+            .ant-descriptions-view {
+                border: 0px solid;
+            }
+            .ant-descriptions-row {
+                .ant-descriptions-item-label {
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+    //去除禁用情况下的输入框样式
+    //禁用的输入框不要有边框色
+    //禁用的输入框中的文字颜色为黑色
+    //输入框背景色透明
+    .ItemDisabled {
+        .qnnFormInput {
+            border: 0px;
+            color: @fc;
+            background-color: transparent !important;
+        }
+        :global {
+            .ant-select-disabled {
+                color: @fc;
+                .ant-select-selector {
+                    color: @fc;
+                }
+            }
+        }
+    }
+}

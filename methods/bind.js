@@ -13,23 +13,23 @@ const _fns = {
         const arr = props.form.getFieldValue(bindParams[0]);
         const totalMoney = props.form.getFieldValue(bindParams[2]);
         const sum = arr.reduce((prve,curBlockVal) => prve += curBlockVal[bindParams[1]],0);
-        if (sum !== totalMoney) { 
+        if (sum !== totalMoney) {
             const fieldArr = bindParams[2].split('.');
-            if (fieldArr.length === 1) { 
+            if (fieldArr.length === 1) {
                 props.fns.setValues({
-                    [fieldArr[0]]:sum
+                    [fieldArr[0]]: sum
                 })
-            }else if(fieldArr.length === 2){
+            } else if (fieldArr.length === 2) {
                 props.fns.setValues({
-                    [fieldArr[0]]:{
-                        [fieldArr[1]]:sum
+                    [fieldArr[0]]: {
+                        [fieldArr[1]]: sum
                     }
                 })
-            }else{
+            } else {
                 console.error('_blocksAddends的目标参数暂不支持三层嵌套')
-            }   
+            }
         }
-    } 
+    }
 }
 
 const bind = function (arg) {
@@ -59,11 +59,11 @@ const bind = function (arg) {
 
         !method[methodName] && console.error(`${methodName}未在method中定义。`);
 
-        if (typeof method[methodName] !== "function") {
+        if (method[methodName] && ((typeof method[methodName]) !== "function")) {
             console.error(`${methodName}不是一个函数，请勿在method中定义非函数数据。`);
         }
         return (...args) => {
-            return method[methodName](...args,params)
+            return method[methodName]?.(...args,params)
         };
     } else {
         //有别的情况 所以不执行处理

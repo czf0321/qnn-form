@@ -15,6 +15,8 @@ const getInputProps = (props) => {
 
             className,
 
+            optionDataGroup,
+
             //相当于在这里删除一下非antd的输入组件props 因为下面需要将otherConfig直接设置到input的props
             isUrlParams,
             fetchConfig,
@@ -34,7 +36,7 @@ const getInputProps = (props) => {
             pushJoin,pullJoin,
             formItemLayout,qnnTableConfig,
             labelStyle,
-            formatter,
+            formatter,parser,
             //这三个其实不应该传入进来...
             addShow,addDisabled,qnnDisabled,editShow,editDisabled,
 
@@ -74,7 +76,9 @@ const getInputProps = (props) => {
         onChange: (val,changeProps = {}) => {
             //下拉特有的双向字段数据绑定
             let { linkageFields,children } = optionConfig;
-            let itemData = changeProps.itemdata || changeProps.itemData;
+            //多选时候第二个参数为itemData
+            let itemData = multiple ? changeProps.map(item => item.itemdata) : (changeProps.itemdata || changeProps.itemData);
+            let itemParentData = multiple ? changeProps.map(item => item.parentdata) : (changeProps.parentdata);
             if (linkageFields) {
                 let vals = {};
                 for (const targetField in linkageFields) {
@@ -102,7 +106,7 @@ const getInputProps = (props) => {
             //如果子集在表单块中，那就需要在把子集field给到该变量
             let blockChildField;
             //寻找子字段（如果子字段存在那肯定就是联动成员，这个过程中主要就是关注表单块的联动）
-            //是否是子字段，成立的条件是子字段所配置的parent属性，是否等于该字段的field 
+            //是否是子字段，成立的条件是子字段所配置的parent属性，是否等于该字段的field  
 
             //普通表单拿取联动
             //遇到表单块时并且表单块中某字段满足条件时，直接使用满足条件的字段即可
@@ -140,7 +144,7 @@ const getInputProps = (props) => {
             //props.fieldConfig.onChange 是配置中的监听change
             //每个组件都必须调用props中的onChange来操作值因为Form.Item只对直接子元素生效，这里需要做异步加载组件。所以有些冲突
             onChange(val);
-            bind(props.fieldConfig.onChange)?.(val,{ ...changeProps,...props,itemData });
+            bind(props.fieldConfig.onChange)?.(val,{ ...changeProps,...props,itemData,itemParentData });
         }
     };
 
@@ -180,10 +184,12 @@ const getInputProps = (props) => {
             inputOtherPorpsData = {
                 headers,
                 fetch,
+                actionBtnsPosition: "bottom",
                 ...qnnTableConfig,
                 qnnFormProps: {
                     ...props
                 },
+
                 antd: {
                     size: "small",
                     ...qnnTableConfig.antd
@@ -219,10 +225,11 @@ const getInputProps = (props) => {
         case "money":
             inputOtherPorpsData.formatter = value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g,',');
             inputOtherPorpsData.parser = value => value.replace(/\$\s?|(,*)/g,'');
-
+            break;
         case "integer":
         case "number":
             inputOtherPorpsData.formatter = formatter;
+            inputOtherPorpsData.parser = parser;
             break;
         default:
             inputOtherPorpsData = { ...inputOtherPorpsData };
@@ -230,10 +237,17 @@ const getInputProps = (props) => {
     }
 
     //用户传入的配置会覆盖掉根据不同控件做的特殊处理配置
-    return {
+    const realInputProps = {
         ...inputOtherPorpsData,
         ...inputBaisePorpsData,
     }
+
+    //禁用的输入控件不能显示placeholder
+    if (disabled) {
+        realInputProps.placeholder = undefined
+    }
+
+    return realInputProps;
 
 }
 

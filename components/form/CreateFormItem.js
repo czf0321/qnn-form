@@ -29,6 +29,8 @@ const CreateFormItem = (props) => {
 
     //传入的formItemStyle (colStyle是老版本组件的名字，兼容一下)
     const _formItemStyle = formItemStyle || colStyle;
+    const oldDisabled = fieldConfig.disabled;
+    const oldHide = fieldConfig.hide;
 
     //可为function的属性在这里统一处理下（所有fieldConfig配置中为func属性在inputs组件中处理 ）
     //处理后需要在传个input
@@ -69,7 +71,9 @@ const CreateFormItem = (props) => {
     //类名设置
     let classN = isMobile() ? `${style.mobileItem} mobileItem` : null;
     if (isMobile() && formItemDisabled) {
-        classN = `${classN} ${style.mobileItemDisabled} mobileItemDisabled`
+        classN = `${classN} ${style.mobileItemDisabled} qnn-form-mobileItemDisabled`
+    } else if (formItemDisabled) {
+        classN = `${classN} ${style.ItemDisabled} qnn-form-ItemDisabled`
     }
 
     //label和输入框的布局
@@ -87,8 +91,9 @@ const CreateFormItem = (props) => {
         labelCol: { xs: { span: 0 } },
         wrapperCol: { xs: { span: 24 } }
     };
-    //&& !fieldConfig?.formItemLayout?.labelCol 移动端暂时不可独立设置formItemLayout
-    if (isMobile() && label && label.length > 6) {
+    
+    //移动端文字多余5将自动换行
+    if (isMobile() && label && label.length > 6 && !fieldConfig?.formItemLayout?.labelCol) {
         delfaultFormItemLayout = longLabel;
     } else if (isMobile() && type === "richtext") {
         delfaultFormItemLayout = longLabel
@@ -105,7 +110,6 @@ const CreateFormItem = (props) => {
     const realDependencie = newDependencies.map(dependencie => dependencie.split('.'));
 
     const realName = Array.isArray(field) ? field : field?.split('.');
-
     //formItem的props
     const formItemProps = {
         name: realName,
@@ -158,8 +162,7 @@ const CreateFormItem = (props) => {
             for (let key in regex) {
                 if (regex.hasOwnProperty(key)) {
                     const targetValue = regex[key]; //给定的目标值
-                    const fieldValue = form.getFieldValue(Array.isArray(key) ? key : key.split('.')); //获取的目标字段值
-
+                    const fieldValue = form.getFieldValue(Array.isArray(key) ? key : key.split('.')); //获取的目标字段值 
                     //这里的条件满足情况可以再研究...
                     if ((targetValue === fieldValue) && (action === "disabled")) {
                         setFormItemDisabled(true);
@@ -190,7 +193,7 @@ const CreateFormItem = (props) => {
     //主要目的就是为了在label可以被点击的情况下，input被警用后点击也将要被禁用、input隐藏label也将隐藏
     //造成原因是 字段依赖项更新后 只是重新渲染formItem的子集 而不重新渲染整个formItem
     const updateFormItemFns = {
-        updateFormItemDisabled: (status = disabled()) => { 
+        updateFormItemDisabled: (status = disabled()) => {
             if (status !== formItemDisabled) {
                 setFormItemDisabled(status)
             }
@@ -245,7 +248,7 @@ const CreateFormItem = (props) => {
                     if (condition) {
                         //每次输入框重新渲染都将调用条件方法
                         conditionAction();
-                    } else if (parent) {
+                    } else if (parent && oldDisabled !== true && oldDisabled !== false) {
                         //无限联动处理，禁用或者启用子集
                         if (!form.getFieldValue(parent.split('.')) && !formItemDisabled) {
                             updateFormItemFns.updateFormItemDisabled?.(true);
@@ -253,21 +256,24 @@ const CreateFormItem = (props) => {
                             updateFormItemFns.updateFormItemDisabled?.(false);
                         }
                     } else {
-                        //禁用和隐藏和formItem有管理所以需要从formItem处理完后传入使用
-                        if (typeof hide === 'boolean' || typeof hide === 'function' || typeof hide === 'string') {
-                            updateFormItemFns.updateFormItemHide?.();
+                        //直接等于 boolean 值时候就无需在执行方法了
+                        if (oldDisabled !== true && oldDisabled !== false) {
+                            if (typeof disabled === 'boolean' || typeof disabled === 'function' || typeof disabled === 'string') {
+                                updateFormItemFns.updateFormItemDisabled?.();
+                            }
                         }
-                        if (typeof disabled === 'boolean' || typeof disabled === 'function' || typeof disabled === 'string') {
+                        if (oldHide !== true && oldHide !== false) {
+                            if (typeof hide === 'boolean' || typeof hide === 'function' || typeof hide === 'string') {
+                                updateFormItemFns.updateFormItemHide?.();
+                            }
+                        }
 
-                            updateFormItemFns.updateFormItemDisabled?.();
-                        }
                     }
-
                     return <Form.Item
-                        {...formItemProps}
+                        {...formItemProps} 
                         noStyle={noStyle || formItemHide}
                         label={_label() || <div style={_labelStyle}>{label}</div>}
-                        colon={label ? true : false}
+                        colon={label ? (true) : false}
                     >
                         {React.cloneElement(props.children,{
                             qnnformData,

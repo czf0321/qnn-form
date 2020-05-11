@@ -85,7 +85,7 @@ const TestAreaComponent = (props) => {
                 }}
             >
                 <Input.TextArea
-                    autosize={{ minRows: 3,maxRows: 12 }}
+                    autoSize={{ minRows: 3,maxRows: 12 }}
                     {...inputProps}
                     //因为不同组件值取得不一样，所以需要转换好传回去
                     onChange={(e) => {

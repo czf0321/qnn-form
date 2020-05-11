@@ -154,7 +154,7 @@ const getRules = ({ type,required,message,typeMessage,diyRules,btnfns }) => {
             basic.push({
                 validator: (rule,value) => {
                     if (value) {
-                        let phoneReg = new RegExp(/^1(?:3\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\d|9\d)\d{8}$/);
+                        let phoneReg = new RegExp(/^1(?:3\d|4[4-9]|5[0-35-9]|6[[2,5,6,7]|7[013-8]|8\d|9\d)\d{8}$/);
                         let specialPlaneReg = new RegExp(/^0\d{2,3}-\d{7,8}$/);
                         if (!phoneReg.test(value) && !specialPlaneReg.test(value)) {
                             return Promise.reject("请输入正确的格式");

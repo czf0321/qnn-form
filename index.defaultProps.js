@@ -10,6 +10,7 @@ export default {
     tabsIndex: "0",
     headers: {},
     formConfig: [],
+    formContentScroll:true,
     fetch: (apiName,body) => {
         return new Promise((resolve) => {
             fetch(apiName,{
@@ -64,11 +65,11 @@ export default {
     },
     formItemLayout: {
         labelCol: {
-            xs: { span: 6 },
+            xs: { span: 7 },
             sm: { span: 4 }
         },
         wrapperCol: {
-            xs: { span: 18 },
+            xs: { span: 17 },
             sm: { span: 20 }
         }
     },

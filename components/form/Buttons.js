@@ -3,7 +3,8 @@ import { Form,Button } from "antd";
 import { PlusOutlined,DeleteOutlined,EditOutlined } from '@ant-design/icons';
 
 const ButtonDom = ({
-    btns = [],form,
+    btns = [],
+    form,
     fns: { isMobile,BindComKey,bind,tool,getValues,fetch,msg },
     qnnformData: { isInQnnTable },
     funcCallBackParams
@@ -23,7 +24,7 @@ const ButtonDom = ({
             affirmYes = "",affirmNo = "",
         } = btnConfig;
         let fetchConfig = bind(btnConfig.fetchConfig)(funcCallBackParams({ form }));
-
+  
         //先验证拿值 
         getValues(isValidate).then((vals) => {
 
@@ -38,7 +39,7 @@ const ButtonDom = ({
                     if (delParams.length) { params = tool.delParams(params,delParams) }
 
                     const response = await fetch(apiName,params);
-                    const { success,data,message } = response;
+                    const { success,message } = response;
                     if (!success) {
                         msg.error(message)
                     } else {
@@ -108,6 +109,7 @@ const ButtonDom = ({
                     if (regex.hasOwnProperty(key)) {
                         const targetValue = regex[key]; //给的值
                         const fieldValue = form.getFieldValue([key]); //获取的表单支 
+                        // console.log('渲染',fieldValue)
                         if (targetValue !== fieldValue) {
                             _pass = false;
                         }
@@ -134,7 +136,7 @@ const ButtonDom = ({
                     }
                 }
             }
-        } 
+        }
         return (
             <Button
                 style={buttonStyle}

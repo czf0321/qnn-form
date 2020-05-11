@@ -6,7 +6,7 @@ import { Row } from "antd";
 
 //不可增加的表单块
 const FormBlock = (fieldConfig) => {
-    const { style,disabled,formFields,field,qnnFormConfig = {},formItemLayout = {},label,labelStyle = {},titleStyle = {},CreateFormItemEle } = fieldConfig;
+    const { style,disabled,formFields,field,qnnFormConfig = {},formItemLayout = {},label,labelStyle = {},titleStyle = {},formBlockStyle = {},formBlockFormStyle = {},CreateFormItemEle } = fieldConfig;
 
     //兼容写法(不在建议写qnnFormConfig，推荐使用formFields)
     const qnnFormConfig_formConfig = qnnFormConfig.formConfig;
@@ -35,7 +35,7 @@ const FormBlock = (fieldConfig) => {
         $(`#${blockId}`).slideToggle()
     }
 
-    return <div className={`${style.qnnFormBlock} qnnFormBlock ${closeed ? (style.qnnFormBlockCloseed + " qnnFormBlockCloseed") : null}`}>
+    return <div style={formBlockStyle} className={`${style.qnnFormBlock} qnnFormBlock ${closeed ? (style.qnnFormBlockCloseed + " qnnFormBlockCloseed") : null}`}>
         <div className={style.formBlockTitle} style={titleStyle}>
             <span style={labelStyle}>{label}</span>
             {/* 收缩按钮 */}
@@ -45,7 +45,7 @@ const FormBlock = (fieldConfig) => {
                 {closeed ? <a><DownOutlined /> 展开</a> : <a><UpOutlined /> 收缩</a>}
             </span>
         </div>
-        <div id={blockId}>
+        <div id={blockId} style={formBlockFormStyle}>
             <Row className={style.row}>
                 {
                     fields.map(childFieldConfig => {

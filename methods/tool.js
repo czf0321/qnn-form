@@ -29,12 +29,31 @@ const tool = {
 
     //如果tabs是配置不存在将直接return formConfig
     //将tabs中的所有tab页是qnnForm的formConfig字段合并到一个数组中return出去
-    getAllFormField: ({ tabs = [],formConfig = [] }) => {
+    //onlyFormatValue 为仅仅只是取值时候格式化
+    getAllFormField: ({ tabs = [],formConfig = [],onlyFormatValue }) => {
         let formFields = formConfig;
         //1、将tabs情况下各个qnnForm类型的表单字段集合
         if (tabs.length) {
             formFields = [].concat(...tabs.filter(item => (item.name === "qnnForm" || item.type === "qnnForm")).map(item => item.content.formConfig));
         }
+
+        //1-1、描述式表单 需要将children提取出来
+        //先格式化为二维数组 然后进行合并  需要注意自己field
+        if (onlyFormatValue) {
+            formFields = formFields.map(item => {
+                let arrE = [item];
+                if (item.children && item.children.formConfig) {
+                    item.children.formConfig.forEach(childItem => {
+                        arrE.push({
+                            ...childItem,
+                            field: `${item.field}.${childItem.field}`
+                        })
+                    })
+                }
+                return arrE;
+            }).reduce((prve,curItem) => prve.concat(curItem),[]);
+        }
+
 
         //2、兼容linkage类型的字段
         let linkageFields = [];
@@ -159,7 +178,7 @@ const tool = {
 
         if (type === "get") {
             formConfig.forEach(fieldConfig => {
-                let { type,field,pushJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple } = fieldConfig;
+                let { type,field,scope,pushJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple } = fieldConfig;
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
                 let itemValue = tool.getDataValByField(field,values);
 
@@ -180,7 +199,14 @@ const tool = {
                         case "month":
                         case "year":
                         case "week":
-                            formatedData[field] = moment(itemValue).valueOf();
+                            if (scope) {
+                                formatedData[field] = {
+                                    value: itemValue.value ? moment(itemValue.value).valueOf() : itemValue.value,
+                                    scope: itemValue.scope
+                                };
+                            } else {
+                                formatedData[field] = moment(itemValue).valueOf();
+                            }
                             break;
                         case "rangeDate":
                             formatedData[field] = [moment(itemValue[0]).valueOf(),moment(itemValue[1]).valueOf()];
@@ -212,7 +238,7 @@ const tool = {
                     console.warn("字段配置为空！！！请检查")
                     return;
                 }
-                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple } = fieldConfig;
+                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,scope } = fieldConfig;
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
 
                 //field可能是个嵌套  
@@ -234,10 +260,29 @@ const tool = {
                         case "datetime":
                         case "month":
                         case "year":
-                            formatedData[field] = isMobile() ? new Date(itemValue) : moment(itemValue);
+                            if (scope) {
+                                formatedData[field] = isMobile() ? {
+                                    ...itemValue,
+                                    value: new Date(itemValue.value)
+                                } : {
+                                        ...itemValue,
+                                        value: moment(itemValue.value)
+                                    };
+                            } else {
+                                formatedData[field] = isMobile() ? new Date(itemValue) : moment(itemValue);
+                            }
+                            break;
                         //周组件使用的pc端组件
                         case "week":
-                            formatedData[field] = moment(itemValue);
+                            if (scope) {
+                                formatedData[field] = {
+                                    ...itemValue,
+                                    value: moment(itemValue.value)
+                                };
+                            } else {
+
+                                formatedData[field] = moment(itemValue);
+                            }
                             break;
                         case "rangeDate":
                             formatedData[field] = [moment(itemValue[0]),moment(itemValue[1])];
@@ -336,20 +381,20 @@ const tool = {
             getFieldValue: (name) => form?.getFieldValue?.(getArrayName(name)),
             getFieldsValue: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.getFieldsValue?.(names);
+                return form.getFieldsValue?.((names.length ? names : undefined));
             },
             getFieldError: (name) => form.getFieldError(getArrayName(name)),
             getFieldsError: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.getFieldsError(names);
+                return form.getFieldsError((names.length ? names : undefined));
             },
             resetFields: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.resetFields(names);
+                return form.resetFields((names.length ? names : undefined));
             },
             validateFields: (names = [],...args) => {
                 names = names.map(item => getArrayName(item));
-                return form.validateFields(names,...args);
+                return form.validateFields((names.length ? names : undefined),...args);
             },
             validateFieldsAndScroll: (nameList,cb) => {
                 let names;
@@ -539,6 +584,55 @@ const tool = {
         }
         loopChildren(children);
         return formConfig;
+    },
+
+    // 读取所有子集配置 也就是parent链接
+    // @formConfig  总字段配置 
+    // @field  总字段配置 
+    // ()=>无限联动子集关系链 {..., realField:表单块中的字段会拼接上表单块id}
+    getChildren: (formConfig = [],field) => {
+        const children = [];
+
+        const getFn = (formConfig = [],field) => {
+            //是联动字段在切换值时候需要寻找子字段，并且给子字段设置下拉选项
+            let childFieldByInFormBlock;
+            //用于储存下拉值的key使用 
+            let blockField;
+            //如果子集在表单块中，那就需要在把子集field给到该变量
+            let blockChildField;
+
+            const childField = formConfig.filter(item => {
+                let { formFields,type,qnnFormConfig = {} } = item;
+
+                if (type === "qnnForm") {
+                    //兼容写法(不建议写qnnFormConfig，推荐使用formFields)
+                    const qnnFormConfig_formConfig = qnnFormConfig.formConfig;
+                    const fields = formFields ? formFields : qnnFormConfig_formConfig;
+                    childFieldByInFormBlock = fields.filter(childFieldCon => childFieldCon.parent === (Array.isArray(field) ? field.join('.') : field))[0];
+
+                    //拿到表单块的 块id
+                    if (childFieldByInFormBlock) {
+                        blockField = item.field;
+                        blockChildField = childFieldByInFormBlock.field
+                    }
+                }
+                //field可能是个数组，因为在表单块里的字段field都是数组 是数组的话需要用逗号拼接下
+                return (item.parent === (Array.isArray(field) ? field.join('.') : field) || childFieldByInFormBlock)
+            })[0];
+            if (childField) {
+                const _fieldConfig = (childFieldByInFormBlock || childField);
+                const realField = blockField ? `${blockField}.${(blockChildField ? blockChildField : _fieldConfig.field)}` : _fieldConfig.field;
+                children.push({
+                    ...childField,
+                    realField: Array.isArray(realField) ? realField.join('.') : realField,
+                });
+                //继续继续递归
+                getFn(formConfig,childField.field);
+            }
+        }
+        getFn(formConfig,field);
+
+        return children;
     }
 }
 export default tool;

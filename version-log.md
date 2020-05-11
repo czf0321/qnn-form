@@ -1,51 +1,89 @@
-##### 1.0.1
 
-        修复上传组件上传失败后会将失败值传递给后台
+### 1.xx +1. xx +0
+
+    新增 日期时间配置scope，可选择一个范围
+    新增 formContentScroll配置
+    新增 formBlockStyle 用以设置表单块的样式
+    新增 formBlockFormStyle 用以设置表单块中的表单样式
+    新增 optionDataGroup 用以设置下拉数据分组
+
+    修整 ts声明文件
+
+    修复 富文本组件会报错问题
+    修复 表单块初期値设置不上问题
+    修复 未配置表单字段时获取值报错问题
+
+    修改 上传组件中文件列表名字折行显示
+
+##### 1.2.9
+
+    修复 移动端表单布局失效问题 
+    修复 隐藏式搜索表头不支持下拉多选问题
+    修复 富文本层级过高问题
+    优化 富文本必填提示边框为红色
+    优化 表格间隔尺寸（实则为table组件的更新。暂写到此处）
+
+
+##### 1.1.5
+
+    新增 描述式表单
+
+    修复 一些问题...
+    
+    修改 在禁用情况下不显示输入框占位符 和 小图标
+
+##### 1.0.4
+
+    修复按钮显隐无效问题
+    修复联动组件回显问题
+    修复textArea组件自适应高度
+    修复下拉组件在禁用时的样式
+    修复上传组件上传失败后会将失败值传递给后台
 
 
 ##### 1.0 升级提示：
 
-        原： ≈7400 行代码
-        现： ≈4900 行代码
-        节省 30%+ 代码
+    原： ≈7400 行代码
+    现： ≈4900 行代码
+    节省 30%+ 代码
 
-        性能方面跟原来的不在一个层面
-        并且新增和修复较多功能
+    性能方面跟原来的不在一个层面
+    并且新增和修复较多功能
 
 ##### 全局配置：
 
-        新增 initialValues配置可将初始值配置到一个对象中（推荐将初始值设置方式改为这种方式）
+    新增 initialValues配置可将初始值配置到一个对象中（推荐将初始值设置方式改为这种方式）
 
-        配置中传入的fetch方法 名字必须为fetch（以前版本可为myFetch）
-        配置中无需传入form对象
-        配置中无需传入history对象
-        配置中无需传入match对象
+    配置中传入的fetch方法 名字必须为fetch（以前版本可为myFetch）
+    配置中无需传入form对象
+    配置中无需传入history对象
+    配置中无需传入match对象
 
-        字段配置formConfig 只可使用props传入方式更新
-        配置中强烈建议使用bind方法绑定方法而不是直接将方法赋值到配置中，否则性能将下降很多！！！
+    字段配置formConfig 只可使用props传入方式更新
+    配置中强烈建议使用bind方法绑定方法而不是直接将方法赋值到配置中，否则性能将下降很多！！！
 
-        修改 绑定自定义组件方式支持：ReactDom(包括函数组件)、string、compontKey形式
+    修改 绑定自定义组件方式支持：ReactDom(包括函数组件)、string、compontKey形式
 
-        尽量避免使用form.setFieldsValue设置值，而是组件的setValues方法
+    尽量避免使用form.setFieldsValue设置值，而是组件的setValues方法
 
-        修改表单值操作不可使用 props.form.xxx 必须使用qnnForm提供的form对象
+    修改表单值操作不可使用 props.form.xxx 必须使用qnnForm提供的form对象
 
 ##### 字段通用配置
 
-        新增 dependencies依赖项配置 [不兼容]
-        新增 locInfo 配置可直接获取用户地址信息（使用前请确保微信sdk正确配置和百度地图cdn正确引入），可获取得信息如下：
-        详细地址address  省province  城市city  区域district  街道street  经度longitude  纬度latitude
-        新增 noStyle配置可设置字段无样式
+    新增 dependencies依赖项配置 [不兼容]
+    新增 locInfo 配置可直接获取用户地址信息（使用前请确保微信sdk正确配置和百度地图cdn正确引入），可获取得信息如下：
+    详细地址address  省province  城市city  区域district  街道street  经度longitude  纬度latitude
+    新增 noStyle配置可设置字段无样式
 
-        修改 labelCanClick属性可直接配置为布尔值
-        修改 btnCallbackFn对象中的myFetch改名为fetchByCb（方便区分）
-        修改 去除condition配置中的show动作，因为是多余的无实际意义
-        修改 colStyle 命名为 formItemStyle
-        修改 colWrapperStyle 命名为 formItemWrapperStyle
+    修改 labelCanClick属性可直接配置为布尔值
+    修改 btnCallbackFn对象中的myFetch改名为fetchByCb（方便区分）
+    修改 去除condition配置中的show动作，因为是多余的无实际意义
+    修改 colStyle 命名为 formItemStyle
+    修改 colWrapperStyle 命名为 formItemWrapperStyle
 
-        condition配置存在时，hide和disabled配置将失去意义并且无效
+    condition配置存在时，hide和disabled配置将失去意义并且无效
 
-        修改 用于改变label样式的labelStyle配置可对任意类型字段配置，包括表单块的标题
+    修改 用于改变label样式的labelStyle配置可对任意类型字段配置，包括表单块的标题
 
 ##### 下拉、分页下拉类型字段
 

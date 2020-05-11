@@ -1,7 +1,7 @@
 import tool from "./tool"
-import { fromJS } from "../lib" 
+import { fromJS } from "../lib"
 //@isValidate boolean|string(curTab时只验证当前tab页面的表单项) 是否验证
-const getValues = function (isValidate, cb) { 
+const getValues = function (isValidate,cb) {
     const { tabs = [],tabsIndex } = this.state;
     const { children } = this.props;
     //jsx风格是么有这个的 需要手动查询出来
@@ -11,9 +11,8 @@ const getValues = function (isValidate, cb) {
     if (children && !formConfig.length && !tabs.length) {
         formConfig = tool.getFieldsByJSX(children);
     }
-
-    return new Promise((resolve) => { //,reject 
-        let fv = (values) => tool.formatData(values,tool.getAllFormField({ tabs,formConfig }),"get");
+    return new Promise((resolve) => {
+        let fv = (values) => tool.formatData(values,tool.getAllFormField({ tabs,formConfig,onlyFormatValue: true }),"get");
         if (isValidate) {
             //需要验证字段
             if (isValidate === "curTab" && tabs.length) {
@@ -28,13 +27,17 @@ const getValues = function (isValidate, cb) {
                     this.form.scrollToField(errs.errorFields[0]?.name);
                 });
             } else {
-                this.form.validateFields().then(values => {  
+                console.assert(this.form,'form对象不存在   ---qnnForm getValues提示')
+                this.form?.validateFields().then(values => {
                     resolve(fv(values));
                     cb && cb(fv(values));
                 }).catch(async errs => {
+                    if (errs) {
+                        console.error(errs)
+                    }
                     //tab错误是跳转到对应tab
                     //只获取第一个错误
-                    if (tabs.length) {
+                    if (tabs?.length) {
                         const errFieldConfig = tool.getFieldConfig(errs.errorFields[0].name.join('.'),{
                             formConfig,tabs
                         });
@@ -44,12 +47,12 @@ const getValues = function (isValidate, cb) {
                             this.form.validateFields()
                         }
                     }
-                    this.form.scrollToField(errs.errorFields[0]?.name);
+                    this.form.scrollToField(errs?.errorFields?.[0]?.name);
                 });
             }
         } else {
             //无需验证字段
-            const values = this.form.getFieldsValue(); 
+            const values = this.form?.getFieldsValue();
             resolve(fv(values));
             cb && cb(fv(values));
         }

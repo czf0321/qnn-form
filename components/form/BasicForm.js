@@ -6,6 +6,7 @@ import FormBlockCanAdd from "./FormBlockCanAdd"
 import { DeleteOutlined,PlusOutlined } from '@ant-design/icons';
 import { Form,Button,Skeleton,Row,Col } from "antd";
 const Buttons = React.lazy(() => import("./Buttons"));
+const DescriptionsForm = React.lazy(() => import("./DescriptionsForm"));
 
 //基本表单
 const BasicForm = (props) => {
@@ -24,7 +25,9 @@ const BasicForm = (props) => {
         field = "basic",
         formConfig = [],
         tabs = [],btns = [],
-        formItemLayout,tailFormItemLayout
+        formItemLayout,tailFormItemLayout,
+        formType,
+        formContentScroll = true
     } = qnnformData;
 
     //说明是tab页面 配置数据需要用tab中的配置
@@ -39,22 +42,49 @@ const BasicForm = (props) => {
     //获取到初始值
     const initialValues = getInitialValues({ formConfig: [...fromJS(formConfig).toJS()],fns,funcCallBackParams,qnnformData,tabs: [...fromJS(tabs).toJS()] });
 
-    return <Form
-        name={field}
-        form={form}
-        ref={(me) => {
-            props.getForm(me);
+    const ButtonsNode = (<Buttons
+        qnnformData={qnnformData}
+        fns={fns}
+        funcCallBackParams={funcCallBackParams}
+        btns={btns} form={form}
+        tailFormItemLayout={tailFormItemLayout} />);
+
+    const formProps = {
+        name: field,
+        form: form,
+        ref: () => {
+            props.getForm(form);
             //如果是tab表单需要刷新值
             if (tabFormConfig) {
                 getTabsValueByFetch()
             }
-        }}
-        initialValues={initialValues}
-        className={`${style.form} qnn-form-form`}
-        {...formItemLayout}
+        },
+        initialValues: initialValues,
+        className: `${style.form} qnn-form-form`,
+        ...formItemLayout
+    }
+
+    //渲染描述式表单
+    if (formType === 'descriptions') {
+        return <Form
+            {...formProps}
+        >
+            <Suspense fallback={<Skeleton />}>
+                <DescriptionsForm
+                    {...props}
+                    getForm={() => props.getForm(form)}
+                />
+                {btns.length ? ButtonsNode : null}
+            </Suspense>
+        </Form>
+    }
+
+    // 普通表单
+    return <Form
+        {...formProps}
     >
         {/* 加一层用于和按钮做flex布局并且不能影响form */}
-        <div className={`${style.formContent} qnn-form-formContent`}>
+        <div className={`${style.formContent} qnn-form-formContent ${formContentScroll === false ? style.formContentNoScroll : null}`}>
             <Row className={`${style.row}`}>
                 {
                     formConfig.map((fieldConfig) => {
@@ -86,6 +116,12 @@ const BasicForm = (props) => {
                                 //兼容写法(不在建议写qnnFormConfig，推荐使用formFields)
                                 const qnnFormConfig_formConfig = qnnFormConfig.formConfig;
                                 const fields = formFields ? formFields : qnnFormConfig_formConfig;
+                                const fieldsInitialValue = fields?.reduce((pre,cur) => {
+                                    if (cur.initialValue) {
+                                        pre[cur.field] = cur.initialValue
+                                    }
+                                    return pre;
+                                },{});
                                 const defaultTextObj = {
                                     add: "新增信息",del: "删除",
                                     ...textObj
@@ -102,6 +138,8 @@ const BasicForm = (props) => {
                                         //表单块比较特殊的是在设置值时候也需要更新，否则不会主动更新
                                         //注意：调用这个方法不是覆盖某个字段  而是全部表单块的全部字段
                                         getSetValueFn={(fn) => setCanAddBlocksUpdateValueFn(field,fn)}
+                                        fieldsInitialValue={fieldsInitialValue}
+                                        fns={fns}
                                     >
                                         {(props) => {
                                             const { addBlock,removeBlock,value = [] } = props;
@@ -142,6 +180,8 @@ const BasicForm = (props) => {
                                                         icon={<PlusOutlined />}
                                                         block={isMobile()}
                                                         type="primary"
+                                                        // ghost
+                                                        // type="dashed"
                                                         style={addBtnStyle} onClick={() => addBlock()}
                                                         className={`${style.addBlockBtn} addBlockBtn`}>
                                                         {defaultTextObj.add}
@@ -161,14 +201,7 @@ const BasicForm = (props) => {
             </Row>
         </div>
         {
-            btns.length ? <Suspense fallback={<Skeleton />}>
-                <Buttons
-                    qnnformData={qnnformData}
-                    fns={fns}
-                    funcCallBackParams={funcCallBackParams}
-                    btns={btns} form={form}
-                    tailFormItemLayout={tailFormItemLayout} />
-            </Suspense> : null
+            btns.length ? <Suspense fallback={<Skeleton />}> {ButtonsNode}  </Suspense> : null
         }
 
     </Form>

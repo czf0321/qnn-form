@@ -10,7 +10,6 @@ import sByZJ from "./style/default.less"; //中交样式
 import { CreateForm } from "./components/form"
 import { withRouter } from "react-router-dom";
 import { Spin } from "antd";
-
 //可选样式
 const styles = {
     "0": sByZJ,
@@ -24,10 +23,13 @@ class QnnForm extends Component {
 
     static getDerivedStateFromProps(props,state) {
         const _props = { ...props };
-        let { fetchConfig,formConfig = [],tabs = [],data } = _props;
+        let { fetchConfig,formConfig = [],tabs = [],btns = [],data } = _props;
 
         if ((typeof tabs) === "function") {
             tabs = tabs(props);
+        }
+        if ((typeof btns) === "function") {
+            btns = btns(props);
         }
         if ((typeof formConfig) === "function") {
             formConfig = formConfig(props);
@@ -75,6 +77,16 @@ class QnnForm extends Component {
             }
         }
 
+        //btns改变
+        if (Array.isArray(btns)) {
+            const propsbtnsDataformJs = fromJS(btns);
+            const statebtnsDataformJs = fromJS(state.btns);
+            if (!is(propsbtnsDataformJs,statebtnsDataformJs)) {
+                //防止值被改变  
+                newState.btns = btns;
+            }
+        }
+
         //fetchConfig改变后需要刷新数据
         //进行比较 判断是否需要刷新 
         const oFetchConfig = state.fetchConfig;
@@ -104,17 +116,21 @@ class QnnForm extends Component {
             qnnFormContextHeight,styleType,
             fetch,myFetch,
             initialValues = {},
-            btns = [],
             tabsIndex, //这两是一样的，只是兼容写法
             isInQnnTable, //在table中会自动带过来
             data,
             fieldsValueChange,
-            field
+            field,
+            formType,
+            descriptionsConfig,
         } = this.props;
 
-        let { formConfig = [],tabs = [],fetchConfig } = this.props.tabs;
+        let { formConfig = [],tabs = [],btns,fetchConfig } = this.props.tabs;
         if ((typeof tabs) === "function") {
             tabs = tabs(props);
+        }
+        if ((typeof btns) === "function") {
+            btns = btns(props);
         }
         if ((typeof formConfig) === "function") {
             formConfig = formConfig(props);
@@ -143,8 +159,8 @@ class QnnForm extends Component {
         this.getValues = getValues.bind(this);
         this.setValues = setValues.bind(this);
         this.setTabsIndex = setTabsIndex.bind(this);
-        this.getTabsIndex = () => this.state.tabsIndex,
-            this.setActiveKey = this.setTabsIndex;
+        this.getTabsIndex = () => this.state.tabsIndex;
+        this.setActiveKey = this.setTabsIndex;
         this.refresh = refresh.bind(this);
         this.form = null;
 
@@ -204,6 +220,10 @@ class QnnForm extends Component {
             isInQnnTable: isInQnnTable,
             fieldsValueChange,
             field,
+            values: null, //没有实际用处，但是请求完值后需要重新渲染表单和按钮什么的，所有需要设置下
+
+            formType: formType, //表单类型
+            descriptionsConfig, //描述式表单的表单配置
         };
 
         //绑定给按钮点击后回调使用的方法
@@ -251,7 +271,6 @@ class QnnForm extends Component {
         this.funcCallBackParams = (args = {}) => {
             //this.form在实例化的时候是没有的，需要等form组件实例化完后才有的，但是在实例化的过程中可能需要用到，所以在需要用到的时候手动传入即可
             const { form = this.form } = args;
-
             return {
                 ...this.props,
                 props: {
@@ -291,10 +310,10 @@ class QnnForm extends Component {
 
     componentDidMount() {
         this._isMounted = true;
-
         //如果是tabs页面而且当前tab页面是qnnForm类型的表单需要请求当前表单的值 
         //非tab页面直接执行refresh即可
         const { tabsIndex,tabs = [] } = this.state;
+        // console.log(tabs)
         tabs.length && this.setTabsIndex(tabsIndex);
     }
 
@@ -315,12 +334,16 @@ class QnnForm extends Component {
     getCanAddBlocksUpdateValueFn = (field) => field ? this.canAddBlocksUpdateValueFn[field] : this.canAddBlocksUpdateValueFn;
 
     render() {
-        const { fieldsValueChange,loadingByForm,field,isInQnnTable,formConfig,tabs,btns,tailFormItemLayout,formItemLayout,initialValues = {},tabsIndex,isNeedRefresh } = this.state;
-        const { history,match,location,upload,componentsKey,headers,children } = this.props;
+        const {
+            fieldsValueChange,loadingByForm,field,isInQnnTable,formConfig,tabs,btns = [],tailFormItemLayout = {},formItemLayout = {},initialValues = {},tabsIndex,isNeedRefresh,
+            formType, //表单类型
+            descriptionsConfig
+        } = this.state;
+        const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll } = this.props;
         const qnnFormStyle = this.props.style || {};
-        // console.log('%c 表单组件渲染','font-size:20px; color:red', formConfig)
+        // console.log('%c 表单组件渲染','font-size:20px; color:red',formConfig)
         return (
-            <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${!btns.length ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''}`} style={{ ...qnnFormStyle }}>
+            <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''}`} style={{ ...qnnFormStyle }}>
                 <Spin spinning={loadingByForm} style={{ margin: "24px auto",display: "block",textAlign: "center",height: "100%" }} tip="loading...">
                     <CreateForm
                         //所有方法 的回调形参
@@ -391,7 +414,16 @@ class QnnForm extends Component {
 
                             qnnFormProps: this.props,
 
-                            field: field
+                            field: field,
+
+                            formType, //表单类型
+                            descriptionsConfig,
+
+                            //某系情况下createForm中不单独创建form 而是使用这个传入的form
+                            formByQnnForm,
+
+                            //表单内容是否滚动
+                            formContentScroll: formContentScroll
                         }}
 
                         children={children}

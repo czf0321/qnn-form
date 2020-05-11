@@ -3,10 +3,8 @@
     <center>
     基于antd、antd-mobile开发，可将纯配置部分和jsx部分做到完全分离开来。<br/>
     移动、pc两端皆可用,  无需在对表单中的数据进行手动操作，一切组件都给你做好了<br/>
-    20多种字段验证、字段动态显隐、tab页面、40多种输入控件...（除了使用内置的外亦可自定义）<br/>
-    你只需要关注你需要什么输入控件即可！<br/>
-    <a>如觉不错，可否给个 star </a>
-    <a>未完全开源、部分特殊组件受限，但完全可自行使用自定义组件填补</a>
+    20多种字段验证、字段动态显隐、tab页面、40多种输入控件...<br/>
+    你只需要关注你需要什么输入控件即可！
     </center>
 <h4><br/><br/>
 
@@ -19,12 +17,6 @@
     可使用 vsCode qnn 扩展进行更加愉快的配置
 
 ---
-
-#### 预览
- 
- ![alt 属性文本](./preview/basic.png)
-
- ![alt 属性文本](./preview/tabs.png)
 
 #### 文档导航
 
@@ -46,6 +38,7 @@
     <li><b><a href="#func">一些方法调用</a></li>
     <li><b><a href="#bind">绑定内置方法</a></li>
     <li><b><a href="#JSX">JSX风格调用</a></li>
+    <li><b><a href="#descriptForm">描述式表单</a></li>
  
 </ul>
 
@@ -186,7 +179,8 @@
     </tr>   
 </table>
 
-#### <a id="example">使用实例</a> 
+#### <a id="example">使用实例</a>
+
     import React,{ Component } from "react";
     import QnnForm from "../modules/qnn-table/qnn-form";
 
@@ -223,7 +217,7 @@
                             placeholder: '请输入',
                             max:99,
                             onChange:"bind:ageChange"
-                        } 
+                        }
                     ]
 
                     method={{
@@ -417,6 +411,14 @@
             移动端时 tab页面表单页面高度 （一般为：window.innerHeight - 45（tab容器高）, 如果上面顶部还加有导航条等需要继续减去导航条的高度）
             [number]
             qnnFormContextHeight
+
+            表单字段改变时候的监听
+            fieldsValueChange:({ form, name },changedFields, values)=>{}
+
+            表单内容是否滚动
+            使用场景：在移动端某些情况下 除了表单外还有其他元素时需要使用  默认 true  [boolean]
+            formContentScroll:true 
+            
 
 #### <a id="common">通用属性说明</a>
 
@@ -870,7 +872,9 @@
         max: 99, //最大值
         min: 20, //最大值
         precision: 2, //数值精度
-        // formatter:function(value){return value + '$'}, //格式化显示
+        格式化显示
+        formatter: value => value ? `${value.replace ? value.replace(/(万|元)/ig,'') : value}万元` : value,
+        parser: value => value ? value.replace(/(万|元)/ig,'') : value
     }
 
 #### <a id="integer">整数</a>
@@ -928,6 +932,7 @@
         type: "year",
         label: "年选择",
         field: "year", //唯一的字段名 ***必传
+        scope:false, //是否可选择范围
     }
 
 #### <a id="week">周选择</a>
@@ -936,6 +941,7 @@
         type: "week",
         field: "week",
         label: "周选择",
+        scope:false, //是否可选择范围
     },
 
 #### <a id="month">年月 YYYY-MM</a>
@@ -944,7 +950,8 @@
         type: "month",
         label: "年月选择",
         field: "month", //唯一的字段名 ***必传
-        placeholder: "请选择"
+        placeholder: "请选择",
+        scope:false, //是否可选择范围
     }
 
 #### <a id="date">日期 yyyy-mm-dd</a>
@@ -957,6 +964,7 @@
         required: true,
         format:"YYYY-MM-DD",
         showTime:false, //不显示时间
+        scope:false, //是否可选择范围
     }
 
 #### <a id="dateTime">日期时间 YYYY-MM-DD HH:mm:ss</a>
@@ -968,6 +976,7 @@
         placeholder: '请选择',
         required: true,
         is24: true,//是否是24小时制 默认true
+        scope:false, //是否可选择范围
     },
 
 #### <a id="time">时间 mm:ss</a>
@@ -979,6 +988,7 @@
         placeholder: '请选择',
         required: true,
         is24: true,//是否是24小时制 默认true2
+        scope:false, //是否可选择范围
     }
 
 #### <a id="component">自定义组件</a>
@@ -1019,6 +1029,8 @@
         showSearch: false, //是否开启搜索功能 (移动端不建议开启)
         pullJoin:false, 多选可能会用到  控制是否拆分后台返回的数据 后台返回数组就无需配置或者配置为false 反之为true
         pushJoin:true, 多选可能会用到  控制是否join给到后台的数据 同pull
+        是否需开启数据分组  开启后需要数据中加入children属性
+        optionDataGroup:false,
         // optionData: [//默认选项数据//可为function (props)=>array
         //     {
         //         name: '01name',
@@ -1439,7 +1451,12 @@
         type: "qnnForm",
         field: "qnnFormField",
         label: "报销细明",
-        addBtnStyle：{}, //底部按钮样式
+        底部按钮样式
+        addBtnStyle：{},
+        表单块容器样式
+        formBlockStyle:{ marginTop:"0px"},
+        表单块中的表单容器样式
+        formBlockFormStyle:{ padding:"0px 12px" }, 
         //文字配置 默认数据如下 [object]
         textObj: {
             add: "添加报销细明",
@@ -1757,6 +1774,45 @@
 
     }
     export default index;
+
+#### <a id="descriptForm">描述式表单说明</a>
+
+    将表格配置为描述式表单只需添加配置
+    config = {
+        将表单类型设置 描述式
+        formType: "descriptions", // dataList为普通表格  descriptions描述式
+
+        描述式表单的配置
+        descriptionsConfig: {
+            title	描述列表的标题，显示在最顶部	[ReactNode]
+            bordered	是否展示边框	[boolean]
+            column	一行的 输入控件 数量，可以写成像素值或支持响应式的对象写法 { xs: 8, sm: 16, md: 24}	[number]	默认4
+            size	设置列表的大小。可以设置为 middle 、small, 或不填（只有设置 bordered={true} 生效）	[default | middle | small]	默认small
+            layout	布局方向	[horizontal | vertical]	默认horizontal
+        },
+
+        ....
+    }
+
+
+    使用描述式表单需要注意以下问题：
+
+        1、描述式表单不支持表单块
+            配置子集方式使用 children 属性设置
+
+            children:{
+                descriptionsConfig:{...},
+                formConfig:[...]
+            }
+
+        2、可使用tdStyle设置单元格的样式 区别于formItemWrapperStyle、formItemStyle、style
+            tdStyle:{
+                width:"30%"
+            }
+
+        3、字段中的span配置不在是栅格的24 而是descriptionsConfig.column的数量  默认span是1
+            children中不可放入hide字段
+            formItem:true 配置将字段从表格中排除开变为一个普通字段
 
 #### <a id="func">方法调用</a>
 

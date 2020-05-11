@@ -1,7 +1,7 @@
 import React,{ useState,useEffect } from "react";
 import { Select,Spin,Empty,Divider,Pagination } from "antd";
 import { getStrTmp } from "../../methods"
-const { Option } = Select;
+const { Option,OptGroup } = Select;
 //下拉组件
 /*
     下拉组件只要有值没有下拉就需要去请求下拉选项数据，否则会显示一个id
@@ -11,9 +11,12 @@ const SelectComponent = (props) => {
     const {
         fieldConfig,
         fns: { fetch,tool,bind },
-        qnnformData: { match },
+        qnnformData: { match,formConfig },
         inputProps,
         getSelectOptionFns,
+        setSelectOptionFns,
+        setSelectRender,
+        getSelectRender,
         form,
         funcCallBackParams
     } = props;
@@ -23,7 +26,7 @@ const SelectComponent = (props) => {
     //输入定时器
     let selectByPagingTimer;
 
-    const { fetchConfig,pageConfig = {},parent,field } = fieldConfig;
+    const { fetchConfig,pageConfig = {},parent,field,optionDataGroup } = fieldConfig;
 
     const defaultOptionConfig = {
         label: "label",
@@ -46,7 +49,7 @@ const SelectComponent = (props) => {
 
     //下拉数据和下拉数据kv配置
     const [optionData,setOptionData] = useState(defaultOption);
-    const [optionConfig] = useState({ ...defaultOptionConfig,...optionConfig });
+    const [optionConfig] = useState({ ...defaultOptionConfig });
 
     //下拉分页使用的
     const [limit] = useState(defaultPageConfig.limit);
@@ -98,6 +101,11 @@ const SelectComponent = (props) => {
         }
     },[inputProps.value]);
 
+    useEffect(() => {
+        //刷新方法其实就是设置下状态让组件重新渲染
+        setSelectRender((Array.isArray(field) ? field.join('.') : field),() => isMonted && setOptionData(getSelectOptionFns((Array.isArray(field) ? field.join('.') : field))))
+    },[]);
+
     //将字符串模板label绑定数据
     const getLabelByStrTmp = (item) => {
         let arrLabel = getStrTmp(label);
@@ -146,6 +154,33 @@ const SelectComponent = (props) => {
         if (success) {
             isMonted && setOptionData(data);
             isMonted && setTotalNumber(totalNumber);
+
+            // 一般是回显需要用到 需要为子集设置下拉选项
+            const childrenFieldConfig = tool.getChildren(formConfig,field);
+            childrenFieldConfig && childrenFieldConfig.forEach((childFieldConfig) => {
+                let { realField } = childFieldConfig;
+                let childValue = form.getFieldValue(realField.split('.'));
+                let childOptionData = [];
+                let children = childFieldConfig.children || optionConfig.children;
+                let getOpteionData = (data = [],childValue) => {
+                    data.forEach(item => {
+                        if (item[value] === childValue) {
+                            childOptionData = data;
+                        } else if (item[children] && item[children].length) {
+                            getOpteionData(item[children],childValue)
+                        }
+                    })
+                }
+                //获取到下拉数据
+                getOpteionData(data,childValue);
+
+                //设置下拉数据
+                setSelectOptionFns(realField,childOptionData);
+
+                //让子组件重新渲染
+                getSelectRender(realField)();
+            });
+
             //当非首次请求时候就无需重复设置fetchOptionDataEd了
             isMonted && !fetchOptionDataEd && !isPageSelectCallBackShow && setFetchOptionDataEd(true);
             //分页下拉回显时候备份回显的下拉选项
@@ -169,6 +204,12 @@ const SelectComponent = (props) => {
         //当请求过了就不需要重新请求了
         isMonted && isPageSelectCallBackShow && setIsPageSelectCallBackShow(false);
         !fetchOptionDataEd && fetchConfig && fetchConfig.apiName && fetchData();
+
+        //无限联动字段需要调用方法来获取下拉选项数据
+        //理论上不会出现这种情况
+        if (parent && !optionData && parent) {
+            setOptionData(getSelectOptionFns((Array.isArray(field) ? field.join('.') : field)))
+        }
     }
 
     //总数样式渲染
@@ -201,7 +242,7 @@ const SelectComponent = (props) => {
             setPage(1);
             setSearchText(val);
         },200)
-    } 
+    }
     //是否需要显示备份的option数据
     let isNeedBackupOption = true;
     return <Select
@@ -232,9 +273,23 @@ const SelectComponent = (props) => {
     >
         {
             optionData && optionData.map((item,index) => {
-                let v = getOptionItemValue(item);
-                if (v === backUpOption.value) { isNeedBackupOption = false }
-                return <Option key={index} value={v} itemdata={item}>{getOptionItemLabel(item)}</Option>
+                if (optionDataGroup) {
+                    // 会存在开启数据分组 的情况 
+                    return <OptGroup key={index} label={getOptionItemLabel(item)}>
+                        {
+                            item?.children?.map?.((cItem,cIndex) => {
+                                let v = getOptionItemValue(cItem);
+                                if (v === backUpOption.value) { isNeedBackupOption = false };
+                                return <Option key={`${index}-${cIndex}`} value={v} itemdata={cItem} parentdata={item}>{getOptionItemLabel(cItem)}</Option>
+                            })
+                        }
+                    </OptGroup>
+                } else {
+                    let v = getOptionItemValue(item);
+                    if (v === backUpOption.value) { isNeedBackupOption = false };
+                    return <Option key={index} value={v} itemdata={item}>{getOptionItemLabel(item)}</Option>
+                }
+
             })
         }
 

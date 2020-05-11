@@ -1,9 +1,9 @@
 import tool from "./tool"
 //传入fetchConfig将使用传入的配置  一般是tab在切换到表单配置时候会用到
 const refresh = function (fetchConfig) {
-    // console.log("%c请求数据",'color:green;font-size:20px'); 
+    // console.log("%c请求数据",'color:green;font-size:20px', fetchConfig); 
     return new Promise(async (resolve) => {
-        let { formConfig,data } = this.state;
+        let { formConfig,data,values } = this.state;
         fetchConfig = fetchConfig || this.state.fetchConfig;
         const { match } = this.props;
         fetchConfig = this.bind(fetchConfig)({ ...this.funcCallBackParams() });
@@ -16,13 +16,14 @@ const refresh = function (fetchConfig) {
         //请求默认值  
         if (apiName) {
             let _params = tool.getFetchParams({ params,otherParams,match,form: this.form,bind: this.bind,funcCallBackParams: this.funcCallBackParams })
-            this.qnnSetState({ loadingByForm: true, isNeedRefresh: false });
+            this.qnnSetState({ loadingByForm: true,isNeedRefresh: false });
             let resData = await this.fetch(apiName,_params);
             let { success,data,message } = resData;
             this.qnnSetState({ loadingByForm: false });
             if (success) {
                 if (Array.isArray(data)) { data = data[0] }
-                this.setValues(data); 
+                this.setValues(data);
+                !values && this.qnnSetState({ values: data });
             } else {
                 tool.msg.error(message);
             }
@@ -32,6 +33,7 @@ const refresh = function (fetchConfig) {
         } else if (data && JSON.stringify(data) !== '{}') {
             //设置死数据     
             this.setValues(data);
+            !values && this.qnnSetState({ values: data });
             resolve({ response: data,...this.funcCallBackParams() });
         }
     })

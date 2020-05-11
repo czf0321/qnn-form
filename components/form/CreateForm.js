@@ -32,15 +32,23 @@ const CreateForm = (props) => {
     const setSelectOptionFns = (name,option) => selectOptionFns[name] = option;
     const getSelectOptionFns = (name) => name ? selectOptionFns[name] : selectOptionFns;
 
+    //所有下拉组件重新渲染的方法
+    const selectRender = {};
+    const setSelectRender = (name,option) => selectRender[name] = option;
+    const getSelectRender = (name) => name ? selectRender[name] : selectRender;
+
     //这里的formItemLayout是顶层form的布局
     const {
         children,
         fns,fns: { tool },
         funcCallBackParams,
         qnnformData,
-        qnnformData: { tabs = [],style },
-        onFieldsValueChange
+        qnnformData: { tabs = [],style,formByQnnForm,field = "basic" },
+        onFieldsValueChange,
     } = props;
+
+    //优先使用传入的form 对象
+    const _realForm = formByQnnForm ? formByQnnForm : { ...form,field };
 
     //输入框上面开始语音的按钮点击后执行的方法
     const startVoice = (field) => {
@@ -70,8 +78,8 @@ const CreateForm = (props) => {
     };
 
     //formItem 和 输入框需要的peops
-    const formItemProps = { form,fns,qnnformData,funcCallBackParams }
-    const inputItemProps = { setSelectOptionFns,getSelectOptionFns,form: tool.getForm(form),startVoice }
+    const formItemProps = { form: _realForm,fns,qnnformData,funcCallBackParams }
+    const inputItemProps = { setSelectOptionFns,getSelectOptionFns,setSelectRender,getSelectRender,form: tool.getForm(_realForm),startVoice }
 
     //表单或者非表单块都需要调用这个组件生成具体输入控件
     const CreateFormItemEle = (fieldConfig) => {
@@ -82,7 +90,7 @@ const CreateForm = (props) => {
             colWrapperStyle,
 
             ...otherFieldConfig
-        } = fieldConfig; 
+        } = fieldConfig;
         return <CreateFormItem
             colProps={{
                 span: span,
@@ -122,10 +130,25 @@ const CreateForm = (props) => {
 
     //渲染jsx方式的配置
     if (children) {
-        return <Form ref={(me) => { props?.getForm(me) }} form={form}>
-            {loopChildren(children)}
-        </Form>
+        if (formByQnnForm) {
+            //formByQnnForm存在 就 不在重复进行创建form
+            return loopChildren(children)
+        } else {
+            return <Form.Provider onFormChange={(name,{ changedFields,forms }) => {
+                //传入监听字段改变的方法需要执行
+                onFieldsValueChange && onFieldsValueChange({
+                    form: forms[name],
+                    name: name
+                },changedFields,forms[name]?.getFieldsValue())
+            }}>
+                <Form name={field} ref={() => { props?.getForm(_realForm) }} form={_realForm}>
+                    {loopChildren(children)}
+                </Form>
+            </Form.Provider>
+        }
+
     }
+
     // 普通表单渲染
     return <div className={`${style.QnnFormContent} QnnFormContent`} >
         <Form.Provider onFormChange={(name,{ changedFields,forms }) => {
@@ -140,14 +163,14 @@ const CreateForm = (props) => {
                     <TabsForm
                         {...props}
                         CreateFormItemEle={CreateFormItemEle}
-                        form={form}
+                        form={_realForm}
                         BasicForm={BasicForm}
                     />
                 </Suspense>) : (<Suspense fallback={<Skeleton />}>
                     <BasicForm
                         {...props}
                         CreateFormItemEle={CreateFormItemEle}
-                        form={form}
+                        form={_realForm}
                     />
                 </Suspense>)
             }

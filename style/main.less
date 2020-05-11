@@ -28,6 +28,36 @@
         padding: 12px 24px;
         box-sizing: border-box;
     }
+
+    //禁用的输入框不要有边框色
+    //禁用的输入框中的文字颜色为黑色
+    //输入框背景色透明
+    //禁用后小图标也将去除
+    .ItemDisabled {
+        .qnnFormInput {
+            color: @fc;
+        }
+        :global {
+            .ant-select-disabled {
+                color: @fc;
+                .ant-select-selector {
+                    color: @fc;
+                }
+            }
+            .ant-select-selection-item {
+                color: @fc;
+            }
+            input[disabled] {
+                color: @fc;
+            }
+            .ant-radio-disabled + span {
+                color: @fc;
+            }
+            .ant-picker-suffix {
+                display: none;
+            }
+        }
+    }
 }
 
 //pc端表单样式
@@ -49,6 +79,7 @@
             //更改富文本默认样式
             .edui-editor-iframeholder,
             .edui-editor {
+                z-index: 0 !important;
                 width: 100% !important;
             }
             .edui-default
@@ -60,8 +91,14 @@
             }
         }
     }
+    .qnnFormReactUeditorError {
+        :global(.edui-editor) {
+            border-color: red !important;
+            border-radius: 2px;
+        }
+    }
 
-    .QnnFormContent { 
+    .QnnFormContent {
         //富文本在销毁时候没法销毁留下的textarea输入框,暂时这么解决 ...需要继续研究
         & > form > textarea {
             display: none;
@@ -121,7 +158,7 @@
     .qnnFormItem {
         margin: 12px 12px;
         box-sizing: border-box;
-    } 
+    }
 }
 
 //移动端表单样式
@@ -188,7 +225,14 @@
             :global(.ant-upload-list-item) {
                 margin-top: 0px;
                 margin: 4px;
+                height: auto;
             }
+            //上传的列表文件名字折行显示
+            :global(.ant-upload-list-item-name) {
+                white-space: pre-wrap;
+                overflow: auto;
+            }
+
             //让上传组件的文件删除按钮一直显示
             :global {
                 .ant-upload-list-item-card-actions,
@@ -303,13 +347,11 @@
                 box-sizing: border-box;
                 color: @blank;
                 font-size: @labelSize;
-                display: inline-block;
                 & > a,
                 & > div {
                     height: 100%;
                     width: 100%;
-                    display: inline-block;
-                    flex: 1;
+                    line-height: 30px;
                     text-align: justify;
                     text-align: -webkit-justify;
                     text-align-last: justify;
@@ -317,12 +359,13 @@
                     &:after {
                         content: "";
                         width: 100%;
-                        height: 0;
+                        height: 0px;
+                        line-height: 0px;
                         display: inline-block;
                     }
                 }
 
-                //让必填符号不占据label文字的空间
+                // 让必填符号不占据label文字的空间
                 position: relative;
                 &:before {
                     position: absolute;
@@ -345,6 +388,16 @@
                             flex: 1;
                             text-align: left;
                             text-align-last: left;
+                            &:after {
+                                display: none;
+                            }
+                        }
+                    }
+                    //独占一行的无需用 ： 冒号
+                    &.ant-form-item-label {
+                        &::after {
+                            content: "";
+                            position: absolute;
                         }
                     }
                 }
@@ -354,27 +407,16 @@
                 //antd移动端适配导致布局失效
                 //解决移动端label独占一行
                 .ant-form-item-label {
-                    flex: 0 0 90px;
-                    max-width: 100%;
-                    padding: 0 0 0px;
-                    position: relative;
-                    height: 32px;
-                    line-height: 32px;
+                    padding-right: 10px;
+                    box-sizing: border-box;
                     //解决移动端上没有 冒号
                     &::after {
                         content: ":";
                         position: absolute;
-                        top: 0px;
-                        bottom: 0px;
-                        right: -5px;
-                        margin: auto;
-                        height: 32px;
-                        line-height: 32px;
+                        right: 3px;
+                        height: 30px;
+                        line-height: 30px;
                     }
-                }
-                .ant-form-item-control {
-                    flex: 1;
-                    margin-left: 8px;
                 }
 
                 //文字超过6个label独占一行 并且去除：号
@@ -404,9 +446,19 @@
                 color: @fc;
                 background-color: transparent !important;
             }
+            :global {
+                .ant-select-disabled {
+                    color: @fc;
+                    .ant-select-selector {
+                        color: @fc;
+                        background-color: transparent !important;
+                    }
+                }
+            }
         }
         .mobileItemDisabled .qnnFormReactUeditor {
             :global(.edui-editor) {
+                border-radius: 2px;
                 border: 1px solid @gray !important;
             }
         }
@@ -529,6 +581,10 @@
             width: 100%;
             height: 100%;
         }
+        //无需滚动的
+        .formContentNoScroll {
+            overflow-y: hidden;
+        }
 
         //底部按钮
         .btnsContainer {
@@ -537,6 +593,9 @@
             border-top: 1px solid #efefef;
             box-sizing: border-box;
             margin-bottom: 0px;
+            :global(.ant-form-item-control-input) {
+                min-height: 0px;
+            }
             :global(.ant-form-item-control) {
                 box-sizing: border-box;
                 display: block;

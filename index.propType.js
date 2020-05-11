@@ -12,7 +12,7 @@ export default {
     styleType: PropTypes.string,
     componentsKey: PropTypes.object,
     tabsActiveKey: PropTypes.string,
-    tabsIndex:PropTypes.string,
+    tabsIndex: PropTypes.string, 
     fetchConfig: PropTypes.oneOfType([
         PropTypes.func,
         PropTypes.object,
@@ -34,7 +34,7 @@ export default {
         PropTypes.number,
         PropTypes.string,
     ]),
-    initialValues:PropTypes.oneOfType([
-        PropTypes.object, 
+    initialValues: PropTypes.oneOfType([
+        PropTypes.object,
     ]),
 }

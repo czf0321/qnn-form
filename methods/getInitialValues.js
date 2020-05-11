@@ -13,8 +13,8 @@ const getInitialValues = ({
             item.field = item.field?.split('.');
         }
         return item;
-    });
-
+    }).filter(item => item.field); //没有field配置全部过滤掉
+    // console.log(allFieldConfig)
     //1、copyInitialValue是一个对象 里面值优先取用
     //2、每个字段都可能会有initialValue  当copyInitialValue没有该字段值时 需要取用该字段的initialValue
     const initialValues = allFieldConfig.reduce((prveVals,curFieldConfig) => {
@@ -41,7 +41,7 @@ const getInitialValues = ({
         return prveVals;
     },copyInitialValue)
 
-    const formated = { ...tool.formatData(initialValues,tool.getAllFormField({ tabs,formConfig }),"set") }; 
+    const formated = { ...tool.formatData(initialValues,tool.getAllFormField({ tabs,formConfig }).filter(item => item.field),"set") };
     return formated
 }
 export default getInitialValues;
