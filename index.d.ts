@@ -1,57 +1,57 @@
 
 import * as React from 'react';
 
-export declare interface HeadersProps {
-    token?: string;
+export declare type HeadersProps = {
+    token?: string,
     [propName: string]: any
 }
 declare type LayoutProps = {
     xs?: {
-        span: number;
+        span: number,
         [propName: string]: any
     };
     sm?: {
-        span: number;
+        span: number,
         [propName: string]: any
     }
 }
-export declare interface FormItemLayoutProps {
-    labelCol?: LayoutProps;
+export declare type FormItemLayoutProps = {
+    labelCol?: LayoutProps,
     wrapperCol?: LayoutProps
 }
 export declare type TailFormItemLayoutProps = FormItemLayoutProps;
 
 declare type ComponentsKeyProps = {
-    [propName: string]: React.ReactNode;
+    [propName: string]: React.ReactNode
 }
 declare type MethodProps = {
     [propName: string]: React.ReactNode;
 }
 
 export declare type TabsAttrProps = {
-    [propName: string]: any;
+    [propName: string]: any
 };
 
 export declare type BntsAttrProps = {
-    [propName: string]: any;
+    [propName: string]: any
 };
 
 export declare type FetchConfigProps = {
-    apiName: string;
+    apiName: string,
     params?: {
-        [propName: string]: any;
-    };
+        [propName: string]: any
+    },
     otherParams?: {
-        [propName: string]: any;
-    };
-    success?: (args: any) => void;
+        [propName: string]: any
+    },
+    success?: (args: any) => void
 };
 export declare type FieldType = 'string' | 'email' | 'url' | 'identity' | 'phone' | 'password' | 'textarea' | 'number' | 'integer' | 'datetime' | 'date' | 'time' | 'month' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'select' | 'slider' | 'cascader' | 'files' | 'images' | 'camera' | 'treeSelect' | 'treeNode' | 'itemitem' | 'component' | 'Component' | 'qnnTable' | 'qnnForm' | 'treeSelect' | 'hongKongPerpetualIdentity' | 'passport' | 'taiWanIdentity' | 'householdRegister' | 'richtext' | 'specialPlane' | 'postalCode' | 'filesDragger' | 'selectByPaging' | 'money' | 'locInfo' | 'year' | 'year' | 'week' | 'rangeDate' | 'phoneOnly' | 'trainNumber' | 'phoneBodyCode' | 'creditCode' | 'noLetter' | 'onlyChineseAndNumber' | 'HexadecimalColor' | 'qq' | 'weixin' | 'licensePlateNumber';
 
 export declare type CallbackFnProps = {
-    getSelectKey?: () => string;
-    getValues?: (isCerify: boolean, callback: (values: any) => void) => string;
-    [propName: string]: any;
+    getSelectKey?: () => string,
+    getValues?: (isCerify: boolean, callback: (values: any) => void) => string,
+    [propName: string]: any
 };
 
 export declare type CallbackFnByBoolean = (args?: CallbackFnProps, ...oArgs?: any) => boolean;
@@ -128,8 +128,8 @@ export declare interface FormAttrProps {
     formFields?: FormAttrProps[];
     qnnTableConfig?: any; //待完善
     qnnFormConfig?: QnnFormProps;
-    maxLength?:number;
-    optionDataGroup?:boolean;
+    maxLength?: number;
+    optionDataGroup?: boolean;
 };
 
 export declare type CallbackFnByFormConfig = (args?: CallbackFnProps, ...oArgs: any) => FormAttrProps[];
@@ -145,8 +145,8 @@ export declare interface QnnFormProps {
     name?: string;
     data?: any;
     headers?: HeadersProps;
-    formItemLayout?: LayoutProps;
-    tailFormItemLayout?: FormItemLayoutProps;
+    formItemLayout?: FormItemLayoutProps;
+    tailFormItemLayout?: TailFormItemLayoutProps;
     style?: React.CSSProperties;
     styleType?: string;
     componentsKey?: ComponentsKeyProps;
@@ -164,6 +164,6 @@ export declare interface QnnFormProps {
 export interface QnnFormState {
     [propName: string]: any;
 }
-export default class QnnForm extends React.Component<QnnFormProps; QnnFormState> {
+export default class QnnForm extends React.Component<QnnFormProps, QnnFormState> {
     render(): JSX.Element;
 }
