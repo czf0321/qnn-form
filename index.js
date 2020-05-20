@@ -54,7 +54,7 @@ class QnnForm extends Component {
         //所以组件强烈建议使用bind方法绑定而不是直接将函数赋值到配置中 
         if (Array.isArray(formConfig)) {
             const propsFormConfigDataformJs = fromJS(formConfig);
-            const stateFormConfigDataformJs = fromJS(state.formConfig);
+            const stateFormConfigDataformJs = fromJS(state.formConfig); 
             if (!is(propsFormConfigDataformJs,stateFormConfigDataformJs)) {
                 //防止值被改变 
                 //有tabs配置时把form改为tabs中的表单
@@ -138,7 +138,6 @@ class QnnForm extends Component {
         if ((typeof fetchConfig) === "function") {
             fetchConfig = fetchConfig(props);
         }
-
 
         //防止值被改变
         //有tabs配置时把formConfig配置改为tabs中的表单集合 
@@ -341,7 +340,7 @@ class QnnForm extends Component {
         } = this.state;
         const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll } = this.props;
         const qnnFormStyle = this.props.style || {};
-        // console.log('%c 表单组件渲染','font-size:20px; color:red',formConfig)
+        // console.log('%c 表单组件渲染','font-size:20px; color:red',this.props.formConfig); 
         return (
             <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''}`} style={{ ...qnnFormStyle }}>
                 <Spin spinning={loadingByForm} style={{ margin: "24px auto",display: "block",textAlign: "center",height: "100%" }} tip="loading...">

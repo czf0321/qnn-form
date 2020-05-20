@@ -62,6 +62,16 @@ export declare type bindFnTypeByBoolean = string | CallbackFnByBoolean;
 
 export declare type DiyRules = Array<any> | (args: any)=> Array<any>;
 
+type ActionType = 'disabled' | 'show' | 'hide' | (args: any)=> void; //disabled,  show,  hide, function(){}
+export declare type ConditionItem = {
+    regex: {
+        [propName: string]: any
+    },
+    action: ActionType
+};
+
+export declare type Condition = Array<ConditionItem>
+
 export declare interface FormAttrProps {
     field?: string;
     type?: FieldType;
@@ -130,6 +140,9 @@ export declare interface FormAttrProps {
     qnnFormConfig?: QnnFormProps;
     maxLength?: number;
     optionDataGroup?: boolean;
+    checkedChildren?: React.ReactNode | string;
+    unCheckedChildren?: React.ReactNode | string;
+    condition?: Condition;
 };
 
 export declare type CallbackFnByFormConfig = (args?: CallbackFnProps, ...oArgs: any) => FormAttrProps[];

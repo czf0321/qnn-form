@@ -4,7 +4,7 @@ const getInitialValues = ({
     formConfig = [],tabs = [],fns: { tool,bind },
     funcCallBackParams,qnnformData,
     qnnformData: { match: { params } } }
-) => {
+) => { 
     //默认值从initialValues 有相同的则覆盖
     const copyInitialValue = fromJS((qnnformData.initialValues || {})).toJS();
     //保证所有field都是数组
@@ -13,8 +13,7 @@ const getInitialValues = ({
             item.field = item.field?.split('.');
         }
         return item;
-    }).filter(item => item.field); //没有field配置全部过滤掉
-    // console.log(allFieldConfig)
+    }).filter(item => item.field); //没有field配置全部过滤掉 
     //1、copyInitialValue是一个对象 里面值优先取用
     //2、每个字段都可能会有initialValue  当copyInitialValue没有该字段值时 需要取用该字段的initialValue
     const initialValues = allFieldConfig.reduce((prveVals,curFieldConfig) => {
@@ -40,7 +39,7 @@ const getInitialValues = ({
 
         return prveVals;
     },copyInitialValue)
-
+    // console.log(allFieldConfig, initialValues)
     const formated = { ...tool.formatData(initialValues,tool.getAllFormField({ tabs,formConfig }).filter(item => item.field),"set") };
     return formated
 }

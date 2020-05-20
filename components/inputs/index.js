@@ -1,7 +1,7 @@
 import React,{ Suspense } from 'react';
 import { Skeleton } from "antd"
 import { getInputProps } from "../../methods"
-import { fromJS } from "../../lib" 
+import { fromJS } from "../../lib"
 const VarCharComponent = React.lazy(() => import("./varchar"));
 const NumberComponent = React.lazy(() => import("./Number"));
 const SelectComponent = React.lazy(() => import("./Select"));
@@ -28,7 +28,7 @@ const skeletonProps = {
 //可为func的属性配置都在FormItem组件中处理好后统一传入到input组件
 //没次input渲染都将去掉用FormItem组件提供的更新方法以便FormItem组件得到重新渲染
 const inputs = {
-    string: (props) => { 
+    string: (props) => {
         return (<Suspense fallback={<Skeleton {...skeletonProps} />}>
             <VarCharComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>)
@@ -45,7 +45,7 @@ const inputs = {
     hongKongPerpetualIdentity: "string",
     householdRegister: "string",
     postalCode: "string",
-    birthCertificate: "string", 
+    birthCertificate: "string",
     phoneOnly: "string",
     phoneBodyCode: "string",
     trainNumber: "string",
@@ -180,10 +180,14 @@ export default (props) => {
 
     //处理未func的配置
     const copyFieldConfig = fromJS(fieldConfig).toJS() || {};
-    const { optionData,optionConfig,fetchConfig } = copyFieldConfig;
-    copyFieldConfig.optionData = bind(optionData)(funcCallBackParams);
-    copyFieldConfig.optionConfig = bind(optionConfig)(funcCallBackParams);
-    copyFieldConfig.fetchConfig = bind(fetchConfig)(funcCallBackParams);
+    const { optionData,optionConfig,fetchConfig,initialValue } = copyFieldConfig;
+    const newCopyFieldConfig = {
+        ...copyFieldConfig,
+        initialValue: bind(initialValue)(funcCallBackParams),
+        optionData: bind(optionData)(funcCallBackParams),
+        optionConfig: bind(optionConfig)(funcCallBackParams),
+        fetchConfig: bind(fetchConfig)(funcCallBackParams),
+    }
 
     //输入组件
     let Inp = inputs[type];
@@ -192,7 +196,7 @@ export default (props) => {
     if (typeof Inp === "string") {
         Inp = inputs[Inp]
     }
-    return (Inp ? <Inp {...props} fieldConfig={copyFieldConfig} /> : <div />);
+    return (Inp ? <Inp {...props} fieldConfig={newCopyFieldConfig} /> : <div />);
 };
 
 //当成一个接口暴露出去 

@@ -178,7 +178,7 @@ const tool = {
 
         if (type === "get") {
             formConfig.forEach(fieldConfig => {
-                let { type,field,scope,pushJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple } = fieldConfig;
+                let { type,field,scope,pushJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,ov,cv } = fieldConfig;
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
                 let itemValue = tool.getDataValByField(field,values);
 
@@ -221,6 +221,10 @@ const tool = {
                         case "selectByPaging":
                             formatedData[field] = (pushJoin && multiple) ? itemValue.join(',') : itemValue;
                             break;
+
+                        case "switch":
+                            formatedData[field] = itemValue === true ? (ov || itemValue) : (cv || itemValue);
+                            break;
                         default:
                             formatedData[field] = itemValue;
                             break;
@@ -238,7 +242,7 @@ const tool = {
                     console.warn("字段配置为空！！！请检查")
                     return;
                 }
-                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,scope } = fieldConfig;
+                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,scope,ov,cv } = fieldConfig;
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
 
                 //field可能是个嵌套  
@@ -298,6 +302,13 @@ const tool = {
                             formatedData[field] = (pullJoin && multiple) ? itemValue?.split(',') : itemValue;
                             break;
 
+                        case "switch":
+                            if (ov) {
+                                formatedData[field] = itemValue === ov ? true : false;
+                            } else {
+                                formatedData[field] = itemValue;
+                            }
+                            break;
                         case "files":
                         case "upload":
                         case "camera":

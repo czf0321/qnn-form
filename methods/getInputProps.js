@@ -38,7 +38,7 @@ const getInputProps = (props) => {
             labelStyle,
             formatter,parser,
             //这三个其实不应该传入进来...
-            addShow,addDisabled,qnnDisabled,editShow,editDisabled,
+            addShow,addDisabled,qnnDisabled,editShow,editDisabled,formItemLayoutForm,
 
             ...otherConfig
         },

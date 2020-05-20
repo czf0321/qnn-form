@@ -1405,6 +1405,10 @@
         type: "switch",
         label: "开关",
         field: "switch",
+        checkedChildren: "开",
+        unCheckedChildren: "关",
+        ov:"1", //打开开关的值 默认为true
+        cv:"0", //关闭开关的值 默认为false
     }
 
 #### <a id="rate">打分</a>
