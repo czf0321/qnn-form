@@ -1,12 +1,19 @@
 <h2><center> Qnn Form 【全能 表单组件】</center><h2>
 <h4>
-    <center>
+    <center> 
     基于antd、antd-mobile开发，可将纯配置部分和jsx部分做到完全分离开来。<br/>
     移动、pc两端皆可用,  无需在对表单中的数据进行手动操作，一切组件都给你做好了<br/>
     20多种字段验证、字段动态显隐、tab页面、40多种输入控件...<br/>
     你只需要关注你需要什么输入控件即可！
+    支持TypeScript引用 
     </center>
 <h4><br/><br/>
+
+#### 预览图
+##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/basic.png">基础预览图</a>
+##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/tabs.png">tab预览图1</a>
+###### <a>敬请期待...</a>
+
 
 #### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
 
@@ -14,7 +21,8 @@
 
 #### <a href="https://marketplace.visualstudio.com/items?itemName=xm.qnn">qnn 【vsCode 扩展】</a>
 
-    可使用 vsCode qnn 扩展进行更加愉快的配置
+    可使用 vsCode qnn 扩展进行更加愉快的配置 
+    开发如同行云流水...
 
 ---
 
@@ -50,7 +58,7 @@
 
 #### <a id="start">环境配置</a>
 
-    需要项目安装并且配置好antd、antd-mobile的按需加载
+    需要项目安装并且配置好antd、antd-mobile的按需加载、js可选链、less-loader、cssModule
     参考配置：
 
         webpack.config.js
@@ -103,6 +111,10 @@
 
             ...
         }
+
+    注意：
+    需自定义处理 qnn-form/lib/index.js 中暴露出去的业务组件
+
 
 #### <a id="types">可用的输入类型</a>
 
