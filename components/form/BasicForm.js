@@ -27,7 +27,8 @@ const BasicForm = (props) => {
         tabs = [],btns = [],
         formItemLayout,tailFormItemLayout,
         formType,
-        formContentScroll = true
+        formContentScroll = true,
+        antdFormProps
     } = qnnformData;
 
     //说明是tab页面 配置数据需要用tab中的配置
@@ -61,7 +62,8 @@ const BasicForm = (props) => {
         },
         initialValues: initialValues,
         className: `${style.form} qnn-form-form`,
-        ...formItemLayout
+        ...formItemLayout,
+        ...antdFormProps
     }
 
     //渲染描述式表单

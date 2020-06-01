@@ -25,7 +25,7 @@
 
     //qnnTable类型的tab页面
     .TabByqnnTable {
-        padding: 12px 24px;
+        padding: 12px 12px;
         box-sizing: border-box;
     }
 
@@ -58,6 +58,12 @@
             }
         }
     }
+
+
+    // 禁止拖动事件
+    // .noDragEvent{
+    //     pointer-events: ;
+    // }
 }
 
 //pc端表单样式
@@ -69,8 +75,10 @@
     position: relative;
     padding-bottom: 12px;
 
+    //每一个输入控件都应该给 一个左右边距  否则在 抽屉中就 直接靠右边 了
     .qnnFormItem {
-        margin: 12px 0px;
+        margin: 12px 12px; 
+        // margin: 12px 0px;
         box-sizing: border-box;
     }
     //富文本
@@ -662,7 +670,11 @@
         padding-bottom: 0px;
     }
 }
-
+.tabsForm{ 
+    :global(.ant-tabs-bar) {
+        margin: 0px;
+    }
+}
 //没有底部按钮的移动表单
 .mobileForm.noBtns {
     //移动端底部按钮的位置

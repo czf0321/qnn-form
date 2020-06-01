@@ -13,3 +13,4 @@ export { default as getValues } from "./getValues";
 export { default as setValues } from "./setValues";
 export { default as setTabsIndex } from "./setTabsIndex";
 export { default as refresh } from "./refresh";
+export { default as FieldDragFns } from "./fieldDragFns";

@@ -1,12 +1,12 @@
 import React,{ useState } from 'react';
 import { Form,Col } from "antd";
-import { getRules,getMessageType } from "../../methods"
+import { getRules,getMessageType,FieldDragFns } from "../../methods"
 import { fromJS,is } from "../../lib"
 const CreateFormItem = (props) => {
     const {
         funcCallBackParams,
-        fns: { bind,isMobile,BindComKey,tool },form,
-        qnnformData: { style },
+        fns: { bind,isMobile,BindComKey,tool,qnnSetState },form,
+        qnnformData: { style,fieldCanDrag,formConfig,fieldDragCbs: { onDragStart,onDragEnd } },
         qnnformData,
         fieldConfig,
         colProps = {},
@@ -91,7 +91,7 @@ const CreateFormItem = (props) => {
         labelCol: { xs: { span: 0 } },
         wrapperCol: { xs: { span: 24 } }
     };
-    
+
     //移动端文字多余5将自动换行
     if (isMobile() && label && label.length > 6 && !fieldConfig?.formItemLayout?.labelCol) {
         delfaultFormItemLayout = longLabel;
@@ -223,10 +223,68 @@ const CreateFormItem = (props) => {
         return <Col {...colProps} style={{ ..._ColStyle }} ><BindComKey {...funcCallBackParams({ form: props.form })}>{Component}</BindComKey></Col>
     }
 
-    const FormItem = () => {
-        return <Col {...colProps} style={{ ..._ColStyle }}>
+    //需要判断是否可拖动  fieldCanDrag  
+    let fieldDragEvent = {};
+    if (fieldCanDrag && !isMobile()) {
+        let fieldStr = realName.join('.');
+        const fieldDragFns = new FieldDragFns(fieldStr);
+        fieldDragEvent = {
+            field: fieldStr,
+            id: `formItemCol-${fieldStr}`,
+            className: `qnn-form-formItemCol ${colProps.className}`,
+            draggable: fieldCanDrag,
+            onDragStart: (event) => fieldDragFns.onDragStart(event, onDragStart),
+            onDragEnter: (event) => fieldDragFns.onDragEnter(event),
+            onDragLeave: (event) => fieldDragFns.onDragLeave(event),
+            onDragOver: (event) => fieldDragFns.onDragOver(event),
+            onDrop: (event) => fieldDragFns.onDrop(event,formConfig,({ newFormConfig,...args }) => {
+                //需要给特殊标识让getDerivedStateFromProps方法使用state中的formConfig 而不是props中的formConfig
+                qnnSetState({
+                    dragEdformConfig: newFormConfig,
+                },() => {
+                    onDragEnd && onDragEnd({
+                        newFormConfig,
+                        ...args,
+                        funcCallBackParams: { ...funcCallBackParams({ form: props.form }) }
+                    });
+                })
+            }),
+            onDragEnd: (event) => fieldDragFns.onDragEnd(event),
+        }
+    } else if (fieldCanDrag && isMobile()) {
+        let fieldStr = realName.join('.');
+        const fieldDragFns = new FieldDragFns(fieldStr);
+        fieldDragEvent = {
+            field: fieldStr,
+            id: `formItemCol-${fieldStr}`,
+            className: `qnn-form-formItemCol ${colProps.className}`,
+            onTouchStart: (event) => fieldDragFns.onTouchStart(event, onDragStart),
+            onTouchMove: (event) => fieldDragFns.onTouchMove(event),
+            onTouchEnd: (event) => fieldDragFns.onTouchEnd(event,formConfig,({ newFormConfig,...args }) => {
+                //需要给特殊标识让getDerivedStateFromProps方法使用state中的formConfig 而不是props中的formConfig
+                qnnSetState({
+                    dragEdformConfig: newFormConfig,
+                },() => {
+                    onDragEnd && onDragEnd({
+                        newFormConfig,
+                        ...args,
+                        funcCallBackParams: { ...funcCallBackParams({ form: props.form }) }
+                    });
+                })
+            }),
+        }
+    }
 
+
+    const FormItem = () => {
+        return <Col
+            {...colProps}
+            style={{ ..._ColStyle }}
+            //拖动函数   
+            {...fieldDragEvent}
+        >
             {/* 在这个层级进行判断是否需要进行更新 */}
+
             <Form.Item noStyle shouldUpdate={(prevValues,currentValues) => {
                 let update = false;
                 if (realDependencie && realDependencie.length) {
@@ -270,7 +328,7 @@ const CreateFormItem = (props) => {
 
                     }
                     return <Form.Item
-                        {...formItemProps} 
+                        {...formItemProps}
                         noStyle={noStyle || formItemHide}
                         label={_label() || <div style={_labelStyle}>{label}</div>}
                         colon={label ? (true) : false}

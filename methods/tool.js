@@ -1,4 +1,4 @@
-import { Modal,message } from 'antd';
+import { Modal,message, notification } from 'antd';
 import { Modal as mMadal } from 'antd-mobile';
 import { Toast } from 'antd-mobile';
 import getDeviceType from "./getDeviceType"
@@ -242,7 +242,7 @@ const tool = {
                     console.warn("字段配置为空！！！请检查")
                     return;
                 }
-                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,scope,ov,cv } = fieldConfig;
+                let { type,field,pullJoin = true,qnnFormConfig = {},formFields,canAddForm,multiple,scope,ov } = fieldConfig;
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
 
                 //field可能是个嵌套  
@@ -372,13 +372,30 @@ const tool = {
 
     //消息提示
     msg: (() => {
-        const msg = { ...message };
+        //公司居然要求全部用 ~~~ notification ~~~  i服了
+        const msg = {
+            ...message,
+            baisc: (type,content,duration = 3) => {
+                notification[type]({
+                    message: '系统遇到问题，请联系运维人员',
+                    description: `${content}`,
+                    duration: duration
+                });
+            },
+            error: (...args) => msg.baisc('error',...args),
+            success: (...args) => msg.baisc('success',...args),
+            warning: (...args) => msg.baisc('warning',...args),
+            warn: (...args) => msg.baisc('warn',...args),
+        }
+
+        // 正确用法
+        // const msg = { ...message };
         if (isMobile()) {
-            msg.error = Toast.fail;
-            msg.success = Toast.success;
+            //     msg.error = Toast.fail;
+            //     msg.success = Toast.success;
+            //     msg.loading = Toast.loading;
+            //     msg.info = Toast.info;
             msg.destroy = Toast.hide;
-            msg.loading = Toast.loading;
-            msg.info = Toast.info;
         }
         return msg
     })(),

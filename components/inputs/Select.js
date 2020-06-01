@@ -244,7 +244,7 @@ const SelectComponent = (props) => {
         },200)
     }
     //是否需要显示备份的option数据
-    let isNeedBackupOption = true;
+    let isNeedBackupOption = true; 
     return <Select
         loading={fetchOptionDataIng}
         onFocus={onFocus}

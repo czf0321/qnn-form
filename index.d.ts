@@ -1,5 +1,9 @@
 
 import * as React from 'react';
+import { FormProps } from "antd/lib/form"
+import { MessageApi } from "antd/lib/message"
+import { FormInstance } from 'rc-field-form/lib/interface';
+import moment from "moment"
 
 export declare type HeadersProps = {
     token?: string,
@@ -35,6 +39,69 @@ export declare type TabsAttrProps = {
 export declare type BntsAttrProps = {
     [propName: string]: any
 };
+interface ResData {
+    message: string;
+    success: boolean;
+    data?: any;
+    totalNumber?: number;
+    code?: string;
+}
+
+type FormValue = {
+    [propName: string]: any
+}
+type MatchAndHistory = {
+    [propName: string]: any
+}
+
+interface FormRefresh extends CallbackFnProps {
+    response: ResData,
+    [propName: string]: any
+}
+export declare type CallbackFnProps = {
+    getSelectKey?: () => string,
+    getValues?: (isCerify: boolean, callback: (values: any) => void) => string,
+    fetch: (apiName: string, body?: any, type?: string) => Promise<ResData>,
+    btnCallbackFn: {
+        getValues: (isValidate: boolean, cb: (FormValue) => void) => Promise<FormValue>,
+        setValues: (values: FormValue) => void,
+        tableRefresh?: any, //刷新table方法
+        myFetch: (apiName: string, body: any, success: (resData: ResData, args: any) => void) => void,
+        fetchByCb: (apiName: string, body: any, success: (resData: ResData, args: any) => void) => void,
+        Msg: MessageApi,
+        msg: MessageApi,
+        confirm: (title: string | React.ReactNode, content: string | React.ReactNode, onOk: () => void, yes: string | React.ReactNode, no: string | React.ReactNode) => void,
+        formatData: (values: FormValue, formConfig: Array<FormAttrProps>, type: "set" | "get") => FormValue,
+        match: MatchAndHistory,
+        history: MatchAndHistory,
+        props: {
+            form: FormInstance,
+            [propName: string]: any
+        },
+        download: (_URL: string, data: any, _myHeaders: HeadersProps, successCb: () => void, errorCb: (error: any) => void) => void,
+
+        //属性名更改为先两个，这里是兼容一下
+        setActiveKey: (index: string) => Promise<string>,
+        getActiveKey: () => string,
+
+        setTabsIndex: (index: string) => Promise<string>,
+        getTabsIndex: () => string,
+
+        refresh: (fetchConfig: FetchConfigProps) => Promise<FormRefresh>,
+        setConfig: (QnnFormProps) => void,
+
+        moment: moment,
+        bind: (args: any) => any,
+        form: FormInstance
+    },
+    isMobile: boolean,
+    headers: HeadersProps,
+    _formData: any,
+    form: FormInstance,
+    state: any, //里面包含了一些细信息（当前tabs的激活项索引等...）
+    tableFns: any, //qnnTable中的表单存在
+    [propName: string]: any,
+};
 
 export declare type FetchConfigProps = {
     apiName: string,
@@ -44,15 +111,10 @@ export declare type FetchConfigProps = {
     otherParams?: {
         [propName: string]: any
     },
-    success?: (args: any) => void
-};
-export declare type FieldType = 'string' | 'email' | 'url' | 'identity' | 'phone' | 'password' | 'textarea' | 'number' | 'integer' | 'datetime' | 'date' | 'time' | 'month' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'select' | 'slider' | 'cascader' | 'files' | 'images' | 'camera' | 'treeSelect' | 'treeNode' | 'itemitem' | 'component' | 'Component' | 'qnnTable' | 'qnnForm' | 'treeSelect' | 'hongKongPerpetualIdentity' | 'passport' | 'taiWanIdentity' | 'householdRegister' | 'richtext' | 'specialPlane' | 'postalCode' | 'filesDragger' | 'selectByPaging' | 'money' | 'locInfo' | 'year' | 'year' | 'week' | 'rangeDate' | 'phoneOnly' | 'trainNumber' | 'phoneBodyCode' | 'creditCode' | 'noLetter' | 'onlyChineseAndNumber' | 'HexadecimalColor' | 'qq' | 'weixin' | 'licensePlateNumber';
+    success?: (resData: ResData, args: any) => void
+}
 
-export declare type CallbackFnProps = {
-    getSelectKey?: () => string,
-    getValues?: (isCerify: boolean, callback: (values: any) => void) => string,
-    [propName: string]: any
-};
+export declare type FieldType = 'string' | 'email' | 'url' | 'identity' | 'phone' | 'password' | 'textarea' | 'number' | 'integer' | 'datetime' | 'date' | 'time' | 'month' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'select' | 'slider' | 'cascader' | 'files' | 'images' | 'camera' | 'treeSelect' | 'treeNode' | 'itemitem' | 'component' | 'Component' | 'qnnTable' | 'qnnForm' | 'treeSelect' | 'hongKongPerpetualIdentity' | 'passport' | 'taiWanIdentity' | 'householdRegister' | 'richtext' | 'specialPlane' | 'postalCode' | 'filesDragger' | 'selectByPaging' | 'money' | 'locInfo' | 'year' | 'year' | 'week' | 'rangeDate' | 'phoneOnly' | 'trainNumber' | 'phoneBodyCode' | 'creditCode' | 'noLetter' | 'onlyChineseAndNumber' | 'HexadecimalColor' | 'qq' | 'weixin' | 'licensePlateNumber';
 
 export declare type CallbackFnByBoolean = (args?: CallbackFnProps, ...oArgs?: any) => boolean;
 export declare type CallbackFnByAny = (args?: CallbackFnProps, ...oArgs?: any) => any;
@@ -76,6 +138,7 @@ export declare interface FormAttrProps {
     field?: string;
     type?: FieldType;
     label?: string;
+    allowClear?: boolean;
     labelClick?: (args?: CallbackFnProps) => void;
     labelCanClick?: boolean | bindFnTypeByBoolean;
     labelStyle?: React.CSSProperties;
@@ -148,6 +211,20 @@ export declare interface FormAttrProps {
 export declare type CallbackFnByFormConfig = (args?: CallbackFnProps, ...oArgs: any) => FormAttrProps[];
 export declare type CallbackFnByBtns = (args?: CallbackFnProps, ...oArgs: any) => BntsAttrProps[];
 
+interface FieldDragCbFnArgs {
+    dragField: string,
+    targetField?: string,
+    dragIndex?: number,
+    targetIndex?: number,
+    insetDir?: 'before' | 'after',
+    insetIndex?: number,
+    oldFormConfig?: Array<FormAttrProps>,
+    newFormConfig?: Array<FormAttrProps>,
+    funcCallBackParams?: CallbackFnProps
+}
+
+type FieldDragCbFn = (args: FieldDragCbFnArgs) => void;
+
 export declare interface QnnFormProps {
     fetch?: (apiName: string, body?: any, type?: string) => Promise<any>;
     upload?: (apiName: string) => Promise<any>;
@@ -173,6 +250,13 @@ export declare interface QnnFormProps {
     btns?: Array<BntsAttrProps> | CallbackFnByBtns;
     initialValues?: any;
     method?: MethodProps;
+    antdFormProps?: FormProps;
+    fieldCanDrag?: boolean;
+    fieldDragCbs?: {
+        onDragEnd?: FieldDragCbFn | string,
+        onDragStart?: FieldDragCbFn | string
+    };
+    onTabsChange?: (tabKey: string, args: CallbackFnProps) => void
 }
 export interface QnnFormState {
     [propName: string]: any;

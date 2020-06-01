@@ -3,10 +3,12 @@ const setTabsIndex = function (index) {
         this.setState({
             tabsIndex: index
         },() => {
-            resolve(index); 
+            resolve(index);
             this.getTabsValueByFetch();
             //在抽屉中需要去吧tabIndex同步到表格中 
-            this.props?.setTabsIndex?.(index, false);
+            this.props?.setTabsIndex?.(index,false);
+
+            this.props?.onTabsChange?.(index,{ ...this.funcCallBackParams() });
         })
     })
 }

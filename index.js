@@ -41,6 +41,8 @@ class QnnForm extends Component {
         //将返回出去的新state
         let newState = {
             ...state,
+            formConfig: state.dragEdformConfig || state.formConfig,
+            dragEdformConfig: undefined, //拖拽后会传入这个数据 需要清空 因为state中存在这个数据时候将优先使用该数据配置
         };
 
         //data存在时候每次渲染都将赋值
@@ -52,9 +54,9 @@ class QnnForm extends Component {
         //formConfig更新后会重新执行更新 【只可使用props传入方式更新】
         //需要注意的是只要在配置中包含函数的话每次props更新组件都将被重新渲染
         //所以组件强烈建议使用bind方法绑定而不是直接将函数赋值到配置中 
-        if (Array.isArray(formConfig)) {
+        if (Array.isArray(formConfig) && !state.dragEdformConfig) {
             const propsFormConfigDataformJs = fromJS(formConfig);
-            const stateFormConfigDataformJs = fromJS(state.formConfig); 
+            const stateFormConfigDataformJs = fromJS(state.formConfig);
             if (!is(propsFormConfigDataformJs,stateFormConfigDataformJs)) {
                 //防止值被改变 
                 //有tabs配置时把form改为tabs中的表单
@@ -116,6 +118,7 @@ class QnnForm extends Component {
             qnnFormContextHeight,styleType,
             fetch,myFetch,
             initialValues = {},
+            tabsActiveKey,
             tabsIndex, //这两是一样的，只是兼容写法
             isInQnnTable, //在table中会自动带过来
             data,
@@ -193,7 +196,7 @@ class QnnForm extends Component {
             loadingByForm: false,
             //是否需要刷新 首次刷新不需要管这个数据是啥
             isNeedRefresh: false,
-            tabsIndex: tabsIndex, //当前激活的tabs页
+            tabsIndex: tabsIndex || tabsActiveKey || "0", //当前激活的tabs页
 
             //表单数据 不推荐使用
             data: data,
@@ -312,8 +315,7 @@ class QnnForm extends Component {
         //如果是tabs页面而且当前tab页面是qnnForm类型的表单需要请求当前表单的值 
         //非tab页面直接执行refresh即可
         const { tabsIndex,tabs = [] } = this.state;
-        // console.log(tabs)
-        tabs.length && this.setTabsIndex(tabsIndex);
+        tabs.length && this.setTabsIndex(tabsIndex); 
     }
 
     componentDidUpdate(prevProps,prevState) {
@@ -338,11 +340,11 @@ class QnnForm extends Component {
             formType, //表单类型
             descriptionsConfig
         } = this.state;
-        const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll } = this.props;
+        const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll,antdFormProps,fieldCanDrag,fieldDragCbs = {} } = this.props;
         const qnnFormStyle = this.props.style || {};
         // console.log('%c 表单组件渲染','font-size:20px; color:red',this.props.formConfig); 
         return (
-            <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''}`} style={{ ...qnnFormStyle }}>
+            <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''} ${fieldCanDrag ? "fieldCanDragQnnForm" : null}`} style={{ ...qnnFormStyle }}>
                 <Spin spinning={loadingByForm} style={{ margin: "24px auto",display: "block",textAlign: "center",height: "100%" }} tip="loading...">
                     <CreateForm
                         //所有方法 的回调形参
@@ -379,7 +381,9 @@ class QnnForm extends Component {
                             refresh: this.refresh,
                             form: this.form,
 
-                            getTabsValueByFetch: this.getTabsValueByFetch
+                            getTabsValueByFetch: this.getTabsValueByFetch,
+
+                            qnnSetState: this.qnnSetState, //少用
                         }}
 
                         //提供给子组件使用的数据信息
@@ -422,7 +426,16 @@ class QnnForm extends Component {
                             formByQnnForm,
 
                             //表单内容是否滚动
-                            formContentScroll: formContentScroll
+                            formContentScroll: formContentScroll,
+
+                            antdFormProps,
+
+                            fieldCanDrag,
+                            fieldDragCbs: {
+                                onDragStart: this.bind(fieldDragCbs.onDragStart),
+                                //这个end方法实际上是鼠标放下去时候按个方法
+                                onDragEnd: this.bind(fieldDragCbs.onDragEnd),
+                            }
                         }}
 
                         children={children}

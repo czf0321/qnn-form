@@ -6,11 +6,11 @@ export default {
     btns: [],
     componentsKey: {},
     fetchConfig: {},
-    qnnFormContextHeight: window.innerHeight - 45,
-    tabsIndex: "0",
+    qnnFormContextHeight: window.innerHeight - 45, 
     headers: {},
+    antdFormProps: {},
     formConfig: [],
-    formContentScroll:true,
+    formContentScroll: true,
     fetch: (apiName,body) => {
         return new Promise((resolve) => {
             fetch(apiName,{

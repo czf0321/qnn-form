@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+//类型主要看.d.ts文件
 export default {
     fetch: PropTypes.func,
     upload: PropTypes.func,
@@ -12,10 +13,15 @@ export default {
     styleType: PropTypes.string,
     componentsKey: PropTypes.object,
     tabsActiveKey: PropTypes.string,
-    tabsIndex: PropTypes.string, 
+    tabsIndex: PropTypes.string,
+    fieldCanDrag: PropTypes.bool,
     fetchConfig: PropTypes.oneOfType([
         PropTypes.func,
         PropTypes.object,
+    ]),
+    fieldDragCb: PropTypes.oneOfType([
+        PropTypes.func,
+        PropTypes.string,
     ]),
     tabs: PropTypes.oneOfType([
         PropTypes.func,

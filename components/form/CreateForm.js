@@ -43,7 +43,7 @@ const CreateForm = (props) => {
         fns,fns: { tool },
         funcCallBackParams,
         qnnformData,
-        qnnformData: { tabs = [],style,formByQnnForm,field = "basic" },
+        qnnformData: { tabs = [],style,formByQnnForm,field = "basic",antdFormProps },
         onFieldsValueChange,
     } = props;
 
@@ -126,14 +126,14 @@ const CreateForm = (props) => {
             }
             return cloneChild;
         });
-    }
-
+    } 
+    
     //渲染jsx方式的配置
     if (children) {
         if (formByQnnForm) {
             //formByQnnForm存在 就 不在重复进行创建form
             return loopChildren(children)
-        } else {
+        } else { 
             return <Form.Provider onFormChange={(name,{ changedFields,forms }) => {
                 //传入监听字段改变的方法需要执行
                 onFieldsValueChange && onFieldsValueChange({
@@ -141,14 +141,14 @@ const CreateForm = (props) => {
                     name: name
                 },changedFields,forms[name]?.getFieldsValue())
             }}>
-                <Form name={field} ref={() => { props?.getForm(_realForm) }} form={_realForm}>
+                <Form name={field} ref={() => { props?.getForm(_realForm) }} form={_realForm} {...antdFormProps}>
                     {loopChildren(children)}
                 </Form>
             </Form.Provider>
         }
 
     }
-
+    
     // 普通表单渲染
     return <div className={`${style.QnnFormContent} QnnFormContent`} >
         <Form.Provider onFormChange={(name,{ changedFields,forms }) => {

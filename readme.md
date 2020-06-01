@@ -1,19 +1,23 @@
 <h2><center> Qnn Form 【全能 表单组件】</center><h2>
-<h4>
+<h5>
     <center> 
     基于antd、antd-mobile开发，可将纯配置部分和jsx部分做到完全分离开来。<br/>
     移动、pc两端皆可用,  无需在对表单中的数据进行手动操作，一切组件都给你做好了<br/>
     20多种字段验证、字段动态显隐、tab页面、40多种输入控件...<br/>
-    你只需要关注你需要什么输入控件即可！
-    支持TypeScript引用 
+    普通表单、tabs表单、描述式表单（似表格表单）、表单块\可增减表单块、字段可拖动的排序...<br/>
+    使用只需要关注你需要使用哪种表单和需要使用哪种输入控件即可！<br/>
+    使用react lazy 按需加载输入控件<br/>
+    支持TypeScript引用、有VsCode插件辅助
     </center>
-<h4><br/><br/>
+<h5><br/><br/>
 
 #### 预览图
-##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/basic.png">基础预览图</a>
-##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/tabs.png">tab预览图1</a>
-###### <a>敬请期待...</a>
 
+##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/basic.png">基础预览图</a>
+
+##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/tabs.png">tab 预览图 1</a>
+
+###### <a>敬请期待...</a>
 
 #### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
 
@@ -21,8 +25,8 @@
 
 #### <a href="https://marketplace.visualstudio.com/items?itemName=xm.qnn">qnn 【vsCode 扩展】</a>
 
-    可使用 vsCode qnn 扩展进行更加愉快的配置 
-    开发如同行云流水...
+    可使用 vsCode qnn 扩展进行更加愉快的配置
+    配置过程如同行云流水般纵享丝滑...
 
 ---
 
@@ -114,7 +118,6 @@
 
     注意：
     需自定义处理 qnn-form/lib/index.js 中暴露出去的业务组件
-
 
 #### <a id="types">可用的输入类型</a>
 
@@ -313,6 +316,11 @@
             【推荐】表单初始值 object {name:"张三", age:32}
             initialValues={}
 
+            同步ant Form组件配置
+            antdFormProps={{
+                //component:false
+            }}
+
             输入框和label布局
             formItemLayout={
                 labelCol: {
@@ -409,6 +417,9 @@
             当前激活的tabs项
             tabsActiveKey:"0",
 
+            监听tab切换
+            onTabsChange:(tabKey: string, args: CallbackFnProps) => void
+
             页面为tab页面时的配置（参见tabs配置）
             tabs:[],
 
@@ -429,8 +440,54 @@
 
             表单内容是否滚动
             使用场景：在移动端某些情况下 除了表单外还有其他元素时需要使用  默认 true  [boolean]
-            formContentScroll:true 
-            
+            formContentScroll:true
+
+
+
+
+            字段可拖拽配置 boolean 默认false
+            fieldCanDrag: true,
+
+            拖拽之后的回调
+            fieldDragCbs: {
+                onDragEnd: function (obj:FieldDragCbFnArgs) {
+                    console.log('onDragEnd',obj)
+                },
+                onDragStart: function (obj) {
+                    console.log('onDragStart:',obj)
+                }
+            }
+
+            移动端配置拖拽需要给页面加上touchmove防止滚动监听
+            移动端使用拖拽后页面将不可滚动 ***
+            document.body.addEventListener('touchmove', function (e) {
+                e.preventDefault();
+            }, {passive: false});
+
+            拖拽之后的回调形参描述如下
+            具体接口描述见 index.d.ts
+            interface FieldDragCbFnArgs {
+                被拖动的节点
+                dragField: string,
+                插入的目标节点
+                targetField: string,
+                被拖动的节点的索引
+                dragIndex: number,
+                插入的目标节点的点索引
+                targetIndex: number,
+                插入的方向
+                insetDir: 'before' | 'after',
+                拖得控件实际插入的位置索引
+                insetIndex: number,
+                备份的旧版 formConfig 配置
+                oldFormConfig: Array<FormAttrProps>,
+                拖动后的 formConfig 配置
+                newFormConfig: Array<FormAttrProps>,
+                回调方法 ajax 方法等
+                funcCallBackParams:CallbackFnProps
+            }
+
+
 
 #### <a id="common">通用属性说明</a>
 
@@ -1037,6 +1094,7 @@
         field: 'select', //唯一的字段名 ***必传
         placeholder: '请选择',
         required: true,
+        allowClear:true,
         multiple: false, //是否开启多选功能 开启后自动开启搜索功能
         showSearch: false, //是否开启搜索功能 (移动端不建议开启)
         pullJoin:false, 多选可能会用到  控制是否拆分后台返回的数据 后台返回数组就无需配置或者配置为false 反之为true
@@ -1472,7 +1530,7 @@
         表单块容器样式
         formBlockStyle:{ marginTop:"0px"},
         表单块中的表单容器样式
-        formBlockFormStyle:{ padding:"0px 12px" }, 
+        formBlockFormStyle:{ padding:"0px 12px" },
         //文字配置 默认数据如下 [object]
         textObj: {
             add: "添加报销细明",

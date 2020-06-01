@@ -1,6 +1,20 @@
+    
+    注：x[重构].y[新增].z[修复].e[调整]
+    
 
-### 1.xx +1. xx +0
+### 1.8.11.4
 
+    新增 拖拽功能
+    新增 onTabsChange 监听tab页面 切换
+
+    删除 tabs 中的 from 的顶部的 16px margin
+    调整 tabs 中的 table 的左右边距为 0px -> 12px 
+
+    修复 tabsIndex 无效问题
+
+### 1.8.11.2
+
+    新增 antdFormProps 属性设置 同步 ant Form组件配置
     新增 日期时间配置scope，可选择一个范围
     新增 formContentScroll配置
     新增 formBlockStyle 用以设置表单块的样式
