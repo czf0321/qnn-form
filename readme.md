@@ -507,6 +507,10 @@
         中文名 [string]
         label: '姓名',
 
+        是否显示label后的冒号:  [boolean]
+        默认label存在为true反之false  
+        colon:true,
+
         label点击回调
         labelClick:(obj)=>void,
 
@@ -1399,6 +1403,7 @@
         },
         accept: 'image/jpeg', //支持上传的类型 默认都支持  格式"image/gif, image/jpeg"
         max: 2, //最大上传数量
+        className:"自定义类名"
     }
 
 #### <a id="camera">移动端文件上传</a>
@@ -1505,9 +1510,26 @@
     {
         type: "qnnTable",
         label: "qnnTable",
-        field: "slider",
+        field: "qnnTable",
+
+        /**
+            ***incToForm 配置说明 [boolean] 默认false***
+
+            使用环境：可编辑的表格使用的
+            影响结果：将列表数据存入到表单数据中 
+            注意：
+                新增行按钮addRow和del按钮配置的 addCb 和 addRowFetchConfig 和 fetchConfig 配置将无效 因为已经被内置方法接管了
+                各字段的 tdEditCb 和 tdEditFetchConfig 配置将无效 因为已经被内置方法接管了
+                表格字段不参与必填验证
+                表格主键字段必须配置，且新增数据时表格主键值为内置分配
+
+        */ 
+        incToForm: true,
+
         qnnTableConfig:{
             //同步qnn-table插件配置
+            formConfig:[],
+            actionBtns:[]
         }
     }
 
