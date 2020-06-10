@@ -6,4 +6,4 @@ export { default as moment } from "moment";
 
 export { default as PullPerson } from "pull-person"
 export { default as PullPersonMobile } from "pull-person-mobile"
-export { default as Tree } from ".qnn-tree" 
+export { default as Tree } from "qnn-tree" 
