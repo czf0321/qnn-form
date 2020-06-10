@@ -18,14 +18,18 @@ const refresh = function (fetchConfig) {
             let _params = tool.getFetchParams({ params,otherParams,match,form: this.form,bind: this.bind,funcCallBackParams: this.funcCallBackParams })
             this.qnnSetState({ loadingByForm: true,isNeedRefresh: false });
             let resData = await this.fetch(apiName,_params);
-            let { success,data,message } = resData;
+            let { success,data,message,code } = resData;
             this.qnnSetState({ loadingByForm: false });
             if (success) {
                 if (Array.isArray(data)) { data = data[0] }
                 this.setValues(data);
                 !values && this.qnnSetState({ values: data });
             } else {
-                tool.msg.error(message);
+                if (code === "-1") {
+                    tool.msg.error(message);
+                } else {
+                    tool.msg.warn(message);
+                } 
             }
             //回调执行
             _successCB && this.bind(_successCB)(resData,this.funcCallBackParams());

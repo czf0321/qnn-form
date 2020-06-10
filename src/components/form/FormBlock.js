@@ -1,7 +1,7 @@
 import React,{ useState,useEffect } from 'react';
 import { UpOutlined,DownOutlined } from '@ant-design/icons';
 import { fromJS } from "../../lib"
-import * as $ from "jquery"
+import $ from "jquery"
 import { Row } from "antd";
 
 //不可增加的表单块

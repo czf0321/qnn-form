@@ -44,7 +44,7 @@ const getInputProps = (props) => {
         },
         form,
         qnnformData: { formConfig = [],style,headers },
-        fns: { bind,loopClearChild,fetch },
+        fns: { bind,loopClearChild,fetch,upload },
         setSelectOptionFns,
         id,
         funcCallBackParams
@@ -144,7 +144,13 @@ const getInputProps = (props) => {
             //props.fieldConfig.onChange 是配置中的监听change
             //每个组件都必须调用props中的onChange来操作值因为Form.Item只对直接子元素生效，这里需要做异步加载组件。所以有些冲突
             onChange(val);
-            bind(props.fieldConfig.onChange)?.(val,{ ...changeProps,...props,itemData,itemParentData });
+
+            let realVal = val;
+            if (type === 'files' || type === 'images' || type === 'filesDragger') {
+                realVal = val?.fileList?.map?.(item => (item?.response?.data || item))?.filter(item => item); 
+            }
+
+            bind(props.fieldConfig.onChange)?.(realVal,{ ...changeProps,...props,itemData,itemParentData });
         }
     };
 
@@ -184,6 +190,7 @@ const getInputProps = (props) => {
             inputOtherPorpsData = {
                 headers,
                 fetch,
+                upload,
                 actionBtnsPosition: "bottom",
                 ...qnnTableConfig,
                 qnnFormProps: {

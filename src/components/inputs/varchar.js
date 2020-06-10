@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input } from 'antd';
+import voiceImg from "../../imgs/voice.png";
 
 const VarCharComponent = (props) => {
     const { inputProps,fieldConfig: { voice,field,locInfo,initialValue,type },fns: { isMobile,tool },startVoice,form } = props;
@@ -7,9 +8,9 @@ const VarCharComponent = (props) => {
     //微信语音输入
     if (voice && isMobile() && !inputProps.disabled) {
         inputProps["addonAfter"] = (
-            <img alt="voice" width="24" src={require("../../imgs/voice.png")} onClick={() => { startVoice(field) }} />
+            <img alt="voice" width="24" src={voiceImg} onClick={() => { startVoice(field) }} />
         );
-    }  
+    }
 
     //直接定位地址
     //没有初始值 并且没有输入值能执行，否则会导致值覆盖

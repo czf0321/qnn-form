@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "antd";
-const voiceImg = require("../../imgs/voice.png");
+import voiceImg from "../../imgs/voice.png";
 
 const TestAreaComponent = (props) => {
     let {

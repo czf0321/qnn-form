@@ -41,14 +41,18 @@ const FetchInc = (props) => {
 
         //开始请求 
         isMonted && setFetchOptionDataIng(true);
-        const { data,success,message } = await fetch(apiName,_body);
+        const { data,success,message, code } = await fetch(apiName,_body);
         isMonted && setFetchOptionDataIng(false);
         if (success) { 
             isMonted && setOptionData(data);
             //当非首次请求时候就无需重复设置fetchOptionDataEd了
             isMonted && !fetchOptionDataEd && setFetchOptionDataEd(true);
-        } else {
-            tool.msg.error(message);
+        } else { 
+            if (code === "-1") {
+                tool.msg.error(message);
+            } else {
+                tool.msg.warn(message);
+            }
         }
     }
 

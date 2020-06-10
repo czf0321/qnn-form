@@ -1,7 +1,7 @@
 import React,{ Component } from "react";
 import { Modal } from "antd-mobile";
-import s from "./style.less";
-const voiceImg = require("../../imgs/voice.png");
+import s from "./style.less"; 
+import  voiceImg from "../../imgs/voice.png";
 const alert = Modal.alert;
 
 class VoiceEnter extends Component {

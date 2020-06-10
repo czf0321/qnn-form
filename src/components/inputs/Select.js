@@ -149,7 +149,7 @@ const SelectComponent = (props) => {
 
         //开始请求
         isMonted && setFetchOptionDataIng(true);
-        const { data,success,message,totalNumber } = await fetch(apiName,_body);
+        const { data,success,message,totalNumber,code } = await fetch(apiName,_body);
         isMonted && setFetchOptionDataIng(false);
         if (success) {
             isMonted && setOptionData(data);
@@ -195,7 +195,11 @@ const SelectComponent = (props) => {
                 }
             }
         } else {
-            tool.msg.error(message);
+            if (code === "-1") {
+                tool.msg.error(message);
+            } else {
+                tool.msg.warn(message);
+            }
         }
     }
 
@@ -244,7 +248,7 @@ const SelectComponent = (props) => {
         },200)
     }
     //是否需要显示备份的option数据
-    let isNeedBackupOption = true; 
+    let isNeedBackupOption = true;
     return <Select
         loading={fetchOptionDataIng}
         onFocus={onFocus}

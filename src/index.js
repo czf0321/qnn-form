@@ -3,7 +3,7 @@ import React,{ Component } from 'react';
 import qnnFormPropTypes from "./index.propType"
 import qnnFormDefaultProps from "./index.defaultProps"
 import { fromJS,is,moment } from "./lib"
-import { getDeviceType,bind,BindComKey,loopClearChild,tool,getValues,setValues,setTabsIndex,refresh } from "./methods";
+import { getDeviceType,bind,BindComKey,loopClearChild,tool,getValues,setValues,setTabsIndex,refresh,getRules } from "./methods";
 import { download,fetchByCb } from "./methodsCallback";
 import sByTwo from "./style/two.less"; //普通样式
 import sByZJ from "./style/default.less"; //中交样式
@@ -154,9 +154,55 @@ class QnnForm extends Component {
         this.style = style;
         this.isMobile = () => getDeviceType() === "mobile";
 
+        //需要对数据进行缓存 否则在多字段情况下可能会进行重复请求
+        const fetchfn = fetch || myFetch;
+        this.fetch = fetchfn;
+        //正在请求的接口
+        //暂不处理
+        /***
+         * [ 
+         *      {
+         *          apiName:'xxx', 
+         *          body:'{name:张三}', 
+         *          res:Res, 
+         *          status:'loading' | 'done' 
+         *      }
+         * ]
+        */
+        // this.fetchingApiName = [];
+        // this.fetch = (apiName,body,...args) => {
+        //     //如果接口和参数都一样的话不能重复发起请求 
+        //     let curing = this.fetchingApiName.filter((item) => item['apiName'] === apiName)[0];
+        //     if (curing && curing.body === JSON.stringify(body) && curing.status === 'loading') {
+        //         //这样就不会执行then了
+        //         // return { then: () => { } };
+        //         return new Promise((resolve) => { resolve({ success: true }) })
+        //     }
+        //     if (curing && curing.body === JSON.stringify(body) && curing.status === 'done') {
+        //         //直接返回缓存值
+        //         return new Promise((resolve) => { resolve(curing.Res) })
+        //     }
+        //     this.fetchingApiName.push({
+        //         apiName,
+        //         body: JSON.stringify(body),
+        //         status: "loading"
+        //     });
+        //     return new Promise((resolve) => {
+        //         fetchfn(apiName,body,...args).then((res) => {
+        //             //把请求从队列中移除
+        //             this.fetchingApiName = this.fetchingApiName.map((item) => {
+        //                 if (item['apiName'] !== apiName && item['body'] !== JSON.stringify(body)) {
+        //                     item.status = 'done'
+        //                 }
+        //                 return item;
+        //             })   
+        //             resolve(res);
+        //         })
+        //     })
+        // };
+
         //内置方法
         this.bind = bind.bind(this);
-        this.fetch = fetch || myFetch;
         this.loopClearChild = loopClearChild.bind(this);
         this.getValues = getValues.bind(this);
         this.setValues = setValues.bind(this);
@@ -315,7 +361,7 @@ class QnnForm extends Component {
         //如果是tabs页面而且当前tab页面是qnnForm类型的表单需要请求当前表单的值 
         //非tab页面直接执行refresh即可
         const { tabsIndex,tabs = [] } = this.state;
-        tabs.length && this.setTabsIndex(tabsIndex); 
+        tabs.length && this.setTabsIndex(tabsIndex);
     }
 
     componentDidUpdate(prevProps,prevState) {
@@ -446,4 +492,4 @@ class QnnForm extends Component {
 }
 
 export default withRouter(QnnForm);
-export { tool }
+export { tool,getRules } 

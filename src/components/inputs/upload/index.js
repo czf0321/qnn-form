@@ -7,13 +7,19 @@ import { Toast } from "antd-mobile";
 import s from "./style.less";
 import { Spin } from "antd"
 
+import pptImg from "./img/ppt.png";
+import docImg from "./img/doc.png";
+import pdfImg from "./img/pdf.png";
+import wzImg from "./img/wz.png";
+import xlsxImg from "./img/xlsx.png";
 const imgs = {
-    ppt: require("./img/ppt.png"),
-    doc: require("./img/doc.png"),
-    pdf: require("./img/pdf.png"),
-    wz: require("./img/wz.png"),
-    xlsx: require("./img/xlsx.png")
+    ppt: pptImg,
+    doc: docImg,
+    pdf: pdfImg,
+    wz: wzImg,
+    xlsx: xlsxImg
 };
+
 
 //判断是否是微信浏览器的函数
 function isWeiXin() {

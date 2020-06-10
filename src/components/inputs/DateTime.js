@@ -89,7 +89,7 @@ const DateTimeComponent = (props) => {
                     return picker === "time" ? <TimePickerRangePicker  {...comProps} /> : <RangePicker  {...comProps} />
 
                 } else {
-                    comProps.extra = <span style={{ color: "#c9c9c9" }}>{placeholder.join('~')}</span>;
+                    comProps.extra = <span style={{ color: "#c9c9c9" }}>{placeholder}</span>;
                     // console.log(value)
                     return <div className={`${style.DateRangeMobile} DateRangeMobile`}>
                         <List.Item

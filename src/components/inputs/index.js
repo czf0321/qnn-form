@@ -14,14 +14,14 @@ const RichtextComponent = React.lazy(() => import("./Richtext"));
 const ItemComponent = React.lazy(() => import("./Item"));
 const FileUploadComponent = React.lazy(() => import("./FileUpload"));
 const TreeSelectComponent = React.lazy(() => import("./TreeSelect"));
-const TreeNodeComponent = React.lazy(() => import("./TreeNode"));
-const QnnTableComponent = React.lazy(() => import("../../../qnn-table"));
+const TreeNodeComponent = React.lazy(() => import("./TreeNode")); 
+const QnnTableComponent = React.lazy(() => import("./QnnTable"));
 
 //异步加载的loading配置
 const skeletonProps = {
     loading: true,
     active: true,
-    paragraph: { rows: 1,width: "100%" },
+    paragraph: { rows: 1, width: "100%" },
 }
 
 //所有的输入组件

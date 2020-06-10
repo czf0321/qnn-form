@@ -1,7 +1,7 @@
 
 import React,{ useEffect } from 'react';
 import { Descriptions } from 'antd';
-import QnnForm from '../../../qnn-form';
+import QnnForm from 'qnn-form';
 export default (props) => {
     const {
         fns: { fetch,upload },

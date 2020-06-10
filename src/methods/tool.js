@@ -1,4 +1,4 @@
-import { Modal,message, notification } from 'antd';
+import { Modal,message,notification } from 'antd';
 import { Modal as mMadal } from 'antd-mobile';
 import { Toast } from 'antd-mobile';
 import getDeviceType from "./getDeviceType"
@@ -325,7 +325,7 @@ const tool = {
                                     };
                                 });
                             } else {
-                                formatedData[field] = itemValue.map((item,index) => {
+                                formatedData[field] = itemValue?.map?.((item,index) => {
                                     let { url,name,fileUrl,fileName,thumbUrl } = item;
                                     if (type === "images") {
                                         url = thumbUrl || url;
@@ -382,10 +382,24 @@ const tool = {
                     duration: duration
                 });
             },
+            baiscBySuccess: (type,content,duration = 3) => {
+                notification[type]({
+                    message: '提示',
+                    description: `${content}`,
+                    duration: duration
+                });
+            },
+            baiscByWarn: (type,content,duration = 3) => {
+                notification[type]({
+                    message: '提示',
+                    description: `${content}`,
+                    duration: duration
+                });
+            },
             error: (...args) => msg.baisc('error',...args),
-            success: (...args) => msg.baisc('success',...args),
+            success: (...args) => msg.baiscBySuccess('success',...args),
             warning: (...args) => msg.baisc('warning',...args),
-            warn: (...args) => msg.baisc('warn',...args),
+            warn: (...args) => msg.baiscByWarn('warn',...args),
         }
 
         // 正确用法

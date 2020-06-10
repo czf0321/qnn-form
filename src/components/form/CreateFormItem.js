@@ -23,7 +23,8 @@ const CreateFormItem = (props) => {
             formItemLayout = (props.qnnformData.formItemLayout),
             colStyle,formItemStyle, //colStyle 改名为 formItemStyle
             noStyle,
-            addends
+            addends,
+            colon
         }
     } = props;
 
@@ -220,7 +221,29 @@ const CreateFormItem = (props) => {
     //如果label数据对象中有的话优先从中取   
     //自定义组直接返回即可
     if (type === "component" || type === "Component") {
-        return <Col {...colProps} style={{ ..._ColStyle }} ><BindComKey {...funcCallBackParams({ form: props.form })}>{Component}</BindComKey></Col>
+        return <Col {...colProps} style={{ ..._ColStyle }} >
+            <Form.Item noStyle dependencies={realDependencie} shouldUpdate={(prevValues,currentValues) => {
+                let update = false;
+                if (realDependencie && realDependencie.length) {
+                    //依赖项存在才有更新的可能 然后将依赖配置转一下
+                    realDependencie.forEach(item => {
+                        let realItem = item.join('.');
+                        let pf = fromJS(tool.getDataValByField(realItem,prevValues));
+                        let cf = fromJS(tool.getDataValByField(realItem,currentValues)); 
+                        if (!is(pf,cf)) {
+                            update = true;
+                        }
+                    })
+                } 
+                return update;
+            }}>
+                {
+                    () => {
+                        return <BindComKey {...funcCallBackParams({ form: props.form })}>{Component}</BindComKey>
+                    }
+                }
+            </Form.Item>
+        </Col>
     }
 
     //需要判断是否可拖动  fieldCanDrag  
@@ -233,7 +256,7 @@ const CreateFormItem = (props) => {
             id: `formItemCol-${fieldStr}`,
             className: `qnn-form-formItemCol ${colProps.className}`,
             draggable: fieldCanDrag,
-            onDragStart: (event) => fieldDragFns.onDragStart(event, onDragStart),
+            onDragStart: (event) => fieldDragFns.onDragStart(event,onDragStart),
             onDragEnter: (event) => fieldDragFns.onDragEnter(event),
             onDragLeave: (event) => fieldDragFns.onDragLeave(event),
             onDragOver: (event) => fieldDragFns.onDragOver(event),
@@ -258,7 +281,7 @@ const CreateFormItem = (props) => {
             field: fieldStr,
             id: `formItemCol-${fieldStr}`,
             className: `qnn-form-formItemCol ${colProps.className}`,
-            onTouchStart: (event) => fieldDragFns.onTouchStart(event, onDragStart),
+            onTouchStart: (event) => fieldDragFns.onTouchStart(event,onDragStart),
             onTouchMove: (event) => fieldDragFns.onTouchMove(event),
             onTouchEnd: (event) => fieldDragFns.onTouchEnd(event,formConfig,({ newFormConfig,...args }) => {
                 //需要给特殊标识让getDerivedStateFromProps方法使用state中的formConfig 而不是props中的formConfig
@@ -331,7 +354,7 @@ const CreateFormItem = (props) => {
                         {...formItemProps}
                         noStyle={noStyle || formItemHide}
                         label={_label() || <div style={_labelStyle}>{label}</div>}
-                        colon={label ? (true) : false}
+                        colon={(colon === false || colon === true) ? colon : (label ? (true) : false)}
                     >
                         {React.cloneElement(props.children,{
                             qnnformData,
