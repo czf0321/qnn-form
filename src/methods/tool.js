@@ -508,7 +508,7 @@ const tool = {
     },
 
     //根据fetchConfig中的params,otherParams,还有form字段和路由参数获取请求参数
-    getFetchParams: ({ params = {},otherParams = {},form: { getFieldValue },match,bind,funcCallBackParams }) => {
+    getFetchParams: ({ params = {},rowData = {},otherParams = {},form: { getFieldValue },match,bind,funcCallBackParams }) => {
         //这个方法会在输入控件的组件中调用，在输入组件中的funcCallBackParams并不是一个func 
         let _funcCallBackParams = (typeof funcCallBackParams) === "function" ? funcCallBackParams() : funcCallBackParams;
         params = bind(params)({ ..._funcCallBackParams });
@@ -516,11 +516,11 @@ const tool = {
 
         let fetchParams = {};
         if (params) {
-            //从表单中或者路由中取值
+            //从表单中或者路由中取值 或者从行数据中取值
             const routeParams = match.params;
             for (const key in params) {
                 if (params.hasOwnProperty(key)) {
-                    fetchParams[key] = getFieldValue(params[key]) || routeParams[params[key]];
+                    fetchParams[key] = getFieldValue(params[key]) || routeParams[params[key]] || rowData[params[key]];
                 }
             }
         }

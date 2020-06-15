@@ -1,4 +1,5 @@
 import React from 'react';
+
 //绑定组件的方法
 //可传入ReactDom、组件名、htmlString和函数组件 调用<BindComKey {...props}>{component}</BindComKey>
 // BindComKey:(ReactDom|组件名|string|函数组件)=>ReactDom

@@ -1,5 +1,5 @@
 import React from 'react';
-const QnnTableComponent = React.lazy(() => import("qnn-table"));
+const QnnTableComponent = React.lazy(() => import("../../../qnn-table"));
 
 const QnnTable = (props) => {
     const { incToForm,value = [],actionBtns = [],onChange,formConfig = [],...qnnTableProps } = props;

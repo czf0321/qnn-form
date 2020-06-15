@@ -1,9 +1,10 @@
-import React,{ useState,useEffect } from 'react';
+import React,{ useState,useEffect,useRef } from 'react';
 //包裹后的组件可直接从props中获取请求选项数据的方法和选项数据
 //用于层叠选择、多选、单选、
 const FetchInc = (props) => {
-    //组件是否存在状态
-    let isMonted = true;
+
+    //组件是否处于离开状态
+    const isGone = useRef(false);
 
     const {
         fieldConfig,
@@ -20,7 +21,7 @@ const FetchInc = (props) => {
     }
 
     //下拉数据和下拉数据kv配置
-    const [optionData,setOptionData] = useState(fieldConfig.optionData); 
+    const [optionData,setOptionData] = useState(fieldConfig.optionData);
 
     //是否正在请求下拉数据
     const [fetchOptionDataIng,setFetchOptionDataIng] = useState(false);
@@ -29,7 +30,7 @@ const FetchInc = (props) => {
 
     //[]变为了didMount 在return时是组件被销毁时候 
     const useWillUnmount = fn => useEffect(() => () => fn && fn(),[]);
-    useWillUnmount(() => isMonted = false); 
+    useWillUnmount(() => isGone.current = true);
 
     //请求数据的方法 
     const fetchData = async () => {
@@ -40,14 +41,14 @@ const FetchInc = (props) => {
         let _body = tool.getFetchParams({ params,otherParams,match,form,bind,funcCallBackParams })
 
         //开始请求 
-        isMonted && setFetchOptionDataIng(true);
-        const { data,success,message, code } = await fetch(apiName,_body);
-        isMonted && setFetchOptionDataIng(false);
-        if (success) { 
-            isMonted && setOptionData(data);
+        !isGone.current && setFetchOptionDataIng(true);
+        const { data,success,message,code } = await fetch(apiName,_body);
+        !isGone.current && setFetchOptionDataIng(false);
+        if (success) {
+            !isGone.current && setOptionData(data);
             //当非首次请求时候就无需重复设置fetchOptionDataEd了
-            isMonted && !fetchOptionDataEd && setFetchOptionDataEd(true);
-        } else { 
+            !isGone.current && !fetchOptionDataEd && setFetchOptionDataEd(true);
+        } else {
             if (code === "-1") {
                 tool.msg.error(message);
             } else {
@@ -59,7 +60,7 @@ const FetchInc = (props) => {
     //触焦 请求数据
     const onFocus = () => {
         //当请求过了就不需要重新请求了
-        !fetchOptionDataIng && !fetchOptionDataEd && fetchConfig && fetchConfig.apiName && isMonted && fetchData();
+        !fetchOptionDataIng && !fetchOptionDataEd && fetchConfig && fetchConfig.apiName && fetchData();
     }
 
     return React.cloneElement(<props.children />,{

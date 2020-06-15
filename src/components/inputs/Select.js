@@ -1,4 +1,4 @@
-import React,{ useState,useEffect } from "react";
+import React,{ useState,useEffect,useRef } from "react";
 import { Select,Spin,Empty,Divider,Pagination } from "antd";
 import { getStrTmp } from "../../methods"
 const { Option,OptGroup } = Select;
@@ -19,15 +19,15 @@ const SelectComponent = (props) => {
         getSelectRender,
         form,
         funcCallBackParams
-    } = props;
-    //组件是否存在状态
-    let isMonted = true;
+    } = props; 
+
+    //组件是否处于离开状态
+    const isGone = useRef(false); 
 
     //输入定时器
     let selectByPagingTimer;
 
     const { fetchConfig,pageConfig = {},parent,field,optionDataGroup } = fieldConfig;
-
     const defaultOptionConfig = {
         label: "label",
         value: "value",
@@ -40,7 +40,6 @@ const SelectComponent = (props) => {
         page: 1,
         ...pageConfig
     }
-
     //联动字段应该使用父级提供的option
     let defaultOption = parent ? getSelectOptionFns((Array.isArray(field) ? field.join('.') : field)) : fieldConfig.optionData;
 
@@ -59,6 +58,8 @@ const SelectComponent = (props) => {
     //分页下拉的搜索文字（普通下拉的搜索前端组件实现）
     const [searchText,setSearchText] = useState(null);
 
+    //组件是否首次加载 
+    const [isLoaded,setIsloaded] = React.useState(false);
     //是否正在请求下拉数据
     const [fetchOptionDataIng,setFetchOptionDataIng] = useState(false);
     //是否已经请求过数据了(必须是请求成功了才算请求过)
@@ -72,10 +73,6 @@ const SelectComponent = (props) => {
     //下拉选项key
     const { label,value } = optionConfig;
 
-    //[]变为了didMount 在return时是组件被销毁时候 
-    const useWillUnmount = fn => useEffect(() => () => fn && fn(),[]);
-    useWillUnmount(() => isMonted = false);
-
     // 分页改变后去请求数据 
     // 搜索文字改变后去搜索
     //必须是请求过之后才能生效，因为防止首次渲染
@@ -85,26 +82,37 @@ const SelectComponent = (props) => {
 
     //分页下拉回显需要根据下拉框的值去请求后台数据  （需要后台支持用下拉选项id去对下拉选项进行搜索）
     //非分页下拉直接请求全部下拉列表即可
-    //只要是值变了就需要执行这个方法 因为设置值后没有下拉会显示id 
+    //只要是值变了就需要执行这个方法 因为设置值后没有下拉会显示id   
     useEffect(() => {
-        if (!fetchOptionDataEd && inputProps.value && fetchConfig && fetchConfig.apiName) {
+        //首次加载组件不能执行这个方法  必须是inputProps.value改变后才能使用 
+        if (isLoaded && !fetchOptionDataEd && inputProps.value && fetchConfig && fetchConfig.apiName) {
             if (type === "select") {
-                fetchData();
+                !isGone.current && fetchData();
             } else {
                 //组件实例化后监听到值切换 并且 是分页下拉 并且没有下拉选项值时候
                 //1、需要根据上面所述去请求后台下拉选项数据
-                //2、请求来后世界上不能算请求过数据，只能算有了一个个显示的下拉选项，没有会显示一个id在输入框中
+                //2、请求来后实际上不能算请求过数据，只能算有了一个个显示的下拉选项，没有会显示一个id在输入框中
                 //3、当用户触礁时候需要备份该下拉数据并且请求新的数据
-                isMonted && setIsPageSelectCallBackShow(true);
-                isMonted && fetchData({ [value]: inputProps.value });
+                !isGone.current && setIsPageSelectCallBackShow(true);
+                !isGone.current && fetchData({ [value]: inputProps.value });
             }
         }
-    },[inputProps.value]);
+    },[inputProps.value,isLoaded]);
 
     useEffect(() => {
+
+        //设置组件渲染完毕 
+        setIsloaded(true);
         //刷新方法其实就是设置下状态让组件重新渲染
-        setSelectRender((Array.isArray(field) ? field.join('.') : field),() => isMonted && setOptionData(getSelectOptionFns((Array.isArray(field) ? field.join('.') : field))))
+        //设置一个刷新方法 在请求完数据时候会调用该刷新方法
+        setSelectRender((Array.isArray(field) ? field.join('.') : field),() => !isGone.current && setOptionData(getSelectOptionFns((Array.isArray(field) ? field.join('.') : field))))
+
+        //注销组件时候需要注意
+        return () => {
+            isGone.current = true;
+        }
     },[]);
+
 
     //将字符串模板label绑定数据
     const getLabelByStrTmp = (item) => {
@@ -141,72 +149,74 @@ const SelectComponent = (props) => {
             _body.page = page;
             _body[searchKey] = searchText;
         }
-
         //请求特定值 分页插件用于回显
         if (_oParams) {
             _body = { limit: limit,page: 1,..._oParams }
         }
 
         //开始请求
-        isMonted && setFetchOptionDataIng(true);
-        const { data,success,message,totalNumber,code } = await fetch(apiName,_body);
-        isMonted && setFetchOptionDataIng(false);
-        if (success) {
-            isMonted && setOptionData(data);
-            isMonted && setTotalNumber(totalNumber);
+        //别使用await 会卡住滴
+        !isGone.current && setFetchOptionDataIng(true);
+        fetch(apiName,_body).then(({ data,success,message,totalNumber,code }) => {
+            if (isGone.current) { return; }
+            setFetchOptionDataIng(false);
+            if (success) {
+                setOptionData(data);
+                setTotalNumber(totalNumber);
 
-            // 一般是回显需要用到 需要为子集设置下拉选项
-            const childrenFieldConfig = tool.getChildren(formConfig,field);
-            childrenFieldConfig && childrenFieldConfig.forEach((childFieldConfig) => {
-                let { realField } = childFieldConfig;
-                let childValue = form.getFieldValue(realField.split('.'));
-                let childOptionData = [];
-                let children = childFieldConfig.children || optionConfig.children;
-                let getOpteionData = (data = [],childValue) => {
-                    data.forEach(item => {
-                        if (item[value] === childValue) {
-                            childOptionData = data;
-                        } else if (item[children] && item[children].length) {
-                            getOpteionData(item[children],childValue)
-                        }
-                    })
+                // 一般是回显需要用到 需要为子集设置下拉选项
+                const childrenFieldConfig = tool.getChildren(formConfig,field);
+                childrenFieldConfig && childrenFieldConfig.forEach((childFieldConfig) => {
+                    let { realField } = childFieldConfig;
+                    let childValue = form.getFieldValue(realField.split('.'));
+                    let childOptionData = [];
+                    let children = childFieldConfig.children || optionConfig.children;
+                    let getOpteionData = (data = [],childValue) => {
+                        data.forEach(item => {
+                            if (item[value] === childValue) {
+                                childOptionData = data;
+                            } else if (item[children] && item[children].length) {
+                                getOpteionData(item[children],childValue)
+                            }
+                        })
+                    }
+                    //获取到下拉数据
+                    getOpteionData(data,childValue);
+
+                    //设置下拉数据
+                    setSelectOptionFns(realField,childOptionData);
+
+                    //让子组件重新渲染
+                    getSelectRender(realField)();
+                });
+
+                //当非首次请求时候就无需重复设置fetchOptionDataEd了
+                !isGone.current && !fetchOptionDataEd && !isPageSelectCallBackShow && setFetchOptionDataEd(true);
+                //分页下拉回显时候备份回显的下拉选项
+                if (type === "selectByPaging" && isPageSelectCallBackShow && !isGone.current) {
+                    let curSelectedOptiion = data.filter(item => getOptionItemValue(item) === inputProps.value)[0];
+                    //如果备份数据同数据列表中的数据重复的话情况备份选项即可  
+                    if (curSelectedOptiion) {
+                        !isGone.current && setBackUpOption({
+                            label: getOptionItemLabel(curSelectedOptiion),
+                            value: inputProps.value,
+                        })
+                    }
                 }
-                //获取到下拉数据
-                getOpteionData(data,childValue);
-
-                //设置下拉数据
-                setSelectOptionFns(realField,childOptionData);
-
-                //让子组件重新渲染
-                getSelectRender(realField)();
-            });
-
-            //当非首次请求时候就无需重复设置fetchOptionDataEd了
-            isMonted && !fetchOptionDataEd && !isPageSelectCallBackShow && setFetchOptionDataEd(true);
-            //分页下拉回显时候备份回显的下拉选项
-            if (type === "selectByPaging" && isPageSelectCallBackShow && isMonted) {
-                let curSelectedOptiion = data.filter(item => getOptionItemValue(item) === inputProps.value)[0];
-                //如果备份数据同数据列表中的数据重复的话情况备份选项即可  
-                if (curSelectedOptiion) {
-                    isMonted && setBackUpOption({
-                        label: getOptionItemLabel(curSelectedOptiion),
-                        value: inputProps.value,
-                    })
-                }
-            }
-        } else {
-            if (code === "-1") {
-                tool.msg.error(message);
             } else {
-                tool.msg.warn(message);
+                if (code === "-1") {
+                    tool.msg.error(message);
+                } else {
+                    tool.msg.warn(message);
+                }
             }
-        }
+        });
     }
 
     //触焦 请求数据
     const onFocus = () => {
         //当请求过了就不需要重新请求了
-        isMonted && isPageSelectCallBackShow && setIsPageSelectCallBackShow(false);
+        !isGone.current && isPageSelectCallBackShow && setIsPageSelectCallBackShow(false);
         !fetchOptionDataEd && fetchConfig && fetchConfig.apiName && fetchData();
 
         //无限联动字段需要调用方法来获取下拉选项数据
@@ -251,7 +261,6 @@ const SelectComponent = (props) => {
     let isNeedBackupOption = true;
     return <Select
         loading={fetchOptionDataIng}
-        onFocus={onFocus}
         onSearch={type === "selectByPaging" ? handleSearch : null}
         //下拉分页自定义了下拉框，所以不需要notFoundContent，不然会出现两个loading的样式
         notFoundContent={fetchOptionDataIng && type !== "selectByPaging" ? <div style={{ textAlign: "center",padding: "24px 0px" }}><Spin tip="请稍等..." /></div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
@@ -272,6 +281,10 @@ const SelectComponent = (props) => {
             </Spin>
         )}
         {...inputProps}
+        onFocus={() => {
+            onFocus();
+            inputProps.onFocus && inputProps.onFocus();
+        }}
         //解决回显值时候会显示id
         value={(optionData?.length && inputProps.value) ? inputProps.value : undefined}
     >

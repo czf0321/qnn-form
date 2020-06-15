@@ -17,7 +17,10 @@ const CascaderComponent = (props) => {
                 options={optionData}
                 {...inputProps}
                 className={`${inputProps.className} ${style.qnnFormCascader} qnnFormCascader`}
-                onFocus={onFocus}
+                onFocus={()=>{
+                    onFocus();
+                    inputProps.onFocus && inputProps.onFocus(); 
+                }}
                 onChange={(v) => inputProps.onChange(v)} 
             />
         }}

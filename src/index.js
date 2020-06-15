@@ -157,49 +157,6 @@ class QnnForm extends Component {
         //需要对数据进行缓存 否则在多字段情况下可能会进行重复请求
         const fetchfn = fetch || myFetch;
         this.fetch = fetchfn;
-        //正在请求的接口
-        //暂不处理
-        /***
-         * [ 
-         *      {
-         *          apiName:'xxx', 
-         *          body:'{name:张三}', 
-         *          res:Res, 
-         *          status:'loading' | 'done' 
-         *      }
-         * ]
-        */
-        // this.fetchingApiName = [];
-        // this.fetch = (apiName,body,...args) => {
-        //     //如果接口和参数都一样的话不能重复发起请求 
-        //     let curing = this.fetchingApiName.filter((item) => item['apiName'] === apiName)[0];
-        //     if (curing && curing.body === JSON.stringify(body) && curing.status === 'loading') {
-        //         //这样就不会执行then了
-        //         // return { then: () => { } };
-        //         return new Promise((resolve) => { resolve({ success: true }) })
-        //     }
-        //     if (curing && curing.body === JSON.stringify(body) && curing.status === 'done') {
-        //         //直接返回缓存值
-        //         return new Promise((resolve) => { resolve(curing.Res) })
-        //     }
-        //     this.fetchingApiName.push({
-        //         apiName,
-        //         body: JSON.stringify(body),
-        //         status: "loading"
-        //     });
-        //     return new Promise((resolve) => {
-        //         fetchfn(apiName,body,...args).then((res) => {
-        //             //把请求从队列中移除
-        //             this.fetchingApiName = this.fetchingApiName.map((item) => {
-        //                 if (item['apiName'] !== apiName && item['body'] !== JSON.stringify(body)) {
-        //                     item.status = 'done'
-        //                 }
-        //                 return item;
-        //             })   
-        //             resolve(res);
-        //         })
-        //     })
-        // };
 
         //内置方法
         this.bind = bind.bind(this);
@@ -340,7 +297,11 @@ class QnnForm extends Component {
         if (this.props.form) { console.error("QnnForm组件无需再传入form对象") };
 
         //如果是tabs表单的话需要等待tab表单加载出来后再执行这个方法进行设置值
-        this.getTabsValueByFetch = () => {
+        this.getTabsValueByFetch = () => { 
+            //新增时候是不需要去请求数据的
+            if (this.props?.clickCb?.rowInfo?.name === 'add') {
+                return;
+            } 
             const { tabs,tabsIndex } = this.state;
             let _type = tabs[tabsIndex].type || tabs[tabsIndex].name; //兼容写法 
             if (_type === 'qnnForm' && tabs[tabsIndex]?.content?.fetchConfig && !tabs[tabsIndex].fetched) {

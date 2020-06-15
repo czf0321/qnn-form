@@ -1,6 +1,6 @@
 import React,{ Suspense } from 'react';
 import { Skeleton,Tabs } from "antd";
-const QnnTableComponent = React.lazy(() => import("qnn-table"));
+const QnnTableComponent = React.lazy(() => import("../../../qnn-table"));
 const { TabPane } = Tabs;
 
 const TabsForm = (props) => {
@@ -39,7 +39,6 @@ const TabsForm = (props) => {
                         tabFormConfig: { ...content },
                         qnnformData: qnnformData,
                     }
- 
                     return <TabPane
                         tab={title}
                         key={index.toString()}
@@ -52,7 +51,8 @@ const TabsForm = (props) => {
                         className={`${otherArgs.className} ${style.TabPane} TabPane ${_type !== "qnnForm" ? style.TabPaneByNoForm : ""}`}
                     >
                         {(() => {
-                            if (_type === "qnnForm") {
+                            if (_type === "qnnForm") { 
+                                // console.log('渲染tabItem')
                                 return <Suspense fallback={<Skeleton />}>
                                     <BasicForm {...itemBasicFormProps} />
                                 </Suspense>

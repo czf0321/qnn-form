@@ -113,7 +113,7 @@ const CreateForm = (props) => {
             if (childChildrenData && ((typeof childChildrenData) === "object")) {
                 cloneChild.props.children = loopChildren(childChildrenData)
             } else {
-                if (childProps?.field) {
+                if (childProps?.field) { 
                     //需要使用CreateFormItemEle组件渲染  
                     cloneChild = <CreateFormItemEle {...childProps} />
                 } else {

@@ -5,7 +5,7 @@ const refresh = function (fetchConfig) {
     return new Promise(async (resolve) => {
         let { formConfig,data,values } = this.state;
         fetchConfig = fetchConfig || this.state.fetchConfig;
-        const { match } = this.props;
+        const { match,clickCb } = this.props;
         fetchConfig = this.bind(fetchConfig)({ ...this.funcCallBackParams() });
         let { apiName,params,otherParams,success } = fetchConfig;
         let _successCB = success;
@@ -14,8 +14,17 @@ const refresh = function (fetchConfig) {
         formConfig.fetchConfig && this.getFieldsInsertForm();
         //因为联动下拉需要获取到字段的值来设置子级数据所以先设置值，然后社遏制下拉选项
         //请求默认值  
-        if (apiName) {
-            let _params = tool.getFetchParams({ params,otherParams,match,form: this.form,bind: this.bind,funcCallBackParams: this.funcCallBackParams })
+        if (apiName) { 
+            console.log('刷新 ')
+            let _params = tool.getFetchParams({
+                params,
+                otherParams,
+                match,
+                form: this.form,
+                bind: this.bind,
+                funcCallBackParams: this.funcCallBackParams,
+                rowData: clickCb?.rowData || {}
+            })
             this.qnnSetState({ loadingByForm: true,isNeedRefresh: false });
             let resData = await this.fetch(apiName,_params);
             let { success,data,message,code } = resData;
@@ -29,7 +38,7 @@ const refresh = function (fetchConfig) {
                     tool.msg.error(message);
                 } else {
                     tool.msg.warn(message);
-                } 
+                }
             }
             //回调执行
             _successCB && this.bind(_successCB)(resData,this.funcCallBackParams());
