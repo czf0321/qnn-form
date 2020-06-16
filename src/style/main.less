@@ -601,6 +601,8 @@
             border-top: 1px solid #efefef;
             box-sizing: border-box;
             margin-bottom: 0px;
+            padding-bottom: constant(safe-area-inset-bottom);
+            padding-bottom: env(safe-area-inset-bottom); 
             :global(.ant-form-item-control-input) {
                 min-height: 0px;
             }

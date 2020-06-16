@@ -1,6 +1,6 @@
 import React,{ Suspense } from 'react';
 import { Skeleton,Tabs } from "antd";
-const QnnTableComponent = React.lazy(() => import("../../../qnn-table"));
+const QnnTableComponent = React.lazy(() => import("qnn-table"));
 const { TabPane } = Tabs;
 
 const TabsForm = (props) => {

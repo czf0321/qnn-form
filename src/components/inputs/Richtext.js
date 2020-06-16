@@ -1,7 +1,7 @@
 import React,{ memo,useEffect } from 'react';
 import ReactUeditor from 'ifanrx-react-ueditor'
 
-window.UEDITOR_HOME_URL = window.configs.ueCdn || 'http://cdn.apih5.com/lib/react-ueditor/vendor/ueditor/';
+window.UEDITOR_HOME_URL = window?.configs?.ueCdn || 'http://cdn.apih5.com/lib/react-ueditor/vendor/ueditor/';
 
 const RichtextComponent = memo((props) => {
     const {

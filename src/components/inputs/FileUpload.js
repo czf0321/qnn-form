@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useLayoutEffect } from 'react';
 import { Upload,Button } from "antd";
 import { UploadOutlined,InboxOutlined,PlusOutlined } from '@ant-design/icons';
 import Camera from "./upload";
@@ -16,7 +16,7 @@ const FileUploadComponent = (props) => {
             fetchConfig: { apiName = "upload" }
         },
         qnnformData: { headers,style,qnnFormProps = {} },
-        fns: { upload },
+        fns: { upload,isMobile },
         fileList = [],
     } = props;
     //文件上传组件的props 
@@ -32,7 +32,7 @@ const FileUploadComponent = (props) => {
     if (upload) {
         //自定义上传实现 
         uploadPropsByCom.customRequest = (e) => {
-            const { onSuccess,onError,file } = e; 
+            const { onSuccess,onError,file } = e;
             upload(apiName)({
                 target: { files: [file] }
             }).then((response) => {
@@ -58,24 +58,41 @@ const FileUploadComponent = (props) => {
             file,
             fileList: fileList.filter(({ url,mobileUrl,status }) => (url || mobileUrl || status === "uploading" || status === 'done'))
         });
-    } 
+    }
+
+    //给a连接添加 needsclick 用以阻止移动端需要双击才能打开文件的问题
+    //解决ios上面的问题
+    useLayoutEffect(() => {
+        if (isMobile()) {
+            document.querySelectorAll('.ant-upload  button').forEach((ele) => {
+                if (!(new RegExp('needsclick','g').test(ele.className))) {
+                    ele.setAttribute('class',`${ele.className} needsclick`)
+                }
+            })
+            document.querySelectorAll('.ant-upload-list-item a').forEach((ele) => {
+                if (!(new RegExp('needsclick','g').test(ele.className))) {
+                    ele.setAttribute('class',`${ele.className} needsclick`)
+                }
+            })
+        }
+    },[fileList])
 
     if (type === "files") {
-        return <div id={inputProps.id}>
+        return <div id={inputProps.id} className="needsclick">
             <Upload
                 {...uploadPropsByCom}
                 {...inputProps}
                 onChange={onChange}
                 id={field}
                 className={`${inputProps.className} ${style.upload} upload`}
-            > 
+            >
                 {
                     _das ? null : <Button disabled={disabled}>
                         <UploadOutlined /> {desc || "点击上传"}
                     </Button>
                 }
             </Upload>
-        </div>
+        </div >
     } else if (type === "filesDragger") {
         return <div id={inputProps.id}>
             <Upload.Dragger

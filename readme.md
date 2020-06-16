@@ -17,6 +17,10 @@
 
 ##### <a href="https://github.com/wangzongming/qnn-form/blob/master/preview/tabs.png">tab 预览图 1</a>
 
+#### 在线体验
+
+基础案例  <a href="https://codesandbox.io/s/qnn-form-dwpjo">点击直达</a>
+
 ###### <a>敬请期待...</a>
 
 #### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
@@ -54,11 +58,11 @@
  
 </ul>
 
-#### <a id="use">下载&引用</a>
+#### <a id="use">下载&引用</a> 
+    
+    yarn add qnn-form | npm i qnn-form
 
-    ps：暂未打包发布到npm，所以请直接克隆后放置项目合适的位置引用即可
-
-    import QnnForm from 'XXX/qnn-form'
+    import QnnForm from 'qnn-form'
 
 #### <a id="start">环境配置</a>
 

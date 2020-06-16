@@ -4,6 +4,6 @@ export { fromJS,is } from "immutable"
 export { withRouter } from "react-router-dom";
 export { default as moment } from "moment";
 
-export { default as PullPerson } from "../../pullPersion"
-export { default as PullPersonMobile } from "../../pullPersionMobile"
-export { default as Tree } from "../../tree" 
+export { default as PullPerson } from "pull-person"
+export { default as PullPersonMobile } from "pull-person-mobile"
+export { default as Tree } from "qnn-tree" 
