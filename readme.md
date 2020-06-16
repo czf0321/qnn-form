@@ -19,7 +19,12 @@
 
 #### 在线体验
 
-基础案例  <a href="https://codesandbox.io/s/qnn-form-dwpjo">点击直达</a>
+<p>基础配置  <a href="https://codesandbox.io/s/qnn-form-dwpjo">点击直达</a>
+<p>字段拖动  <a href="https://codesandbox.io/s/qnn-form-drag-8oi2u">点击直达</a>
+<p>描述式表单  <a href="https://codesandbox.io/s/qnn-form-descriptions-217bi">点击直达</a>
+
+
+
 
 ###### <a>敬请期待...</a>
 
