@@ -137,7 +137,7 @@ const tool = {
         if (!path) { console.error("未读取到field配置！！请检查  ---getDataValByField方法提示") }
         const arr = path.split?.('.') || path;
         const len = arr.length - 1
-        let val = null;
+        let val = null; 
         arr.reduce((prev,cur,index) => {
             if (index === len) {
                 val = prev[cur]
@@ -246,14 +246,14 @@ const tool = {
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
 
                 //field可能是个嵌套  
-                let itemValue = tool.getDataValByField(field,values);
+                let itemValue = tool.getDataValByField(field,values); 
 
                 //当值存在是进行操作 否则忽略  0和false别忽略
                 //等于 undefind 的就不要进行操作了 否则会把所有表单字段都给清空了
                 if (itemValue || itemValue === 0 || itemValue === false || itemValue === null || itemValue === "") {
                     switch (type) {
                         case "qnnForm":
-                            if (canAddForm) {
+                            if (canAddForm) { 
                                 formatedData[field] = itemValue?.map?.(item => tool.formatData(item,formFields,"set"))
                             } else {
                                 formatedData[field] = tool.formatData(itemValue,formFields,"set");
@@ -349,7 +349,7 @@ const tool = {
                     //空的值也不能忽略 否则字段将不可以清空了  ---错误思维  请控制需要用form.resetxxx  
                     // formatedData[field] = itemValue;
                 }
-            });
+            }); 
             return { ...formatedData };
         }
     },

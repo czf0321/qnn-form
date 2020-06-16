@@ -15,7 +15,7 @@ const refresh = function (fetchConfig) {
         //因为联动下拉需要获取到字段的值来设置子级数据所以先设置值，然后社遏制下拉选项
         //请求默认值  
         if (apiName) { 
-            console.log('刷新 ')
+            // console.log('刷新 ')
             let _params = tool.getFetchParams({
                 params,
                 otherParams,

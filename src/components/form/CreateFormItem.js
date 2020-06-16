@@ -110,7 +110,7 @@ const CreateFormItem = (props) => {
     //最终依赖项
     const realDependencie = newDependencies.map(dependencie => dependencie.split('.'));
 
-    const realName = Array.isArray(field) ? field : field?.split('.');
+    const realName = Array.isArray(field) ? field : field?.split('.'); 
     //formItem的props
     const formItemProps = {
         name: realName,

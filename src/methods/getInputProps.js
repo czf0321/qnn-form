@@ -6,8 +6,8 @@ const getInputProps = (props) => {
         fieldConfig,
         fieldConfig: {
             type,field,
-            placeholder,
-            multiple,showSearch,
+            placeholder, 
+            showSearch,
             optionConfig = {},
             //这两是必须formItem处理完后传入的所以不能从fieldConfig中取出
             disabled,
@@ -50,6 +50,8 @@ const getInputProps = (props) => {
         funcCallBackParams
     } = props;
 
+    let multiple = otherConfig.multiple;
+
     //格式化值
     let formatVal = value;
     if ((type !== "number" || type !== "integer") && formatter) {
@@ -76,9 +78,9 @@ const getInputProps = (props) => {
         onChange: (val,changeProps = {}) => {
             //下拉特有的双向字段数据绑定
             let { linkageFields,children } = optionConfig;
-            //多选时候第二个参数为itemData
-            let itemData = multiple ? changeProps.map(item => item.itemdata) : (changeProps.itemdata || changeProps.itemData);
-            let itemParentData = multiple ? changeProps.map(item => item.parentdata) : (changeProps.parentdata);
+            //多选时候第二个参数为itemData 只有下拉输入控件会使用第二个参数
+            let itemData = multiple ? changeProps?.map?.(item => item.itemdata) : (changeProps.itemdata || changeProps.itemData);
+            let itemParentData = multiple ? changeProps?.map?.(item => item.parentdata) : (changeProps.parentdata);
             if (linkageFields) {
                 let vals = {};
                 for (const targetField in linkageFields) {

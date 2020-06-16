@@ -5,6 +5,9 @@ import React,{ useState,useEffect } from 'react';
 const FormBlockCanAdd = (props) => {
     const { form,field,getSetValueFn,fieldsInitialValue,fns: { setValues } } = props;
     const initialValue = props.initialValue;
+    //拆分好的一个数组
+    const realField = Array.isArray(field) ? field : field.split('.');
+
     //可以生成表单块id
     const getInitBlockId = () => `${new Date().getTime().toString()}${(Math.random() * 10000 + 100).toFixed(0)}`;
     //处理初期値
@@ -43,11 +46,32 @@ const FormBlockCanAdd = (props) => {
         setValue(_value);
     })
 
+    //获取要设置进表单的值
+    //@realField 要设置的值
+    //()=>formValue
+    const getRealSetValue = (value) => {
+        let vals = {};
+        //这里需要将field进行拆分
+        if (realField.length > 1) {
+            let fieldValIndex = realField.length - 1;
+            realField.reduce((prve,cur,curIndex) => {
+                if (fieldValIndex === curIndex) {
+                    prve[cur] = value;
+                } else {
+                    vals[cur] = {};
+                }
+                return vals[cur]
+            },{})
+        } else {
+            vals[realField[0]] = value;
+        }
+        return vals;
+    }
+
     //新增块
     const addBlock = () => {
         //获取值 
-        const fieldVal = form.getFieldValue(field);
-
+        const fieldVal = form.getFieldValue(realField);
         //合并数据
         let _value = value;
         if (fieldVal) {
@@ -65,14 +89,16 @@ const FormBlockCanAdd = (props) => {
         //setValue是设置表单块的值
         //setValues是设置表单的值
         setValue(newVal);
-        setValues({
-            [field]: newVal
-        }) 
+
+        //这里需要将field进行拆分
+        let vals = getRealSetValue(newVal); 
+        //需要设置进表单数据
+        setValues(vals)
     }
 
     //删除块
     const removeBlock = ({ _id }) => {
-        const fieldVal = form.getFieldValue(field);
+        const fieldVal = form.getFieldValue(realField);
 
         //合并数据
         let _value = value;
@@ -89,12 +115,12 @@ const FormBlockCanAdd = (props) => {
         }
 
         const deledData = _value.filter(item => item["_id"] !== _id);
-        setValue(deledData);
 
-        //这块需要设置下
-        form.setFieldsValue({
-            [field]: deledData
-        });
+        setValue(deledData);
+  
+        let vals = getRealSetValue(deledData); 
+        //需要设置进表单数据 
+        setValues(vals)
     }
 
     return <div>

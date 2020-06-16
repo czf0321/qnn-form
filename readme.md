@@ -487,8 +487,6 @@
                 funcCallBackParams:CallbackFnProps
             }
 
-
-
 #### <a id="common">通用属性说明</a>
 
     ps:
@@ -508,7 +506,7 @@
         label: '姓名',
 
         是否显示label后的冒号:  [boolean]
-        默认label存在为true反之false  
+        默认label存在为true反之false
         colon:true,
 
         label点击回调
@@ -1359,15 +1357,23 @@
     {
         type: 'files',
         label: 'files',
-        field: 'files', //唯一的字段名 ***必传
-        required: true,//是否必填
-        desc: '点击上传', //默认 点击或者拖动上传
+        唯一的字段名 ***必传
+        field: 'files',
+        是否必填 
+        required: true,
+        默认 点击或者拖动上传
+        desc: '点击上传', 
         fetchConfig: {
-            apiName: window.configs.domain + 'upload',
-            // name:'123', //上传文件的name 默认空
+            可以是http开头的网址 也可以是一个接口名字
+            apiName: 'upload',
+            //name:'123', 上传文件的name 默认空
         },
-        accept: 'image/jpeg', //支持上传的类型 默认都支持  格式"image/gif, image/jpeg"
-        max: 2, //最大上传数量
+        支持上传的类型 默认都支持  格式"image/gif, image/jpeg"
+        accept: 'image/jpeg', 
+        最大上传数量
+        max: 2, 
+        是否支持多选
+        multiple:true, 
     }
 
 #### <a id="textarea">files 文件拖动上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
@@ -1516,14 +1522,14 @@
             ***incToForm 配置说明 [boolean] 默认false***
 
             使用环境：可编辑的表格使用的
-            影响结果：将列表数据存入到表单数据中 
+            影响结果：将列表数据存入到表单数据中
             注意：
                 新增行按钮addRow和del按钮配置的 addCb 和 addRowFetchConfig 和 fetchConfig 配置将无效 因为已经被内置方法接管了
                 各字段的 tdEditCb 和 tdEditFetchConfig 配置将无效 因为已经被内置方法接管了
                 表格字段不参与必填验证
                 表格主键字段必须配置，且新增数据时表格主键值为内置分配
 
-        */ 
+        */
         incToForm: true,
 
         qnnTableConfig:{

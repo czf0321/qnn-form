@@ -162,6 +162,7 @@ const BasicForm = (props) => {
 
                                                                     fields && fields.map(childFieldConfig => {
                                                                         const copyFieldConfig = fromJS(childFieldConfig).toJS();
+                                                                        // console.log([...field.split('.'),index,childFieldConfig.field])
                                                                         return <CreateFormItemEle
                                                                             {...copyFieldConfig}
                                                                             disabled={copyFieldConfig.disabled || blockDisabled}

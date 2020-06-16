@@ -30,9 +30,9 @@ const FileUploadComponent = (props) => {
 
     //一定要用户传入才是用自定义上传处理
     if (upload) {
-        //自定义上传实现
+        //自定义上传实现 
         uploadPropsByCom.customRequest = (e) => {
-            const { onSuccess,onError,file } = e;
+            const { onSuccess,onError,file } = e; 
             upload(apiName)({
                 target: { files: [file] }
             }).then((response) => {
@@ -46,6 +46,7 @@ const FileUploadComponent = (props) => {
             })
         }
     }
+
     //只用于上传长度大于max时使用 因为组件禁用后都删除不了的
     const _das = disabled || fileList.length >= max;
     if (_das && !fileList.length) {
@@ -57,7 +58,8 @@ const FileUploadComponent = (props) => {
             file,
             fileList: fileList.filter(({ url,mobileUrl,status }) => (url || mobileUrl || status === "uploading" || status === 'done'))
         });
-    }
+    } 
+
     if (type === "files") {
         return <div id={inputProps.id}>
             <Upload
@@ -66,8 +68,7 @@ const FileUploadComponent = (props) => {
                 onChange={onChange}
                 id={field}
                 className={`${inputProps.className} ${style.upload} upload`}
-            >
-
+            > 
                 {
                     _das ? null : <Button disabled={disabled}>
                         <UploadOutlined /> {desc || "点击上传"}
