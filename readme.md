@@ -22,9 +22,10 @@
 <p>基础配置  <a href="https://codesandbox.io/s/qnn-form-dwpjo">点击直达</a>
 <p>字段拖动  <a href="https://codesandbox.io/s/qnn-form-drag-8oi2u">点击直达</a>
 <p>描述式表单  <a href="https://codesandbox.io/s/qnn-form-descriptions-217bi">点击直达</a>
+ 
+#### 配合表格组件de使用
 
-
-
+<p>qnn-table(万能表格)  <a href="https://github.com/wangzongming/qnn-table">点击直达</a>
 
 ###### <a>敬请期待...</a>
 
@@ -206,7 +207,7 @@
 #### <a id="example">使用实例</a>
 
     import React,{ Component } from "react";
-    import QnnForm from "../modules/qnn-table/qnn-form";
+    import QnnForm from "qnn-form";
 
     class index extends Component {
         render() {
