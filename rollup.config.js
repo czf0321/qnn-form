@@ -1,30 +1,31 @@
 import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
+// import commonjs from 'rollup-plugin-commonjs'
+// import resolve from 'rollup-plugin-node-resolve'
+// import url from 'rollup-plugin-url'
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve';
+import url from '@rollup/plugin-url';
 import external from 'rollup-plugin-peer-deps-external'
 import postcss from 'rollup-plugin-postcss'
-import resolve from 'rollup-plugin-node-resolve';
-import url from 'rollup-plugin-url'
 import svgr from '@svgr/rollup'
-import image from '@rollup/plugin-image'; 
-import { terser } from 'rollup-plugin-terser'; 
+import image from '@rollup/plugin-image';
+import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
 export default {
     input: 'src/index.js',
     output: [
         {
-            dir: "dist/cjs",
-            // file: pkg.main,
+            dir: "dist/cjs", 
             format: 'cjs',
             sourcemap: false,
-            name: 'qnnTable'
+            exports:"named", 
         },
         {
-            dir: "dist/es",
-            // file: pkg.module,
+            dir: "dist/es", 
             format: 'es',
             sourcemap: false,
-            name: 'qnnTable'
+            exports:"named",
         }
     ],
     external: [
@@ -45,14 +46,16 @@ export default {
         "react-date-range",
         "ifanrx-react-ueditor",
         "@ant-design"
-    ],
-    globals: {
-        jquery: '$'
-    },
+    ], 
+    moduleContext:(id)=>{ 
+        return "window"
+    }, 
     plugins: [
         resolve(),
         external(),
         image(),
+        url(),
+        svgr(),
         postcss({
             modules: true,
             plugins: [
@@ -73,8 +76,6 @@ export default {
                 })
             ]
         }),
-        url(),
-        svgr(),
         babel({
             babelrc: false,
             exclude: 'node_modules/**',
@@ -145,8 +146,8 @@ export default {
                     "antd-mobile"
                 ]
             ]
-        }), 
+        }),
         commonjs(),
-		production && terser() // minify, but only in production 
+        production && terser() // minify, but only in production 
     ]
 }

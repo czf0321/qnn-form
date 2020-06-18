@@ -349,7 +349,7 @@ class QnnForm extends Component {
         } = this.state;
         const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll,antdFormProps,fieldCanDrag,fieldDragCbs = {} } = this.props;
         const qnnFormStyle = this.props.style || {};
-        // console.log('%c 表单组件渲染','font-size:20px; color:red',this.props.formConfig); 
+        // console.log('%c 表单组件渲染12','font-size:20px; color:red',this.props.formConfig); 
         return (
             <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''} ${fieldCanDrag ? "fieldCanDragQnnForm" : null}`} style={{ ...qnnFormStyle }}>
                 <Spin spinning={loadingByForm} style={{ margin: "24px auto",display: "block",textAlign: "center",height: "100%" }} tip="loading...">
