@@ -64,12 +64,11 @@
  
 </ul>
 
-#### <a id="use">下载&引用</a> 
-    
+#### <a id="use">下载&引用</a>
+
     yarn add qnn-form | npm i qnn-form
 
     import QnnForm from 'qnn-form'
- 
 
 #### <a id="types">可用的输入类型</a>
 
@@ -206,26 +205,51 @@
 
     export default idnex;
 
-####<a id="fieldConfigDetail">字段详细配置</a>
+#### <a id="qnnFormConfig">主体配置</a>
+
+<li><b><a href="#fetch">fetch 数据传输的ajax方法（需要返回一个promise,点击看详情）</a></li> 
+<li><b><a href="#upload">upload 上传文件的ajax方法（需要返回一个promise,点击看详情）</a></li> 
+<li><b><a href="#headers">headers 如果未配置upload 将会使用内置上传文件方法 并且加入这个header配置</a></li> 
+<li><b><a href="#wrappedComponentRef">wrappedComponentRef 获取qnn-form实例</a></li> 
+<li><b><a href="#data">data 假数据（不推荐使用 推荐使用initialValues）</a></li> 
+<li><b><a href="#initialValues">initialValues 初始值</a></li> 
+<li><b><a href="#antdFormProps">antdFormProps 同步ant Form组件配置</a></li> 
+<li><b><a href="#formItemLayout">formItemLayout 输入框和label布局</a></li> 
+<li><b><a href="#tailFormItemLayout">tailFormItemLayout 底部按钮的布局</a></li> 
+<li><b><a href="#style">style  自定义容器样式</a></li> 
+<li><b><a href="#fetchConfig">fetchConfig 请求配置  后会自动去请求并且赋值到表单可使用rcform设置数据 可为func</a></li> 
+<li><b><a href="#formConfig">formConfig 字段项配置</a></li> 
+<li><b><a href="#tabsActiveKey">tabsActiveKey 当前激活的tabs项</a></li> 
+<li><b><a href="#onTabsChange">onTabsChange 监听tab切换</a></li> 
+<li><b><a href="#tabs">tabs 页面tab页面时的配置（参见tabs配置）</a></li> 
+<li><b><a href="#btns">btns  底部按钮配置（参见按钮配置）</a></li> 
+<li><b><a href="#componentsKey">componentsKey 自定义组件key定义</a></li> 
+<li><b><a href="#method">method 自定义方法key定义</a></li> 
+<li><b><a href="#fieldsValueChange">fieldsValueChange 表单字段改变时候的监听</a></li> 
+<li><b><a href="#formContentScroll">fieldsValueChange 表单内容是否滚动</a></li> 
+<li><b><a href="#fieldCanDrag">fieldsValueChange 字段可拖拽配置</a></li> 
+<li><b><a href="#fieldDragCbs">fieldDragCbs 拖拽之后的回调</a></li>  
+<li><b><a href="#other">...其他自定义</a></li>
+
+#### <a id="fieldConfigDetail">字段详细配置</a>
 
 <ul>
      <li><b><a href="#use">type 类型（必需配置）</a></li> 
      <li><b><a href="#field">field 字段名（必须配置）</a></li> 
-     <li><b><a href="#dependencies">dependencies</a></li> 
-     <li><b><a href="#label">label</a></li>   
+     <li><b><a href="#label">label 字段中文名</a></li>   
      <li><b><a href="#labelStyle">labelStyle label自定义样式</a></li>   
-     <li><b><a href="#labelClick">labelClick label点击后的回调</a></li>   
+     <li><b><a href="#labelCanClick">labelCanClick 控制label是否可被点击</a></li> 
+     <li><b><a href="#labelClick">labelClick label点击后的回调</a></li> 
+     <li><b><a href="#dependencies">dependencies 字段依赖项</a></li>   
      <li><b><a href="#required">required 是否必填</a></li> 
-     <li><b><a href="#placeholder">placeholder</a></li> 
+     <li><b><a href="#placeholder">placeholder 输入框占位符</a></li> 
      <li><b><a href="#initialValue">initialValue 初始值</a></li> 
      <li><b><a href="#isUrlParams">isUrlParams 该字段值是否是从地址参数中取</a></li> 
      <li><b><a href="#help">help 输入框底部的帮助信息</a></li> 
-     <li><b><a href="#span">span 字段的长度比例默认一行</a></li> 
+     <li><b><a href="#span">span 字段的长度比例默认24（独占一行）</a></li> 
      <li><b><a href="#offse">offse 字段相对于左边偏移量</a></li> 
      <li><b><a href="#voice">voice 开启微信语音输入 请确保jsSdk已经正确配置</a></li> 
-     <li><b><a href="#formItemLayout">formItemLayout label和输入框的布局</a></li> 
-     <li><b><a href="#colWrapperStyle">colWrapperStyle 最外层col容器的样式</a></li> 
-     <li><b><a href="#style">style 自定义input样式</a></li> 
+     <li><b><a href="#formItemLayout">formItemLayout label和输入框的布局</a></li>  
      <li><b><a href="#onChange">onChange 值切换时执行</a></li> 
      <li><b><a href="#formatter">formatter 显示格式化</a></li> 
      <li><b><a href="#message">message 当用户未填写字段时提醒的文字</a></li> 
@@ -239,10 +263,19 @@
      <li><b><a href="#oldValue">oldValue  textarea的历史对话数据 </a></li> 
      <li><b><a href="#oldValueKey">oldValueKey  textarea的历史对话数据的key配置 </a></li> 
      <li><b><a href="#addends">addends  加数</a></li> 
+     <li><b><a href="#hide">hide  是否隐藏</a></li> 
+     <li><b><a href="#colon">colon  是否显示label后的冒号</a></li> 
+     <li><b><a href="#formItemWrapperStyle">formItemWrapperStyle  最外层col容器的样式</a></li> 
+     <li><b><a href="#colWrapperClassName">colWrapperClassName  最外层col容器的class名称</a></li> 
+     <li><b><a href="#formItemStyle">formItemStyle  输入框最外层样式</a></li> 
+     <li><b><a href="#style">style 自定义input样式</a></li> 
+     <li><b><a href="#optionConfig">optionConfig  下拉选项配置</a></li> 
+     <li><b><a href="#diyRules">diyRules  自定义效验规则</a></li> 
+     <li><b><a href="#other">other  其他有效事件(如onFlur...)</a></li>  
 </ul>
 <br />
 
-#### <a id="commonByQnnForm">qnn-form 根配置</a>
+#### <a id="commonByQnnForm">qnn-form 根配置（案例）</a>
 
         {
 
@@ -299,25 +332,10 @@
                 }
             };
 
-            //表单块左右布局配置
-            formContainerLayoutLeftAndRright: {
-                left: {
-                    span: 21,
-                    name: "qnnForm"
-                },
-                right: {
-                    span: 3,
-                    name: "diy",
-                    content: () => {
-                        return <div>123456</div>
-                    }
-                }
-            },
-
             自定义容器样式
             style:{},
 
-            form表单滚动条滚动监听
+            form表单滚动条滚动监听 -- 暂不可使用
             formContainerOnScroll:(e)=>void,
 
             样式类型（0 | 1 ）  1类型暂时停止维护部分样式可能 会出问题 默认0
@@ -383,6 +401,13 @@
                 myDiyComponent: (props)=><div></div> | reactDom
             }}
 
+
+            自定义方法key定义
+            method={{
+                myDiyComponent: (props)=><div></div> | reactDom
+            }}
+
+
             移动端时 tab页面表单页面高度 （一般为：window.innerHeight - 45（tab容器高）, 如果上面顶部还加有导航条等需要继续减去导航条的高度）
             [number]
             qnnFormContextHeight
@@ -393,8 +418,6 @@
             表单内容是否滚动
             使用场景：在移动端某些情况下 除了表单外还有其他元素时需要使用  默认 true  [boolean]
             formContentScroll:true
-
-
 
 
             字段可拖拽配置 boolean 默认false
@@ -439,7 +462,7 @@
                 funcCallBackParams:CallbackFnProps
             }
 
-#### <a id="common">通用属性说明</a>
+#### <a id="common">通用属性说明（案例）</a>
 
     ps:
         所有function可用bind绑定函数名
@@ -677,7 +700,7 @@
         }
     },
 
-#### <a id="cangyongv">21 中常用验证</a>
+#### <a id="cangyongv">21 中常用验证（案例）</a>
 
     {
         type: "email",
@@ -1311,21 +1334,21 @@
         label: 'files',
         唯一的字段名 ***必传
         field: 'files',
-        是否必填 
+        是否必填
         required: true,
         默认 点击或者拖动上传
-        desc: '点击上传', 
+        desc: '点击上传',
         fetchConfig: {
             可以是http开头的网址 也可以是一个接口名字
             apiName: 'upload',
             //name:'123', 上传文件的name 默认空
         },
         支持上传的类型 默认都支持  格式"image/gif, image/jpeg"
-        accept: 'image/jpeg', 
+        accept: 'image/jpeg',
         最大上传数量
-        max: 2, 
+        max: 2,
         是否支持多选
-        multiple:true, 
+        multiple:true,
     }
 
 #### <a id="textarea">files 文件拖动上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
@@ -1789,7 +1812,7 @@
         this.props.form.setFieldsValue(_d)
     }
 
-#### <a id="JSX">JSX 风格</a>
+#### <a id="JSX">JSX 风格（案例）</a>
 
     import React from "react";
 
@@ -1829,7 +1852,7 @@
     }
     export default index;
 
-#### <a id="descriptForm">描述式表单说明</a>
+#### <a id="descriptForm">描述式表单说明（案例）</a>
 
     将表格配置为描述式表单只需添加配置
     config = {
