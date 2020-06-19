@@ -220,7 +220,7 @@ const CreateFormItem = (props) => {
     //如果是隐藏字段的话不能有样式的
     //如果label数据对象中有的话优先从中取   
     //自定义组直接返回即可
-    if (type === "component" || type === "Component") {
+    if (type === "component" || type === "Component") { 
         return <Col {...colProps} style={{ ..._ColStyle }} >
             <Form.Item noStyle dependencies={realDependencie} shouldUpdate={(prevValues,currentValues) => {
                 let update = false;

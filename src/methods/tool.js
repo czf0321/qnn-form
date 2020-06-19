@@ -423,20 +423,20 @@ const tool = {
             getFieldValue: (name) => form?.getFieldValue?.(getArrayName(name)),
             getFieldsValue: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.getFieldsValue?.((names.length ? names : undefined));
+                return form?.getFieldsValue?.((names.length ? names : undefined));
             },
             getFieldError: (name) => form.getFieldError(getArrayName(name)),
             getFieldsError: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.getFieldsError((names.length ? names : undefined));
+                return form?.getFieldsError?.((names.length ? names : undefined));
             },
             resetFields: (names = []) => {
                 names = names.map(item => getArrayName(item));
-                return form.resetFields((names.length ? names : undefined));
+                return form?.resetFields((names.length ? names : undefined));
             },
             validateFields: (names = [],...args) => {
                 names = names.map(item => getArrayName(item));
-                return form.validateFields((names.length ? names : undefined),...args);
+                return form?.validateFields((names.length ? names : undefined),...args);
             },
             validateFieldsAndScroll: (nameList,cb) => {
                 let names;
@@ -447,7 +447,7 @@ const tool = {
                     cb = names
                 }
                 names = names.map(item => getArrayName(item));
-                form.validateFields(names).then((vals) => {
+                form?.validateFields(names).then((vals) => {
                     cb(null,vals)
                 }).catch((errs) => {
                     cb(errs.errorFields,errs.values)

@@ -104,7 +104,7 @@ const BasicForm = (props) => {
 
                         const copyFieldConfig = fromJS(fieldConfig).toJS();
                         if (type === "qnnForm" || type === "qnnTable") {
-                            const realHide = fns.bind(hide)(funcCallBackParams({ form }));
+                            const realHide = fns.bind(hide)(funcCallBackParams({}));
                             if (realHide) return <div key={`formItem_${field}_Col`} />;
                         }
                         //切不可在此将hide字段改为div 否则将获取不到该字段值 

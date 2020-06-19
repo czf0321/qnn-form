@@ -69,65 +69,7 @@
     yarn add qnn-form | npm i qnn-form
 
     import QnnForm from 'qnn-form'
-
-#### <a id="start">环境配置</a>
-
-    需要项目安装并且配置好antd、antd-mobile的按需加载、js可选链、less-loader、cssModule
-    参考配置：
-
-        webpack.config.js
-
-        {
-            ...
-
-            module:{
-                ...
-                rules:[
-
-                    ...
-
-                    {
-                        oneOf:[
-                            {
-                                ...
-
-                                test: /\.(js|mjs|jsx|ts|tsx)$/,
-                                options:{
-                                    ...
-
-                                    plugins:[
-                                        ...
-                                        [
-                                            "import",
-                                            {
-                                                libraryName: "antd",
-                                                libraryDirectory: "es",
-                                                style: "css"
-                                            },
-                                            "ant"
-                                        ],
-                                        [
-                                            "import",
-                                            {
-                                                libraryName: "antd-mobile",
-                                                libraryDirectory: "es",
-                                                style: "css"
-                                            },
-                                            "antd-mobile"
-                                        ]
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-
-            ...
-        }
-
-    注意：
-    需自定义处理 qnn-form/lib/index.js 中暴露出去的业务组件
+ 
 
 #### <a id="types">可用的输入类型</a>
 
