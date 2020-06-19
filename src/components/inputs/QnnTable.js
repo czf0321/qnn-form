@@ -1,9 +1,52 @@
 import React from 'react';
+import tool from "../../methods/tool"
 const QnnTableComponent = React.lazy(() => import("qnn-table"));
 
 const QnnTable = (props) => {
-    const { incToForm,value = [],actionBtns = [],onChange,formConfig = [],...qnnTableProps } = props;
-  
+    const { incToForm,value = [],actionBtns = [],onChange,formConfig = [],fetchConfig = {},...qnnTableProps } = props;
+
+    const isFirstRender = React.useRef();
+
+    //如果incToForm 和 fetchConfig都存在的情况下需要在首次请先请求设置值
+    const getData = async () => { 
+        const { apiName,params = {},otherParams = {} } = fetchConfig;
+        const {
+            qnnFormProps: {
+                qnnFormProps = {},
+                fns: { bind },
+                funcCallBackParams,
+                qnnformData: { match = {} }
+            }
+        } = props; 
+        let _params = tool.getFetchParams({
+            params,
+            otherParams,
+            match,
+            form: props.form || {},
+            bind: bind,
+            funcCallBackParams: funcCallBackParams,
+            rowData: qnnFormProps?.clickCb?.rowData || {}
+        })
+        const { success,data,message,code } = await props.fetch(apiName,_params);
+        if (success) { 
+            onChange(data)
+        } else {
+            if (code === "-1") {
+                tool.msg.error(message);
+            } else {
+                tool.msg.warn(message);
+            }
+        }
+    }
+
+    React.useEffect(() => {
+        isFirstRender.current = true;
+        //首次渲染 在以下条件需要请求值
+        if (isFirstRender.current && incToForm && fetchConfig.apiName) { getData() }
+        isFirstRender.current = false;
+    },[])
+
+    //这个配置存在将不去掉用fetch(首次除外)
     if (incToForm) {
         //需要将表格数据存入表单数据
         if (!Array.isArray(actionBtns)) return console.error('actionBtns不可配置为 非数组 类型');

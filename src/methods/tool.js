@@ -520,7 +520,7 @@ const tool = {
             const routeParams = match.params;
             for (const key in params) {
                 if (params.hasOwnProperty(key)) {
-                    fetchParams[key] = getFieldValue(params[key]) || routeParams[params[key]] || rowData[params[key]];
+                    fetchParams[key] = getFieldValue?.(params[key]) || routeParams[params[key]] || rowData[params[key]];
                 }
             }
         }

@@ -27,8 +27,7 @@
 #### 配合表格组件de使用
 
 <p>qnn-table(万能表格)  <a href="https://github.com/wangzongming/qnn-table">点击直达</a>
-
-###### <a>敬请期待...</a>
+ 
 
 #### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
 
@@ -49,7 +48,7 @@
     <li><b><a href="#types">可用的输入类型</a></li>
     <li><b><a href="#example">使用实例</a></li>  
     <li><b><a href="#fieldConfigDetail">字段详细配置</a></li>
-    <li><b><a href="#commonByQnnForm">表单详细配置</a></li>
+    <li><b><a href="#commonByQnnForm">主体配置（案例）</a></li>
     <li><b><a href="#common">字段配置的通用属性说明</a></li> 
     <li><b><a href="#isUrlParams">网址参数取值</a></li>
     <li><b><a href="#setVals">设置值</a></li>
@@ -62,6 +61,7 @@
     <li><b><a href="#bind">绑定内置方法</a></li>
     <li><b><a href="#JSX">JSX风格调用</a></li>
     <li><b><a href="#descriptForm">描述式表单</a></li>
+    <li><b><a href="version-log.md">升级日志</a></li>
  
 </ul>
 
@@ -276,7 +276,7 @@
 </ul>
 <br />
 
-#### <a id="commonByQnnForm">qnn-form 根配置（案例）</a>
+#### <a id="commonByQnnForm">qnn-form 主体配置（案例）</a>
 
         {
 
@@ -463,7 +463,7 @@
                 funcCallBackParams:CallbackFnProps
             }
 
-#### <a id="common">通用属性说明（案例）</a>
+#### <a id="common">字段属性配置（案例）</a>
 
     ps:
         所有function可用bind绑定函数名
@@ -1504,6 +1504,7 @@
                 各字段的 tdEditCb 和 tdEditFetchConfig 配置将无效 因为已经被内置方法接管了
                 表格字段不参与必填验证
                 表格主键字段必须配置，且新增数据时表格主键值为内置分配
+                如果incToForm 和 fetchConfig都存在的情况下首次会请求一次 往后重新渲染将不在进行再次请求
 
         */
         incToForm: true,
