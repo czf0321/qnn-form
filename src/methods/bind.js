@@ -1,3 +1,6 @@
+
+import docPre from "./ntkoDocPre/docPre"
+
 //解析配置 确定是否需要绑定函数
 
 //传入的参数（@arg）可能是方法或者字符串等数据
@@ -28,6 +31,55 @@ const _fns = {
             } else {
                 console.error('_blocksAddends的目标参数暂不支持三层嵌套')
             }
+        }
+    },
+    _docPre: (info,fileList,props) => {
+        if (!props.headers?.token) {
+            console.error('使用onPreview:"bind:_docPre"该属性时  qnnForm.header.token属性必须配置');
+            return;
+        }
+        if (!props.myPublic?.domain) {
+            console.error('使用onPreview:"bind:_docPre"该属性时  qnnForm.myPublic.domain属性必须配置');
+            return;
+        }
+        const url = info?.url || info?.mobileUrl;
+        // 如果是文档需要使用预览  
+        const docExg = /(doc|docx|xls|xlsx|ppt|pdf)/gi;
+        const imgExg = /(png|gif|jpg|jpeg|webp|ico|mp4|webm|ogg)/gi;
+        const arrUrl = url?.split?.('.') || [];
+        const gs = arrUrl[arrUrl.length - 1];
+        if (docExg.test(gs)) {
+            docPre({
+                token: props.headers?.token,
+                domain: props.myPublic?.domain,
+            })(info)
+        } else {
+            //将图片类型的附件都筛选出来
+            const imgList = [];
+            for (let i = 0; i < fileList.length; i++) {
+                let item = { ...fileList[i] };
+                let iurl = item?.url || item?.mobileUrl;
+                let arrUrl = iurl?.split?.('.') || [];
+                let gs = arrUrl[arrUrl.length - 1];
+                if (gs.match(imgExg)) {
+                    imgList.push(item)
+                }
+            }
+
+            //找出当前图片索引
+            let curIndex = 0;
+            imgList.forEach((item,index) => {
+                let iurl = item?.url || item?.mobileUrl;
+                if (url === iurl) { curIndex = index }
+            });
+
+            props.fns.qnnSetState({
+                previewInfo: {
+                    fileList: imgList,
+                    curIndex: curIndex,
+                    visible: true
+                }
+            }) 
         }
     }
 }
@@ -63,7 +115,7 @@ const bind = function (arg) {
             console.error(`${methodName}不是一个函数，请勿在method中定义非函数数据。`);
         }
         return (...args) => {
-            return method[methodName]?.(...args,params)
+            return method[methodName]?.(...args,params,this.props)
         };
     } else {
         //有别的情况 所以不执行处理

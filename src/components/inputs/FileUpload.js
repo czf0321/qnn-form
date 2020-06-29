@@ -16,8 +16,9 @@ const FileUploadComponent = (props) => {
             fetchConfig: { apiName = "upload" }
         },
         qnnformData: { headers,style,qnnFormProps = {} },
-        fns: { upload,isMobile },
+        fns: { upload,isMobile,bind },
         fileList = [],
+        funcCallBackParams
     } = props;
     //文件上传组件的props 
     let uploadPropsByCom = {
@@ -75,13 +76,23 @@ const FileUploadComponent = (props) => {
                 }
             })
         }
-    },[fileList])
+    },[fileList]);
 
+    //其他需要强制替换的属性
+    const otherAttr = {};
+
+    //预览
+    if (inputProps.onPreview) {
+        otherAttr.onPreview = (info) => {
+            bind(inputProps.onPreview)(info,fileList,{ ...funcCallBackParams,...props })
+        }
+    }
     if (type === "files") {
         return <div id={inputProps.id} className="needsclick">
             <Upload
                 {...uploadPropsByCom}
                 {...inputProps}
+                {...otherAttr}
                 onChange={onChange}
                 id={field}
                 className={`${inputProps.className} ${style.upload} upload`}
@@ -125,6 +136,7 @@ const FileUploadComponent = (props) => {
                 edit={!disabled}
                 upload={upload}
                 {...inputProps}
+                {...otherAttr}
                 fieldName={`${(qnnFormProps.field || "")}_${(fieldName || (Array.isArray(field) ? field.join('.') : field))}_fieldName`}
             />
         </div>
@@ -137,6 +149,7 @@ const FileUploadComponent = (props) => {
                 }}
                 {...inputProps}
                 {...uploadPropsByCom}
+                {...otherAttr}
                 onChange={onChange}
                 id={field}
                 className={`dropbox-images ${inputProps.className} ${style.qnnFormImages} qnnFormImages`}

@@ -13,9 +13,8 @@ const refresh = function (fetchConfig) {
         //需要去请求字段项然后渲染
         formConfig.fetchConfig && this.getFieldsInsertForm();
         //因为联动下拉需要获取到字段的值来设置子级数据所以先设置值，然后社遏制下拉选项
-        //请求默认值  
-        if (apiName) { 
-            // console.log('刷新 ')
+        //请求默认值   
+        if (apiName && this._isMounted) {
             let _params = tool.getFetchParams({
                 params,
                 otherParams,
@@ -25,15 +24,18 @@ const refresh = function (fetchConfig) {
                 funcCallBackParams: this.funcCallBackParams,
                 rowData: clickCb?.rowData || {}
             })
+            //设置loading
+            this.loadingByForm = true;
             this.qnnSetState({ loadingByForm: true,isNeedRefresh: false });
             let resData = await this.fetch(apiName,_params);
             let { success,data,message,code } = resData;
-            this.qnnSetState({ loadingByForm: false });
+            this.loadingByForm = false;
             if (success) {
                 if (Array.isArray(data)) { data = data[0] }
                 this.setValues(data);
-                !values && this.qnnSetState({ values: data });
+                this.qnnSetState({ values: data,loadingByForm: false });
             } else {
+                this.qnnSetState({ loadingByForm: false });
                 if (code === "-1") {
                     tool.msg.error(message);
                 } else {

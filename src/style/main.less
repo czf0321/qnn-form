@@ -59,7 +59,6 @@
         }
     }
 
-
     // 禁止拖动事件
     // .noDragEvent{
     //     pointer-events: ;
@@ -77,7 +76,7 @@
 
     //每一个输入控件都应该给 一个左右边距  否则在 抽屉中就 直接靠右边 了
     .qnnFormItem {
-        margin: 12px 12px; 
+        margin: 12px 12px;
         // margin: 12px 0px;
         box-sizing: border-box;
     }
@@ -108,7 +107,7 @@
 
     .QnnFormContent {
         //富文本在销毁时候没法销毁留下的textarea输入框,暂时这么解决 ...需要继续研究
-        & > form > textarea {
+        form > textarea {
             display: none;
         }
     }
@@ -182,10 +181,9 @@
         box-sizing: border-box;
 
         //富文本在销毁时候没法销毁留下的textarea输入框,暂时这么解决 ...需要继续研究
-        & > form > textarea {
-            display: none;
-        }
-
+        form > textarea {
+            display: none; 
+        } 
         //正常的formItem
         .mobileItem {
             box-sizing: border-box;
@@ -602,7 +600,7 @@
             box-sizing: border-box;
             margin-bottom: 0px;
             padding-bottom: constant(safe-area-inset-bottom);
-            padding-bottom: env(safe-area-inset-bottom); 
+            padding-bottom: env(safe-area-inset-bottom);
             :global(.ant-form-item-control-input) {
                 min-height: 0px;
             }
@@ -672,7 +670,7 @@
         padding-bottom: 0px;
     }
 }
-.tabsForm{ 
+.tabsForm {
     :global(.ant-tabs-bar) {
         margin: 0px;
     }

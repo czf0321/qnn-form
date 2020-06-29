@@ -14,14 +14,14 @@ const RichtextComponent = React.lazy(() => import("./Richtext"));
 const ItemComponent = React.lazy(() => import("./Item"));
 const FileUploadComponent = React.lazy(() => import("./FileUpload"));
 const TreeSelectComponent = React.lazy(() => import("./TreeSelect"));
-const TreeNodeComponent = React.lazy(() => import("./TreeNode")); 
+const TreeNodeComponent = React.lazy(() => import("./TreeNode"));
 const QnnTableComponent = React.lazy(() => import("./QnnTable"));
 
 //异步加载的loading配置
 const skeletonProps = {
     loading: true,
     active: true,
-    paragraph: { rows: 1, width: "100%" },
+    paragraph: { rows: 1,width: "100%" },
 }
 
 //所有的输入组件
@@ -29,7 +29,7 @@ const skeletonProps = {
 //没次input渲染都将去掉用FormItem组件提供的更新方法以便FormItem组件得到重新渲染
 const inputs = {
     string: (props) => {
-        return (<Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return (<Suspense fallback={<Skeleton.Input {...skeletonProps} />}>
             <VarCharComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>)
     },
@@ -59,7 +59,7 @@ const inputs = {
     password: "string",
 
     date: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <DateTimeComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
@@ -71,7 +71,7 @@ const inputs = {
     rangeDate: "date",
 
     switch: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <SwitchComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
@@ -79,33 +79,33 @@ const inputs = {
     slider: "switch",
 
     checkbox: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <CheckboxComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
     radio: "checkbox",
 
     cascader: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <CascaderComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
     textarea: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <TextareaComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
     item: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <ItemComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
 
     number: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <NumberComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
@@ -113,20 +113,20 @@ const inputs = {
     money: "number",
 
     select: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <SelectComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
     selectByPaging: "select",
 
     richtext: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <RichtextComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
     files: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <FileUploadComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
@@ -135,19 +135,19 @@ const inputs = {
     images: "files",
 
     treeSelect: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <TreeSelectComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
     treeNode: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <TreeNodeComponent inputProps={getInputProps(props)} {...props} />
         </Suspense>
     },
 
     qnnTable: (props) => {
-        return <Suspense fallback={<Skeleton {...skeletonProps} />}>
+        return <Suspense fallback={<Skeleton.Input  {...skeletonProps} />}>
             <QnnTableComponent
                 {...getInputProps(props)}
             />
@@ -165,8 +165,8 @@ export default (props) => {
         },
         fieldConfig,
         fns: { bind },
-        funcCallBackParams
-    } = props;
+        funcCallBackParams,
+    } = props; 
 
     if (addends) {
         let he = 0;
@@ -178,7 +178,7 @@ export default (props) => {
         }
     }
 
-    //处理未func的配置
+    //处理为func的配置
     const copyFieldConfig = fromJS(fieldConfig).toJS() || {};
     const { optionData,optionConfig,fetchConfig,initialValue } = copyFieldConfig;
     const newCopyFieldConfig = {
@@ -186,7 +186,7 @@ export default (props) => {
         initialValue: bind(initialValue)(funcCallBackParams),
         optionData: bind(optionData)(funcCallBackParams),
         optionConfig: bind(optionConfig)(funcCallBackParams),
-        fetchConfig: bind(fetchConfig)(funcCallBackParams),
+        fetchConfig: bind(fetchConfig)(funcCallBackParams),  
     }
 
     //输入组件

@@ -323,7 +323,7 @@ const CreateFormItem = (props) => {
                 }
                 return update;
             }}>
-                {() => {
+                {() => { 
                     //条件显隐权限比单独设置禁用个隐藏高
                     //所以设置了condition 配置后hide配置和disabled配置将失去意义
                     if (condition) {

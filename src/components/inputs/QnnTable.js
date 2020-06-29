@@ -6,9 +6,18 @@ const QnnTable = (props) => {
     const { incToForm,value = [],actionBtns = [],onChange,formConfig = [],fetchConfig = {},...qnnTableProps } = props;
 
     const isFirstRender = React.useRef();
+    const { loadingByForm } = props.qnnFormProps.qnnformData;
+    let otherAttr = { fetchConfig }
+    //表单在请求数据的时候不需要渲染子控件  否则会导致多余的重复渲染和子组件请求  
+    if (loadingByForm) {
+        //在表单处于loding状态时候表格不能去请求数据
+        otherAttr = {
+            fetchConfig: {}
+        }
+    }
 
     //如果incToForm 和 fetchConfig都存在的情况下需要在首次请先请求设置值
-    const getData = async () => { 
+    const getData = async () => {
         const { apiName,params = {},otherParams = {} } = fetchConfig;
         const {
             qnnFormProps: {
@@ -17,7 +26,7 @@ const QnnTable = (props) => {
                 funcCallBackParams,
                 qnnformData: { match = {} }
             }
-        } = props; 
+        } = props;
         let _params = tool.getFetchParams({
             params,
             otherParams,
@@ -28,7 +37,7 @@ const QnnTable = (props) => {
             rowData: qnnFormProps?.clickCb?.rowData || {}
         })
         const { success,data,message,code } = await props.fetch(apiName,_params);
-        if (success) { 
+        if (success) {
             onChange(data)
         } else {
             if (code === "-1") {
@@ -101,25 +110,48 @@ const QnnTable = (props) => {
                         }]))
                     },
                     _delRowToFormData: ({ selectedRows,btnCallbackFn }) => {
+                        //有可能是树表
                         let selectedRowsKey = selectedRows.map(item => item[rowKey]);
-                        onChange(value.filter(item => !selectedRowsKey.includes(item[rowKey])));
+                        const delFn = (listData) => { 
+                            return listData.filter(item => {
+                                if (item.children) {
+                                    item.children = delFn(item.children);
+                                } 
+                                return !selectedRowsKey.includes(item[rowKey])
+                            })
+
+                        }
+  
+                        onChange(delFn(value)); 
                         // 将选中的数据清空
                         btnCallbackFn.setState({
                             selectedRows: []
                         })
                     },
                     _tdEditCbToFormData: ({ newRowData }) => {
-                        //异步是因为如果在设置值时候用户是将焦点移动到另一个输入框中将遗漏掉该事件
+                        //异步是因为如果在设置值时候用户是将焦点移动到另一个输入框中将遗漏掉触礁事件
                         setTimeout(() => {
-                            onChange(value.map(item => {
-                                if (item[rowKey] === newRowData[rowKey]) {
-                                    return {
-                                        ...item,
-                                        ...newRowData
+                            //可能是给子集设置值 需要注意
+
+                            let setFn = (listData) => {
+                                return listData.map(item => {
+                                    if (item[rowKey] === newRowData[rowKey]) {
+                                        return {
+                                            ...item,
+                                            ...newRowData
+                                        }
+                                    } else if (item['children']) {
+                                        return {
+                                            ...item,
+                                            children: setFn(item['children'])
+                                        }
                                     }
-                                }
-                                return item;
-                            }));
+
+                                    return item;
+                                })
+                            }
+
+                            onChange(setFn(value));
                         })
                     }
                 }}
@@ -128,9 +160,9 @@ const QnnTable = (props) => {
         </div>
     } else {
         //普通的qnnTable
-        return <QnnTableComponent {...props} />
+        return <QnnTableComponent {...props} {...otherAttr} />
     }
 
 
 }
-export default QnnTable;
+export default QnnTable 

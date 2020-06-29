@@ -16,16 +16,18 @@ export default {
     input: 'src/index.js',
     output: [
         {
-            dir: "dist/cjs", 
+            dir: "dist/cjs",
             format: 'cjs',
             sourcemap: false,
-            exports:"named", 
+            // sourcemap: !production,
+            exports: "named",
         },
         {
-            dir: "dist/es", 
+            dir: "dist/es",
             format: 'es',
             sourcemap: false,
-            exports:"named",
+            // sourcemap: !production,
+            exports: "named",
         }
     ],
     external: [
@@ -44,12 +46,12 @@ export default {
         "moment",
         "immutable",
         "react-date-range",
-        "ifanrx-react-ueditor",
-        "@ant-design"
-    ], 
-    moduleContext:(id)=>{ 
+        "ifanrx-react-ueditor"
+        // "@ant-design"
+    ],
+    moduleContext: (id) => {
         return "window"
-    }, 
+    },
     plugins: [
         resolve(),
         external(),
@@ -148,6 +150,8 @@ export default {
             ]
         }),
         commonjs(),
-        production && terser() // minify, but only in production 
+        //加上后报错 需要排查
+        // terser()
+        // production && terser() // minify, but only in production 
     ]
 }

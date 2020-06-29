@@ -1,0 +1,88 @@
+//最外层弹出不在 root里面
+.imgPreviewModal {
+    @height: 60vh;
+    // @height: 100%;
+    :global {
+        .ant-carousel .slick-slide {
+            text-align: center;
+            height: @height;
+            overflow: hidden;
+        }
+        .ant-carousel .slick-dots li {
+            background-color: #ccc;
+        }
+        .ant-carousel .slick-dots li.slick-active button {
+            background: #1890ff;
+        }
+    }
+    .sliderItem {
+        padding: 8px;
+        box-sizing: border-box;
+        height: @height;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .videoContainer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-items: center;
+            align-items: center;
+        }
+    }
+
+    position: relative;
+    .next,
+    .prve {
+        position: absolute;
+        width: 30px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        left: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        // background: rgba(180, 179, 179, 0.356);
+        color: rgb(167, 165, 165);
+        font-size: 22px;
+        cursor: pointer;
+        font-weight: 200;
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+    .next {
+        left: 100%;
+        transform: translate(-100%, -50%);
+    }
+
+    .fullScreenBtn {
+        position: absolute;
+        right: 24px;
+        bottom: 6px;
+        cursor: pointer;
+        padding-bottom: 8px;
+        &:hover {
+            color: #1890ff;
+        }
+    }
+}
+
+//全屏
+.imgPreviewModal.imgPreviewModalByFullScreen {
+    @height: calc(100vh - 48px);
+    height: 100%;
+    :global {
+        .ant-modal-content{
+            border-radius: 0px;
+        }
+        .ant-carousel .slick-slide {
+            height: @height;
+        }
+    }
+    .sliderItem {
+        height: @height;
+    }
+}

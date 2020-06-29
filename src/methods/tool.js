@@ -26,6 +26,29 @@ const tool = {
             });
         }
     },
+    successMsg: (message) => {
+        notification.success({
+            message: '提示',
+            description: message,
+            duration: 3
+        });
+    },
+    errMsg: (message,code) => {
+        if (code === '-1') {
+            notification.error({
+                message: '系统遇到问题，请联系运维人员',
+                description: message,
+                duration: 3
+            });
+        } else {
+            notification.warn({
+                message: '提示',
+                description: message,
+                duration: 3
+            });
+        }
+    },
+
 
     //如果tabs是配置不存在将直接return formConfig
     //将tabs中的所有tab页是qnnForm的formConfig字段合并到一个数组中return出去
@@ -137,7 +160,7 @@ const tool = {
         if (!path) { console.error("未读取到field配置！！请检查  ---getDataValByField方法提示") }
         const arr = path.split?.('.') || path;
         const len = arr.length - 1
-        let val = null; 
+        let val = null;
         arr.reduce((prev,cur,index) => {
             if (index === len) {
                 val = prev[cur]
@@ -246,14 +269,14 @@ const tool = {
                 formFields = formFields || qnnFormConfig.formConfig; //兼容写法
 
                 //field可能是个嵌套  
-                let itemValue = tool.getDataValByField(field,values); 
+                let itemValue = tool.getDataValByField(field,values);
 
                 //当值存在是进行操作 否则忽略  0和false别忽略
                 //等于 undefind 的就不要进行操作了 否则会把所有表单字段都给清空了
                 if (itemValue || itemValue === 0 || itemValue === false || itemValue === null || itemValue === "") {
                     switch (type) {
                         case "qnnForm":
-                            if (canAddForm) { 
+                            if (canAddForm) {
                                 formatedData[field] = itemValue?.map?.(item => tool.formatData(item,formFields,"set"))
                             } else {
                                 formatedData[field] = tool.formatData(itemValue,formFields,"set");
@@ -349,7 +372,7 @@ const tool = {
                     //空的值也不能忽略 否则字段将不可以清空了  ---错误思维  请控制需要用form.resetxxx  
                     // formatedData[field] = itemValue;
                 }
-            }); 
+            });
             return { ...formatedData };
         }
     },

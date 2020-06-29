@@ -5,11 +5,13 @@ import qnnFormDefaultProps from "./index.defaultProps"
 import { fromJS,is,moment } from "./lib"
 import { getDeviceType,bind,BindComKey,loopClearChild,tool,getValues,setValues,setTabsIndex,refresh,getRules } from "./methods";
 import { download,fetchByCb } from "./methodsCallback";
+import { ImgPreview } from "./components"
 import sByTwo from "./style/two.less"; //普通样式
 import sByZJ from "./style/default.less"; //中交样式
 import { CreateForm } from "./components/form"
 import { withRouter } from "react-router-dom";
 import { Spin } from "antd";
+
 //可选样式
 const styles = {
     "0": sByZJ,
@@ -107,6 +109,8 @@ class QnnForm extends Component {
 
     static sFormatData = (...args) => { tool.formatData(...args); console.warn('除非你明白你在做什么【明白可忽略】，否则请勿使用sFormatData方法，请使用setValues和getValues操作值！！！') }
 
+    static ImgPreview = ImgPreview;
+
     //初始为被卸载状态
     _isMounted = false;
 
@@ -170,7 +174,10 @@ class QnnForm extends Component {
         this.form = null;
 
         //设置state必须调用这个方法进行设置
-        this.qnnSetState = (data,cbFn) => this._isMounted && this.setState({ ...data },cbFn);
+        this.qnnSetState = (data,cbFn) => {
+            // console.log(data)
+            this._isMounted && this.setState({ ...data },cbFn)
+        };
 
         //设置配置的方法
         this.setConfig = ({ tabs,formConfig,...newConfig }) => {
@@ -195,7 +202,7 @@ class QnnForm extends Component {
             btns: btns,
             tabs: tabs,
             loading: false,
-            //表单内容的loading
+            //表单内容的loading  设置为true的时候不应该重新渲染任何控件
             loadingByForm: false,
             //是否需要刷新 首次刷新不需要管这个数据是啥
             isNeedRefresh: false,
@@ -229,6 +236,13 @@ class QnnForm extends Component {
 
             formType: formType, //表单类型
             descriptionsConfig, //描述式表单的表单配置
+
+            //正在预览的文件
+            previewInfo: {
+                fileList: [],
+                curIndex: 0,
+                visible: false
+            }
         };
 
         //绑定给按钮点击后回调使用的方法
@@ -297,11 +311,11 @@ class QnnForm extends Component {
         if (this.props.form) { console.error("QnnForm组件无需再传入form对象") };
 
         //如果是tabs表单的话需要等待tab表单加载出来后再执行这个方法进行设置值
-        this.getTabsValueByFetch = () => { 
+        this.getTabsValueByFetch = () => {
             //新增时候是不需要去请求数据的
             if (this.props?.clickCb?.rowInfo?.name === 'add') {
                 return;
-            } 
+            }
             const { tabs,tabsIndex } = this.state;
             let _type = tabs[tabsIndex].type || tabs[tabsIndex].name; //兼容写法 
             if (_type === 'qnnForm' && tabs[tabsIndex]?.content?.fetchConfig && !tabs[tabsIndex].fetched) {
@@ -328,7 +342,7 @@ class QnnForm extends Component {
     componentDidUpdate(prevProps,prevState) {
         //检查是否需要调用刷新方法
         const { loadingByForm,isNeedRefresh } = this.state;
-        !prevState.isNeedRefresh && isNeedRefresh && !loadingByForm && this.refresh();
+        !prevState.isNeedRefresh && isNeedRefresh && !loadingByForm && !this.loadingByForm && this.refresh();
     }
 
     componentWillUnmount() {
@@ -341,15 +355,19 @@ class QnnForm extends Component {
     setCanAddBlocksUpdateValueFn = (field,fn) => this.canAddBlocksUpdateValueFn[field] = fn;
     getCanAddBlocksUpdateValueFn = (field) => field ? this.canAddBlocksUpdateValueFn[field] : this.canAddBlocksUpdateValueFn;
 
+    //表单是否正在请求中  与state.loadingByForm 互相辅助
+    loadingByForm = false;
+
     render() {
         const {
             fieldsValueChange,loadingByForm,field,isInQnnTable,formConfig,tabs,btns = [],tailFormItemLayout = {},formItemLayout = {},initialValues = {},tabsIndex,isNeedRefresh,
             formType, //表单类型
-            descriptionsConfig
+            descriptionsConfig,
+            previewInfo
         } = this.state;
         const { history,match,location,upload,componentsKey,headers,children,formByQnnForm,formContentScroll,antdFormProps,fieldCanDrag,fieldDragCbs = {} } = this.props;
         const qnnFormStyle = this.props.style || {};
-        // console.log('%c 表单组件渲染12','font-size:20px; color:red',this.props.formConfig); 
+        // console.log('%c 表单组件渲染12','font-size:20px; color:red',loadingByForm); 
         return (
             <div className={`${isInQnnTable ? style.isInQnnTable : ""} ${(!btns || !btns.length) ? style.noBtns : ""} ${this.isMobile() ? style.mobileForm : style.QnnForm} ${this.isMobile() ? 'mobileForm' : 'QnnForm'}  ${tabs.length ? (style.tabsForm + ' tabsForm') : ''} ${fieldCanDrag ? "fieldCanDragQnnForm" : null}`} style={{ ...qnnFormStyle }}>
                 <Spin spinning={loadingByForm} style={{ margin: "24px auto",display: "block",textAlign: "center",height: "100%" }} tip="loading...">
@@ -362,10 +380,14 @@ class QnnForm extends Component {
                         getForm={(form) => {
                             if (form) {
                                 this.form = form;
-                                //实例化完毕后执行数据刷新
-                                isNeedRefresh && !loadingByForm && this.refresh();
-                                //设置输入框触礁后自动居中
-                                tool.setInputAlignMiddle();
+                                //以下操作需要异步一下
+                                setTimeout(() => {
+                                    //实例化完毕后执行数据刷新  
+                                    isNeedRefresh && !loadingByForm && !this.loadingByForm && this.refresh();
+                                    //设置输入框触礁后自动居中
+                                    tool.setInputAlignMiddle();
+                                },1)
+
                             }
                         }}
 
@@ -442,15 +464,32 @@ class QnnForm extends Component {
                                 onDragStart: this.bind(fieldDragCbs.onDragStart),
                                 //这个end方法实际上是鼠标放下去时候按个方法
                                 onDragEnd: this.bind(fieldDragCbs.onDragEnd),
-                            }
+                            },
+
+                            loadingByForm: loadingByForm
                         }}
 
                         children={children}
                     />
                 </Spin>
+
+                {/* 图片预览组件 */}
+                {
+                    previewInfo.visible ? <ImgPreview
+                        {...previewInfo}
+                        onClose={() => {
+                            this.qnnSetState({
+                                previewInfo: {
+                                    visible: false
+                                }
+                            })
+                        }}
+                    /> : null
+                }
+
             </div>);
     }
 }
 
 export default withRouter(QnnForm);
-export { tool,getRules } 
+export { tool,getRules,ImgPreview } 

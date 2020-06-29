@@ -1,11 +1,24 @@
 ### 版本更新日志
 
-    注：x[重构].y[新增].z[修复]
+    注：x[重构].y[新增].z[修复+调整]
 
     
-### 1.11.20
+### 1.11.22
 
-    调整 incToForm 和 fetchConfig都存在的情况下首次会请求一次 往后重新渲染将不在进行再次请求
+    新增 
+        onPreview:"bind:_docPre",  用以预览文档（需要正确配置ntko环境）
+        tool.successMsg tool.errMsg 
+        字段style可配置问func
+
+    调整 
+        incToForm 和 fetchConfig都存在的情况下首次会请求一次 往后重新渲染将不在进行再次请求
+    
+    修复
+        富文本控件部分问题
+        某些情况下重复请求问题
+        拖拽在某些时候位置不对
+        incToForm模式下树表子集无法修改数据
+        incToForm模式下树表子集无法删除数据
 
 ##### 1.11.19
 

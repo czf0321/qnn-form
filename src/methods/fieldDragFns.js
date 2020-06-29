@@ -128,7 +128,7 @@ class FieldDragFns extends unit {
             if (!this.startX) {
                 this.startX = (event.target.offsetWidth / 2) + event.target.offsetLeft;
             }
-            const containerLeft = document.querySelector('.fieldCanDragQnnForm').offsetLeft;
+            const containerLeft = document.querySelector('.fieldCanDragQnnForm').getBoundingClientRect().left; 
             if ((this.startX - (event.clientX - containerLeft)) > 0) {
                 //向前插入 
                 this.removeClass(event.target,style.afterInsert);

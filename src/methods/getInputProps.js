@@ -6,7 +6,7 @@ const getInputProps = (props) => {
         fieldConfig,
         fieldConfig: {
             type,field,
-            placeholder, 
+            placeholder,
             showSearch,
             optionConfig = {},
             //这两是必须formItem处理完后传入的所以不能从fieldConfig中取出
@@ -58,6 +58,9 @@ const getInputProps = (props) => {
         formatVal = bind(formatter)(props.value,funcCallBackParams);
     }
 
+    //style 
+    let configStyle = fieldConfig.style ? bind(fieldConfig.style)(formatVal,funcCallBackParams) : {};
+
     //所有输入input都有的props
     const inputBaisePorpsData = {
         ...otherConfig,
@@ -67,7 +70,7 @@ const getInputProps = (props) => {
         style: {
             width: "100%",
             display: hide ? "none" : "",
-            ...fieldConfig.style
+            ...configStyle
         },
         className: `${className} ${style.qnnFormInput} qnnFormInput ${voice ? style.voice : ""}`,
         id: id,
@@ -149,7 +152,7 @@ const getInputProps = (props) => {
 
             let realVal = val;
             if (type === 'files' || type === 'images' || type === 'filesDragger') {
-                realVal = val?.fileList?.map?.(item => (item?.response?.data || item))?.filter(item => item); 
+                realVal = val?.fileList?.map?.(item => (item?.response?.data || item))?.filter(item => item);
             }
 
             bind(props.fieldConfig.onChange)?.(realVal,{ ...changeProps,...props,itemData,itemParentData });

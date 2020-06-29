@@ -27,7 +27,6 @@
 #### 配合表格组件de使用
 
 <p>qnn-table(万能表格)  <a href="https://github.com/wangzongming/qnn-table">点击直达</a>
- 
 
 #### <a href="https://ant.design/components/grid-cn/">使用前必看 antd 栅格系统</a>
 
@@ -62,7 +61,8 @@
     <li><b><a href="#JSX">JSX风格调用</a></li>
     <li><b><a href="#descriptForm">描述式表单</a></li>
     <li><b><a href="version-log.md">升级日志</a></li>
- 
+    <li><b><a href="#ImgPreview">文件预览</a></li>
+
 </ul>
 
 #### <a id="use">下载&引用</a>
@@ -555,7 +555,7 @@
                 }
             }
 
-        自定义input样式
+        自定义input样式  (val, ...obj)=>style | style
         style:{
             color:'red'
         },
@@ -626,7 +626,6 @@
 
         //textarea特有
         autosize:{ minRows: 2, maxRows: 12 },  //自适应高度  [object] 默认{ minRows: 2, maxRows: 12 }
-        rows:4, //autosize存在即无意义  [number]  默认 4
         oldValue:[ //该数据存在会自动在textarea框上新增列表数据
             {
                 text:"第一条历史数据",
@@ -1074,6 +1073,7 @@
         required: true,
         allowClear:true,
         multiple: false, //是否开启多选功能 开启后自动开启搜索功能
+        mode:"tags",     //和多选的区别在于这个可以自定义输入标签
         showSearch: false, //是否开启搜索功能 (移动端不建议开启)
         pullJoin:false, 多选可能会用到  控制是否拆分后台返回的数据 后台返回数组就无需配置或者配置为false 反之为true
         pushJoin:true, 多选可能会用到  控制是否join给到后台的数据 同pull
@@ -1325,7 +1325,7 @@
         field: 'textarea', //唯一的字段名 ***必传
         placeholder: '请输入',//占位符
         required: true,//是否必填
-        rows: 4, //行高 默认4
+        autoSize:{}
     }
 
 #### <a id="files">files 文件上传 (只建议 pc 端使用否则请使用 camera 类型)</a>
@@ -1893,6 +1893,27 @@
             children中不可放入hide字段
             formItem:true 配置将字段从表格中排除开变为一个普通字段
 
+#### <a id="ImgPreview">图片视频预览</a>
+
+    import { ImgPreview } from "qnn-form"
+
+    export default ()=>{
+        return { visible ?
+        <ImgPreview
+            fileList={[{url,xxx}]}
+            curIndex={0}
+            visible={true}
+            onClose={() => {
+                this.qnnSetState({
+                    previewInfo: {
+                        visible: false
+                    }
+                })
+            }}
+        />
+         : null }
+    }
+
 #### <a id="func">方法调用</a>
 
     获取某个下拉字段的下拉数据key
@@ -1911,4 +1932,8 @@
 
 #### <a id="bind">绑定内置方法</a>
 
+    表单块加数
     bind:_blocksAddends::表单块字段名::表单块中的字段名::总数字段名
+
+    //上传组件使用 使用ntko预览文件
+    onPreview:"bind:_docPre",
