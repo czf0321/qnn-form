@@ -112,33 +112,34 @@ const QnnTable = (props) => {
                     _delRowToFormData: ({ selectedRows,btnCallbackFn }) => {
                         //有可能是树表
                         let selectedRowsKey = selectedRows.map(item => item[rowKey]);
-                        const delFn = (listData) => { 
+                        const delFn = (listData) => {
                             return listData.filter(item => {
                                 if (item.children) {
                                     item.children = delFn(item.children);
-                                } 
+                                }
                                 return !selectedRowsKey.includes(item[rowKey])
                             })
 
                         }
-  
-                        onChange(delFn(value)); 
+
+                        onChange(delFn(value));
                         // 将选中的数据清空
                         btnCallbackFn.setState({
                             selectedRows: []
                         })
                     },
-                    _tdEditCbToFormData: ({ newRowData }) => {
+                    _tdEditCbToFormData: (args) => {
+                        const { newRowData,editField } = args; 
                         //异步是因为如果在设置值时候用户是将焦点移动到另一个输入框中将遗漏掉触礁事件
                         setTimeout(() => {
-                            //可能是给子集设置值 需要注意
-
+                            //可能是给子集设置值 需要注意 
                             let setFn = (listData) => {
                                 return listData.map(item => {
                                     if (item[rowKey] === newRowData[rowKey]) {
                                         return {
                                             ...item,
-                                            ...newRowData
+                                            ...newRowData,
+                                            [editField]: newRowData[editField] ? newRowData[editField] : undefined
                                         }
                                     } else if (item['children']) {
                                         return {

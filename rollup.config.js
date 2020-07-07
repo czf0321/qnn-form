@@ -1,7 +1,5 @@
-import babel from 'rollup-plugin-babel'
-// import commonjs from 'rollup-plugin-commonjs'
-// import resolve from 'rollup-plugin-node-resolve'
-// import url from 'rollup-plugin-url'
+// import babel from 'rollup-plugin-babel' 
+import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve';
 import url from '@rollup/plugin-url';
@@ -9,7 +7,7 @@ import external from 'rollup-plugin-peer-deps-external'
 import postcss from 'rollup-plugin-postcss'
 import svgr from '@svgr/rollup'
 import image from '@rollup/plugin-image';
-import { terser } from 'rollup-plugin-terser';
+// import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
 export default {
@@ -81,6 +79,8 @@ export default {
         babel({
             babelrc: false,
             exclude: 'node_modules/**',
+            // babelHelpers:production ? "bundled" :"runtime",
+            babelHelpers:"bundled",
             presets: [
                 [
                     "@babel/preset-env",
